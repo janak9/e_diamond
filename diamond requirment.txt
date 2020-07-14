@@ -1,0 +1,42 @@
+- User:
+    login/register
+    view product
+    add/remove product from wishlist
+    add/remove product from cart
+    filter based on category
+    payment module
+    view orders
+    post requirments
+    contact using social media
+    give review
+    Give Feedback
+    view/comment Event
+    view/comment Blogs
+    take Appointments
+    compare products
+    View Offer
+    send message
+
+
+- admin:
+    manage Users
+    add/remove main category
+    add/remove category
+    add/remove sub category
+    add/remove product
+    add/remove social media
+    add/remove Event
+    add/remove Blogs
+    check Appointments
+    view orders
+    check reviews
+    check payments
+    check and replay to post requirments
+    manage about us
+    Manage Offer
+    manage other details
+
+
+
+https://www.hostgator.in/web-hosting/linux-shared-hosting#hg-testimonials
+https://www.pythonanywhere.com/pricing/

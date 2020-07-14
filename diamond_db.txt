@@ -1,0 +1,155 @@
+User:
+    first name
+    last name
+    phone
+    Email
+    password
+
+address:
+    user#
+    address_type (Billing/Shipping)
+    First name
+    Last name
+    Company name (optional)
+    Street address
+    appartment
+    city
+    country
+    pin code
+
+main_category:
+    name
+
+category:
+    main_category#
+    name
+
+sub category
+    main_category#
+    category#
+    sub_category name
+    
+product:
+    category#
+    sub_category#
+    title
+    description
+    images[]
+    max_qty
+    price
+    social_links[]
+
+additional_information:
+    title
+    detail
+
+images:
+    image#
+    title
+    src
+
+social_links:
+    type (fb/insta...)
+    link
+
+contact:
+    type(contact_us/post_requirment)
+    name
+    Email
+    phone
+    country
+    subject
+    message
+
+blogs:
+    title
+    description
+    image#
+    timestamp
+    social_links[]
+    related sub_categories[]
+
+reviews:
+    user#
+    post_type(product_review/feedback)
+    post#
+    star
+    comment
+    timestamp
+
+comments:
+    user#
+    post_type(blogs/events)
+    post#
+    comment
+    timestamp
+
+wishlist:
+    user#
+    product#
+    timestamp
+
+cart:
+    user#
+    product#
+    qty
+    timestamp
+
+order:
+    user#
+    product#
+    offer#
+    qty
+    price
+    discount_price
+    timestamp
+
+payment:
+    order#
+    payment_mode
+    txn_no
+    price
+    timestamp
+
+about us:
+    title
+    main_intro
+    description
+    address
+    phone
+    Email
+    logo
+    social_links[]
+
+compare:
+    user#
+    products#[]
+
+events_category:
+    title
+
+events:
+    events_category#
+    title
+    description
+    location
+    country
+    phone
+    images[]
+    social_links[]
+    event_date
+    timestamp
+
+details:
+    category(Return Policy/FAQ)
+    description
+
+offers:
+    title
+    description
+    code(uniqe)
+    start time
+    end time
+    timestamp
+
+
