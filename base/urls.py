@@ -1,12 +1,13 @@
 from django.contrib import admin
 from django.contrib.admin.sites import AdminSite
-from django.urls import path
+from django.urls import path, include
 from django.conf.urls.static import static
-from django.conf import settings 
+from django.conf import settings
 from decouple import config
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('user/', include('user.urls', namespace="user")),
 ]
 
 AdminSite.site_header = config('APP_NAME')

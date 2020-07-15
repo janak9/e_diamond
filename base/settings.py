@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -111,12 +113,22 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# for authentication
+AUTH_USER_MODEL = 'user.User'
+LOGIN_REDIRECT_URL = '/'
+
+#Authentication backends
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE =  config('TIME_ZONE', default='Asia/Kolkata')
+TIME_ZONE = config('TIME_ZONE', default='Asia/Kolkata')
 
 USE_I18N = True
 
@@ -136,8 +148,8 @@ STATICFILES_DIRS = (
 
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-# for media files 
-MEDIA_ROOT =  os.path.join(BASE_DIR, 'media') 
+# for media files
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 

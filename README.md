@@ -25,7 +25,8 @@ python>=3.5
 1. find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
 2. find . -path "*/migrations/*.pyc"  -delete
 3. Drop the current database
-4. python3 manage.py makemigrations
-5. python3 manage.py migrate
+4. python manage.py makemigrations
+5. python manage.py migrate
 
-
+## force reinstall Django
+pip install --upgrade --force-reinstall  Django==3.0.8
