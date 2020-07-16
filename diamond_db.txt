@@ -1,3 +1,4 @@
+---------- user -------------
 User:
     first name
     last name
@@ -17,6 +18,39 @@ address:
     country
     pin code
 
+compare:
+    user#
+    products#[]
+
+wishlist:
+    user#
+    product#
+    timestamp
+
+cart:
+    user#
+    product#
+    qty
+    timestamp
+
+order:
+    user#
+    product#
+    offer#
+    qty
+    price
+    discount_price
+    timestamp
+
+payment:
+    order#
+    payment_mode
+    txn_no
+    price
+    timestamp
+
+
+---------- product --------------
 main_category:
     name
 
@@ -52,6 +86,16 @@ social_links:
     type (fb/insta...)
     link
 
+reviews:
+    user#
+    post_type(product_review/feedback)
+    post#
+    star
+    comment
+    timestamp
+
+
+--------- admin -----------
 contact:
     type(contact_us/post_requirment)
     name
@@ -69,46 +113,11 @@ blogs:
     social_links[]
     related sub_categories[]
 
-reviews:
-    user#
-    post_type(product_review/feedback)
-    post#
-    star
-    comment
-    timestamp
-
 comments:
     user#
     post_type(blogs/events)
     post#
     comment
-    timestamp
-
-wishlist:
-    user#
-    product#
-    timestamp
-
-cart:
-    user#
-    product#
-    qty
-    timestamp
-
-order:
-    user#
-    product#
-    offer#
-    qty
-    price
-    discount_price
-    timestamp
-
-payment:
-    order#
-    payment_mode
-    txn_no
-    price
     timestamp
 
 about us:
@@ -120,10 +129,6 @@ about us:
     Email
     logo
     social_links[]
-
-compare:
-    user#
-    products#[]
 
 events_category:
     title

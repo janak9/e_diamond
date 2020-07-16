@@ -71,6 +71,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         help_text=_('Designates whether this user should be treated as active.'),
     )
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
+
     phone = models.CharField(_('contact no'), max_length=18, blank=True, null=True, validators=[MyValidation.PHONE_NO])
     gender = models.CharField(max_length=6, default=const.MALE, choices=const.GENDER_TYPE, blank=True, null=True)
     profile_pic = models.ImageField(upload_to=get_profile_path, help_text='profile photo', blank=True, default='profile/user-square.jpeg')

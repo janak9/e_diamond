@@ -73,8 +73,7 @@ def login(request):
                 else:
                     errors.append("not active")
             else:
-                errors.append("Your Account Is " +
-                              user[0].get_status_display())
+                errors.append("Your Account Is " + user[0].get_status_display())
         else:
             errors.append('E-mail is wrong...!')
 

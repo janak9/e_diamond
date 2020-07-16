@@ -24,17 +24,13 @@ class SignUpForm(UserCreationForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', )
-        # fields = ('first_name', 'last_name', 'phone', 'gender', 'profile_pic', )
+        fields = ('first_name', 'last_name', 'phone', 'gender', 'profile_pic', )
 
     def clean(self):
         # data from the form is fetched using super function
         super(ProfileForm, self).clean()
 
-        # extract the username and text field from the data
         phone = self.cleaned_data.get('phone')
-
-        # conditions to be met for fields
         if (len(phone) != 10 and len(phone) != 0):
             self._errors['phone'] = self.error_class(['phone must be of 10 digit'])
 
