@@ -18,3 +18,10 @@ GENDER_TYPE = (
     (MALE, 'Male'),
     (FEMALE, 'Female'),
 )
+
+BILLING = 'billing'
+SHIPPING = 'shipping'
+ADDRESS_TYPE = (
+    (BILLING, 'Billing'),
+    (SHIPPING, 'Shipping'),
+)

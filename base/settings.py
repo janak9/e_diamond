@@ -39,7 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'auth_user',
     'user',
+    'main_admin',
+    'product',
+    'payment'
 ]
 
 MIDDLEWARE = [
@@ -114,7 +118,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # for authentication
-AUTH_USER_MODEL = 'user.User'
+AUTH_USER_MODEL = 'auth_user.User'
 LOGIN_REDIRECT_URL = '/'
 
 #Authentication backends

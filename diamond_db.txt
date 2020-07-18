@@ -42,13 +42,11 @@ order:
     discount_price
     timestamp
 
-payment:
-    order#
-    payment_mode
-    txn_no
-    price
+feedback:
+    user#
+    star
+    comment
     timestamp
-
 
 ---------- product --------------
 main_category:
@@ -64,32 +62,24 @@ sub category
     sub_category name
     
 product:
+    main_category#
     category#
     sub_category#
     title
     description
-    images[]
     max_qty
     price
+    images[]
     social_links[]
+    additional_informations[]
 
 additional_information:
     title
-    detail
-
-images:
-    image#
-    title
-    src
-
-social_links:
-    type (fb/insta...)
-    link
+    description
 
 reviews:
     user#
-    post_type(product_review/feedback)
-    post#
+    product#
     star
     comment
     timestamp
@@ -104,6 +94,18 @@ contact:
     country
     subject
     message
+
+social_type:
+    name (fb/insta...)
+    logo
+
+images:
+    title
+    src
+
+social_links:
+    social_type#
+    link
 
 blogs:
     title
@@ -157,4 +159,11 @@ offers:
     end time
     timestamp
 
+-------- payment ------
 
+payment:
+    order#
+    payment_mode
+    txn_no
+    price
+    timestamp

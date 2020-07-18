@@ -7,7 +7,7 @@ from decouple import config
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('user/', include('user.urls', namespace="user")),
+    path('auth/', include('auth_user.urls', namespace="auth")),
 ]
 
 AdminSite.site_header = config('APP_NAME')

@@ -1,8 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from django.contrib.auth import get_user_model
-from user.models import User as user_model
-User = get_user_model()
+from auth_user.models import User as user_model
 
 
 class SignUpForm(UserCreationForm):
@@ -17,13 +16,13 @@ class SignUpForm(UserCreationForm):
     last_name = forms.CharField(max_length=30, required=True, label='Last Name')
 
     class Meta:
-        model = User
+        model = get_user_model()
         fields = ('first_name', 'last_name', 'email', 'password1', 'password2', )
 
 
 class ProfileForm(forms.ModelForm):
     class Meta:
-        model = User
+        model = get_user_model()
         fields = ('first_name', 'last_name', 'phone', 'gender', 'profile_pic', )
 
     def clean(self):
