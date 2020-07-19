@@ -107,6 +107,28 @@ social_links:
     social_type#
     link
 
+about us:
+    title
+    main_intro
+    description
+    address
+    phone
+    Email
+    logo
+    social_links[]
+
+details:
+    category(Return Policy/FAQ)
+    description
+
+offers:
+    title
+    description
+    code(uniqe)
+    start time
+    end time
+    timestamp
+
 blogs:
     title
     description
@@ -122,16 +144,6 @@ comments:
     comment
     timestamp
 
-about us:
-    title
-    main_intro
-    description
-    address
-    phone
-    Email
-    logo
-    social_links[]
-
 events_category:
     title
 
@@ -145,18 +157,6 @@ events:
     images[]
     social_links[]
     event_date
-    timestamp
-
-details:
-    category(Return Policy/FAQ)
-    description
-
-offers:
-    title
-    description
-    code(uniqe)
-    start time
-    end time
     timestamp
 
 -------- payment ------

@@ -3,3 +3,4 @@ mysqlclient
 pymysql
 Pillow
 python-decouple
+django-softdelete

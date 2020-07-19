@@ -12,6 +12,9 @@ class MainCategory(models.Model):
 
     name = models.CharField(_('name'), max_length=30, blank=False, null=False)
 
+    def __str__(self):
+        return self.name
+
 
 class Category(models.Model):
     class Meta:
@@ -19,6 +22,9 @@ class Category(models.Model):
 
     main_category = models.ForeignKey(MainCategory, related_name='category', on_delete=models.CASCADE, blank=False, null=False)
     name = models.CharField(_('name'), max_length=30, blank=False, null=False)
+
+    def __str__(self):
+        return self.name
 
 
 class SubCategory(models.Model):
@@ -28,6 +34,10 @@ class SubCategory(models.Model):
     main_category = models.ForeignKey(MainCategory, related_name='sub_category', on_delete=models.CASCADE, blank=False, null=False)
     category = models.ForeignKey(Category, related_name='sub_category', on_delete=models.CASCADE, blank=False, null=False)
     name = models.CharField(_('name'), max_length=50, blank=False, null=False)
+    timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
+
+    def __str__(self):
+        return self.name
 
 
 class AdditionalInformation(models.Model):
@@ -36,6 +46,9 @@ class AdditionalInformation(models.Model):
 
     title = models.CharField(_('title'), max_length=20, blank=False, null=False)
     description = models.TextField(_('description'), blank=False, null=False)
+
+    def __str__(self):
+        return self.title
 
 
 class Product(models.Model):
@@ -53,6 +66,10 @@ class Product(models.Model):
     images = models.ManyToManyField(Image, related_name='product', blank=True)
     social_links = models.ManyToManyField(SocialLink, related_name='product', blank=True)
     additional_information = models.ManyToManyField(AdditionalInformation, related_name='product', blank=True)
+    timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
+
+    def __str__(self):
+        return self.title
 
 
 class Review(models.Model):
@@ -63,5 +80,4 @@ class Review(models.Model):
     product = models.ForeignKey(Product, related_name="review", on_delete=models.CASCADE, blank=False, null=False)
     star = models.FloatField(_('star'), blank=False, null=False, default=1.0)
     comment = models.CharField(_('comment'), max_length=250, blank=False, null=False)
-    timestamp = models.DateTimeField(_('date of comment'), default=timezone.now)
-
+    timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)

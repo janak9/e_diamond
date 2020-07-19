@@ -25,3 +25,24 @@ ADDRESS_TYPE = (
     (BILLING, 'Billing'),
     (SHIPPING, 'Shipping'),
 )
+
+CHECKED = 0
+NOT_CHECKED = 1
+CONTACT_STATUS_CHOICES = (
+    (CHECKED, 'Checked'),
+    (NOT_CHECKED, 'Not Checked'),
+)
+
+CONTACT_US = 0
+POST_REQUIRMENT = 1
+CONTACT_TYPE_CHOICES = (
+    (CONTACT_US, 'Contact us'),
+    (POST_REQUIRMENT, 'Post Requirment'),
+)
+
+RETURN_POLICY = 0
+FAQ = 1
+DETAILS_TYPE_CHOICES = (
+    (RETURN_POLICY, 'Return Policy'),
+    (FAQ, 'FAQ'),
+)

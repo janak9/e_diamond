@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from base.utils import MyValidation
 from base import const
 from product.models import Product
+from main_admin.models import Offer
 
 class Address(models.Model):
     class Meta:
@@ -29,7 +30,8 @@ class Feedback(models.Model):
     user = models.ForeignKey(get_user_model(), related_name="feedback", on_delete=models.CASCADE, blank=False, null=False)
     star = models.FloatField(_('star'), blank=False, null=False, default=1.0)
     comment = models.CharField(_('comment'), max_length=250, blank=False, null=False)
-    timestamp = models.DateTimeField(_('date of comment'), default=timezone.now)
+    timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
+    status = models.PositiveSmallIntegerField(choices=const.STATUS_CHOICES, default=const.ACTIVE)
 
 
 class Compare(models.Model):
@@ -39,3 +41,35 @@ class Compare(models.Model):
     user = models.ForeignKey(get_user_model(), related_name="compare", on_delete=models.CASCADE, blank=False, null=False)
     product = models.ManyToManyField(Product, related_name="compare", blank=True)
 
+
+class Wishlist(models.Model):
+    class Meta:
+        db_table = 'wishlist'
+
+    user = models.ForeignKey(get_user_model(), related_name="wishlist", on_delete=models.CASCADE, blank=False, null=False)
+    product = models.ForeignKey(Product, related_name="wishlist", on_delete=models.CASCADE, blank=False, null=False)
+    timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
+
+
+class Cart(models.Model):
+    class Meta:
+        db_table = 'cart'
+
+    user = models.ForeignKey(get_user_model(), related_name="cart", on_delete=models.CASCADE, blank=False, null=False)
+    product = models.ForeignKey(Product, related_name="cart", on_delete=models.CASCADE, blank=False, null=False)
+    qty = models.FloatField(_('quantity'), blank=False, null=False)
+    timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
+
+
+class Order(models.Model):
+    class Meta:
+        db_table = 'order'
+
+    user = models.ForeignKey(get_user_model(), related_name="order", on_delete=models.CASCADE, blank=False, null=False)
+    product = models.ForeignKey(Product, related_name="order", on_delete=models.DO_NOTHING, blank=False, null=False)
+    offer = models.ForeignKey(Offer, related_name="order", on_delete=models.DO_NOTHING, blank=True, null=True)
+    qty = models.FloatField(_('quantity'), blank=False, null=False)
+    price = models.FloatField(_('price'), blank=False, null=False)
+    discount_price = models.FloatField(_('discount price'), blank=False, null=False)
+    timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
+    status = models.PositiveSmallIntegerField(choices=const.STATUS_CHOICES, default=const.ACTIVE)
