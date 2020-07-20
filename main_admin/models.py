@@ -1,8 +1,11 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+from django.core.validators import MaxValueValidator, MinValueValidator
 from base import const
 from base.utils import MyValidation
+import os
+import uuid
 
 def get_image_path(instance, filename):
     return os.path.join('product', '{}.{}'.format(uuid.uuid4(), filename.split('.')[-1]))
@@ -54,11 +57,11 @@ class Contact(models.Model):
     country = models.CharField(_('country'), max_length=15, blank=True, null=True)
     subject = models.CharField(_('subject'), max_length=80, blank=False, null=False)
     message = models.TextField(_('message'), blank=False, null=False)
-    status = models.PositiveSmallIntegerField(choices=const.CONTACT_STATUS_CHOICES, default=const.NOT_CHECKED)
+    status = models.PositiveSmallIntegerField(choices=const.READ_STATUS_CHOICES, default=const.NOT_CHECKED)
     timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
 
     def __str__(self):
-        return '{} {}'.format(self.email, self.name)
+        return '{} - {}'.format(self.email, self.name)
 
 
 class AboutUs(models.Model):
@@ -83,7 +86,7 @@ class Details(models.Model):
     description = models.TextField(_('description'), blank=True, null=True)
 
     def __str__(self):
-        return self.get_detail_type_display
+        return str(self.get_detail_type_display())
 
 class Offer(models.Model):
     class Meta:
@@ -92,6 +95,7 @@ class Offer(models.Model):
     title = models.CharField(_('title'), max_length=150, blank=False, null=False)
     description = models.TextField(_('description'), blank=True, null=True)
     code = models.CharField(_('coupon code'), max_length=10, unique=True, blank=False, null=False)
+    discount_percentage = models.FloatField(_('discount percentage'), blank=False, null=False, default=0, validators=[MinValueValidator(0.01), MaxValueValidator(100)])
     start_time = models.DateTimeField(_('start time'), blank=False, null=False, help_text=_('offer start time'))
     end_time = models.DateTimeField(_('end time'), blank=False, null=False, help_text=_('end start time'))
     timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)

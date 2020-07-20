@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth import get_user_model
 from base.utils import MyValidation
 from base import const
@@ -28,10 +29,11 @@ class Feedback(models.Model):
         db_table = 'feedback'
 
     user = models.ForeignKey(get_user_model(), related_name="feedback", on_delete=models.CASCADE, blank=False, null=False)
-    star = models.FloatField(_('star'), blank=False, null=False, default=1.0)
+    star = models.FloatField(_('star'), blank=False, null=False, default=1.0, validators=[MinValueValidator(0.1), MaxValueValidator(5.0)])
     comment = models.CharField(_('comment'), max_length=250, blank=False, null=False)
     timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
     status = models.PositiveSmallIntegerField(choices=const.STATUS_CHOICES, default=const.ACTIVE)
+    read_status = models.PositiveSmallIntegerField(choices=const.READ_STATUS_CHOICES, default=const.NOT_CHECKED)
 
 
 class Compare(models.Model):

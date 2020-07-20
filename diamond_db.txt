@@ -125,6 +125,7 @@ offers:
     title
     description
     code(uniqe)
+    discount_percentage
     start time
     end time
     timestamp
