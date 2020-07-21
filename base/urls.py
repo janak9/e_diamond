@@ -8,6 +8,10 @@ from decouple import config
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('auth_user.urls', namespace="auth")),
+    path('main_admin/', include('main_admin.urls', namespace="main_admin")),
+    path('', include('user.urls', namespace="user")),
+    path('product/', include('product.urls', namespace="product")),
+    path('payment/', include('payment.urls', namespace="payment")),
 ]
 
 AdminSite.site_header = config('APP_NAME')
