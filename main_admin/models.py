@@ -23,6 +23,16 @@ class Image(models.Model):
     def __str__(self):
         return self.title
 
+    def save(self, *args, **kwargs):
+        try:
+            this = Image.objects.get(id=self.id)
+            if this.src in ['product/default-product.jpg', 'logo/share-default.png']:
+                if this.src != self.src:
+                    this.src.delete(save=False)
+        except:
+            pass
+        super(Image, self).save(*args, **kwargs)
+
 
 class SocialType(models.Model):
     class Meta:
@@ -98,6 +108,7 @@ class Offer(models.Model):
     discount_percentage = models.FloatField(_('discount percentage'), blank=False, null=False, default=0, validators=[MinValueValidator(0.01), MaxValueValidator(100)])
     start_time = models.DateTimeField(_('start time'), blank=False, null=False, help_text=_('offer start time'))
     end_time = models.DateTimeField(_('end time'), blank=False, null=False, help_text=_('end start time'))
+    status = models.PositiveSmallIntegerField(choices=const.STATUS_CHOICES, default=const.ACTIVE)
     timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
 
     def __str__(self):

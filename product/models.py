@@ -12,6 +12,7 @@ class MainCategory(models.Model):
         db_table = 'main_category'
 
     name = models.CharField(_('name'), max_length=30, blank=False, null=False)
+    status = models.PositiveSmallIntegerField(choices=const.STATUS_CHOICES, default=const.ACTIVE)
 
     def __str__(self):
         return self.name
@@ -23,6 +24,8 @@ class Category(models.Model):
 
     main_category = models.ForeignKey(MainCategory, related_name='category', on_delete=models.CASCADE, blank=False, null=False)
     name = models.CharField(_('name'), max_length=30, blank=False, null=False)
+    image = models.ForeignKey(Image, related_name='category', on_delete=models.SET_NULL, blank=False, null=True)
+    status = models.PositiveSmallIntegerField(choices=const.STATUS_CHOICES, default=const.ACTIVE)
 
     def __str__(self):
         return self.name
@@ -35,6 +38,8 @@ class SubCategory(models.Model):
     main_category = models.ForeignKey(MainCategory, related_name='sub_category', on_delete=models.CASCADE, blank=False, null=False)
     category = models.ForeignKey(Category, related_name='sub_category', on_delete=models.CASCADE, blank=False, null=False)
     name = models.CharField(_('name'), max_length=50, blank=False, null=False)
+    image = models.ForeignKey(Image, related_name='sub_category', on_delete=models.SET_NULL, blank=False, null=True)
+    status = models.PositiveSmallIntegerField(choices=const.STATUS_CHOICES, default=const.ACTIVE)
     timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
 
     def __str__(self):
@@ -67,6 +72,7 @@ class Product(models.Model):
     images = models.ManyToManyField(Image, related_name='product', blank=True)
     social_links = models.ManyToManyField(SocialLink, related_name='product', blank=True)
     additional_information = models.ManyToManyField(AdditionalInformation, related_name='product', blank=True)
+    status = models.PositiveSmallIntegerField(choices=const.STATUS_CHOICES, default=const.ACTIVE)
     timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
 
     def __str__(self):
@@ -81,4 +87,5 @@ class Review(models.Model):
     product = models.ForeignKey(Product, related_name="review", on_delete=models.CASCADE, blank=False, null=False)
     star = models.FloatField(_('star'), blank=False, null=False, default=1.0, validators=[MinValueValidator(0.1), MaxValueValidator(5.0)])
     comment = models.CharField(_('comment'), max_length=250, blank=False, null=False)
+    status = models.PositiveSmallIntegerField(choices=const.STATUS_CHOICES, default=const.ACTIVE)
     timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
