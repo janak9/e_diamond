@@ -34,22 +34,11 @@ class Image(models.Model):
         super(Image, self).save(*args, **kwargs)
 
 
-class SocialType(models.Model):
-    class Meta:
-        db_table = 'social_type'
-
-    name = models.CharField(max_length=20, help_text=_('Social Media Name'), blank=False, null=False)
-    logo = models.ImageField(_('logo'), help_text=_('social media logo'), upload_to=get_logo_path, blank=False, null=False)
-
-    def __str__(self):
-        return self.name
-
-
 class SocialLink(models.Model):
     class Meta:
         db_table = 'soical_link'
 
-    social_type = models.ForeignKey(SocialType, on_delete=models.SET_DEFAULT, default='logo/share-default.png', blank=False)
+    social_icon = models.CharField(_('social icon'), max_length=50, blank=False, null=False, default='fa fa-external-link')
     link = models.TextField(_('social link'), blank=False, null=False)
 
     def __str__(self):
