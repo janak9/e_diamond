@@ -46,14 +46,14 @@ def email_thread(user_pk, email_type, message, from_pk):
         #     subject = 'Invitation'
         if email_type == 'inform':
             tpl = get_template('mail/inform.html')
-            subject = 'Quick Ads Updates'
+            subject = 'E-diamond Updates'
             data['message'] = message
             from_user = get_user_model().objects.get(pk=from_pk)
             data['from_user'] = from_user
 
         if email_type == 'requestPayment':
             tpl = get_template('mail/reqPayment.html')
-            subject = 'Quick Ads Updates'
+            subject = 'E-diamond Updates'
             data['message'] = message
             from_user = get_user_model().objects.get(pk=from_pk)
             data['from_user'] = from_user

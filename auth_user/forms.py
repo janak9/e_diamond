@@ -9,8 +9,8 @@ class SignUpForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(SignUpForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
-            visible.field.widget.attrs['class'] = 'form-control radius-both'
-            visible.field.widget.attrs['placeholder'] = visible.field.label
+            visible.field.widget.attrs['class'] = 'input100'
+            visible.field.widget.attrs['placeholder'] = 'Type your ' + str(visible.field.label)
 
     first_name = forms.CharField(max_length=30, required=True, label="First Name")
     last_name = forms.CharField(max_length=30, required=True, label='Last Name')

@@ -142,6 +142,7 @@
 
 	$('.featured-products-box').owlCarousel({
 		loop: true,
+		rewind: true,
 		margin: 0,
 		dots: false,
 		autoplay: true,
@@ -160,7 +161,7 @@
 			1000: {
 				items: 4,
 				nav: true,
-				loop: true
+				loop: false
 			}
 		}
 	});
@@ -191,17 +192,23 @@
 	   ................................................. */
 
 	$(function() {
+		const min_amount = $("#min_amount").val();
+		const max_amount = $("#max_amount").val();
 		$("#slider-range").slider({
 			range: true,
 			min: 0,
-			max: 4000,
-			values: [1000, 3000],
+			max: 100000,
+			values: [min_amount, max_amount],
 			slide: function(event, ui) {
-				$("#amount").val("$" + ui.values[0] + " - $" + ui.values[1]);
+				$("#min_amount").val(ui.values[0]);
+				$("#max_amount").val(ui.values[1]);
+				$("#amount").val("Rs. " + ui.values[0] + " - Rs. " + ui.values[1]);
 			}
 		});
-		$("#amount").val("$" + $("#slider-range").slider("values", 0) +
-			" - $" + $("#slider-range").slider("values", 1));
+		$("#min_amount").val(min_amount);
+		$("#max_amount").val(max_amount);
+		$("#amount").val("Rs. " + min_amount +
+			" - Rs. " + max_amount);
 	});
 
 	/* ..............................................

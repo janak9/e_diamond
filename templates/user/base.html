@@ -20,14 +20,16 @@
     <link rel="shortcut icon" href="{% static 'user/images/favicon.ico' %}" type="image/x-icon">
     <link rel="apple-touch-icon" href="{% static 'user/images/apple-touch-icon.png' %}">
 
-    <!-- Bootstrap CSS -->
     <link type="text/css" rel="stylesheet" href="{% static 'user/css/bootstrap.min.css' %}">
-    <!-- Site CSS -->
     <link type="text/css" rel="stylesheet" href="{% static 'user/css/style.css' %}">
-    <!-- Responsive CSS -->
     <link type="text/css" rel="stylesheet" href="{% static 'user/css/responsive.css' %}">
-    <!-- Custom CSS -->
     <link type="text/css" rel="stylesheet" href="{% static 'user/css/custom.css' %}">
+    <link type="text/css" rel="stylesheet" href="{% static 'user/fontawesome/css/all.css' %}">
+
+    <script type="text/javascript" src="{% static 'user/js/jquery-3.2.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'user/js/jquery-ui.js' %}"></script>
+    <script type="text/javascript" src="{% static 'user/js/popper.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'user/js/bootstrap.min.js' %}"></script>
 
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -46,44 +48,16 @@
                     <div class="text-slid-box">
                         <div id="offer-box" class="carouselTicker">
                             <ul class="offer-box">
-                                <li>
-                                    <i class="fab fa-opencart"></i> Off 10%! Shop Now Man
-                                </li>
-                                <li>
-                                    <i class="fab fa-opencart"></i> 50% - 80% off on Fashion
-                                </li>
-                                <li>
-                                    <i class="fab fa-opencart"></i> 20% off Entire Purchase Promo code: offT20
-                                </li>
-                                <li>
-                                    <i class="fab fa-opencart"></i> Off 50%! Shop Now
-                                </li>
-                                <li>
-                                    <i class="fab fa-opencart"></i> Off 10%! Shop Now Man
-                                </li>
-                                <li>
-                                    <i class="fab fa-opencart"></i> 50% - 80% off on Fashion
-                                </li>
-                                <li>
-                                    <i class="fab fa-opencart"></i> 20% off Entire Purchase Promo code: offT20
-                                </li>
-                                <li>
-                                    <i class="fab fa-opencart"></i> Off 50%! Shop Now
-                                </li>
+                                {% for offer in offers %}
+                                    <li><i class="fab fa-opencart"></i> Off {{ offer.discount_percentage }}%! {{ offer.title }}</li>
+                                {% endfor %}
                             </ul>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <div class="custom-select-box">
-                        <select id="basic" class="selectpicker show-tick form-control" data-placeholder="$ USD">
-						<option>¥ JPY</option>
-						<option>$ USD</option>
-						<option>€ EUR</option>
-					</select>
-                    </div>
                     <div class="right-phone-box">
-                        <p>Call US :- <a href="#"> +11 900 800 100</a></p>
+                        <p>Call US :- <a href="#"> {{ about_us.phone }}</a></p>
                     </div>
                     <div class="our-link">
                         <ul>
@@ -125,8 +99,10 @@
                             {% endif %}">
                             <a class="nav-link" href="{% url 'user:about' %}">About Us</a>
                         </li>
-                        <li class="dropdown megamenu-fw">
-                            <a href="#" class="nav-link dropdown-toggle arrow" data-toggle="dropdown">Product</a>
+                        <li class="dropdown megamenu-fw {% if active == 'products' %}
+                            active
+                            {% endif %}">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Product <i class="fa fa-angle-down"></i></a>
                             <ul class="dropdown-menu megamenu-content" role="menu">
                                 <li>
                                     <div class="row">
@@ -135,22 +111,19 @@
                                                 <h6 class="title">{{ row.name }}</h6>
                                                 <div class="content">
                                                     <ul class="menu-col">
-                                                        {% for cat in categories %}
-                                                            {% if cat.main_category.pk == row.pk %}
-                                                            <li><a href="shop.html">{{ cat.name }}</a></li>
-                                                            {% endif %}
+                                                        {% for category in row.category.all %}
+                                                            <li><a href="{% url 'user:products' main_category_id=row.pk %}">{{ category.name }}</a></li>
                                                         {% endfor %}
                                                     </ul>
                                                 </div>
                                             </div>
                                         {% endfor %}
                                     </div>
-                                    <!-- end row -->
                                 </li>
                             </ul>
                         </li>
                         <li class="dropdown">
-                            <a href="#" class="nav-link dropdown-toggle arrow" data-toggle="dropdown">SHOP</a>
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">SHOP <i class="fa fa-angle-down"></i></a>
                             <ul class="dropdown-menu">
                                 <li><a href="cart.html">Cart</a></li>
                                 <li><a href="checkout.html">Checkout</a></li>
@@ -160,7 +133,9 @@
                             </ul>
                         </li>
                         <li class="nav-item"><a class="nav-link" href="service.html">Our Service</a></li>
-                        <li class="nav-item"><a class="nav-link" href="contact-us.html">Contact Us</a></li>
+                        <li class="nav-item  {% if active == 'contact_us' %}
+                            active
+                            {% endif %}"><a class="nav-link" href="{% url 'user:contact-us' %}">Contact Us</a></li>
                     </ul>
                 </div>
                 <!-- /.navbar-collapse -->
@@ -254,12 +229,6 @@
                                 {% for row in about_us.social_links.all %}
                                     <li><a href="{{ row.link }}"><i class="{{ row.social_icon }}" aria-hidden="true"></i></a></li>
                                 {% endfor %}
-                                {% comment %} <li><a href="#"><i class="fab fa-twitter" aria-hidden="true"></i></a></li>
-                                <li><a href="#"><i class="fab fa-linkedin" aria-hidden="true"></i></a></li>
-                                <li><a href="#"><i class="fab fa-google-plus" aria-hidden="true"></i></a></li>
-                                <li><a href="#"><i class="fa fa-rss" aria-hidden="true"></i></a></li>
-                                <li><a href="#"><i class="fab fa-pinterest-p" aria-hidden="true"></i></a></li>
-                                <li><a href="#"><i class="fab fa-whatsapp" aria-hidden="true"></i></a></li> {% endcomment %}
                             </ul>
                         </div>
                     </div>
@@ -307,11 +276,9 @@
     <a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>
 
     <!-- ALL JS FILES -->
-    <script type="text/javascript" src="{% static 'user/js/jquery-3.2.1.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'user/js/popper.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'user/js/bootstrap.min.js' %}"></script>
     <!-- ALL PLUGIN -->
     <script type="text/javascript" src="{% static 'user/js/jquery.superslides.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'user/js/jquery.nicescroll.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'user/js/bootstrap-select.js' %}"></script>
     <script type="text/javascript" src="{% static 'user/js/inewsticker.js' %}"></script>
     <script type="text/javascript" src="{% static 'user/js/bootsnav.js' %}"></script>
@@ -321,6 +288,7 @@
     <script type="text/javascript" src="{% static 'user/js/baguetteBox.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'user/js/form-validator.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'user/js/contact-form-script.js' %}"></script>
+    <script type="text/javascript" src="{% static 'user/fontawesome/js/all.js' %}"></script>
     <script type="text/javascript" src="{% static 'user/js/custom.js' %}"></script>
 </body>
 

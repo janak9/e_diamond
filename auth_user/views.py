@@ -2,24 +2,25 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import get_user_model, authenticate
-from auth_user.forms import SignUpForm, ProfileForm
-from auth_user.models import User as user_model
-from base.utils import send_email
-from base import const
+from django.contrib.auth.tokens import default_token_generator as token_generator
+from django.contrib.auth.hashers import check_password
 from django.utils.encoding import DjangoUnicodeDecodeError
 from django.utils.encoding import force_text
-from django.contrib.auth.tokens import default_token_generator as token_generator
 from django.utils.http import urlsafe_base64_decode
+from django.urls import reverse
 from django.http import HttpResponse
 from django.forms.models import model_to_dict
-from django.contrib.auth.hashers import check_password
+from auth_user.forms import SignUpForm, ProfileForm
+from auth_user.models import User as user_model
 from auth_user.decorator import checkLogin
+from base import const
+from base.utils import send_email
 from decouple import config
 
 
 def manage_redirect(u_type):
     if(u_type == const.USER):
-        return redirect('/user')
+        return redirect('/')
     elif(u_type == const.ADMIN):
         return redirect('/d_admin')
 
@@ -34,7 +35,7 @@ def resend_verification_token(request):
         else:
             detail = 'User does not exist'
     # print(detail)
-    return render(request, 'home/resend_verify.html', {'detail': detail})
+    return render(request, 'user/resend_verify.html', {'detail': detail})
 
 
 def signup(request):
@@ -48,7 +49,7 @@ def signup(request):
     else:
         form = SignUpForm()
     u_type = {'user': const.USER}
-    return render(request, "home/signup.html", {'form': form, 'u_type': u_type, 'msg': msg})
+    return render(request, "user/signup.html", {'form': form, 'u_type': u_type, 'msg': msg})
 
 
 def login(request):
@@ -71,14 +72,14 @@ def login(request):
                     else:
                         errors.append('Password is wrong...!')
                 else:
-                    errors.append("not active")
+                    errors.append("email is not activated. please check your mail and confirm your email. if you don't get mail then <a href=" + reverse('auth:resend-verify') + ">click here<a> to resend mail")
             else:
                 errors.append("Your Account Is " + user[0].get_status_display())
         else:
             errors.append('E-mail is wrong...!')
 
     u_type = {'user': const.USER}
-    return render(request, "home/login.html", {'u_type': u_type, 'errors': errors})
+    return render(request, "user/login.html", {'u_type': u_type, 'errors': errors})
 
 
 def logout(request):
@@ -102,7 +103,7 @@ def verify_account(request, uid, token):
         user.is_active = True
         user.save()
         detail = "your account is activated successfully<br><a href='" + \
-            config('SITE_URL') + "/user/login/'>Click Here for Login</a>"
+            config('SITE_URL') + reverse('auth:login') + "'>Click Here for Login</a>"
     else:
         send_email(user.pk)
         detail = 'Link was expired. Please check your inbox again.'
@@ -122,7 +123,7 @@ def profile(request):
         else:
             msg = "Something Wrong Try Again!"
 
-    return render(request, "home/profile.html", {'msg': msg, 'form': form})
+    return render(request, "user/profile.html", {'msg': msg, 'form': form})
 
 
 def forgot_pwd(request):
@@ -137,7 +138,7 @@ def forgot_pwd(request):
         else:
             msg = "This Email Does Not exist"
 
-    return render(request, "home/forgot_password.html", {'msg': msg})
+    return render(request, "user/forgot_password.html", {'msg': msg})
 
 
 def verify_forgot_password(request, uid, token):
@@ -156,13 +157,13 @@ def verify_forgot_password(request, uid, token):
         if new_pwd == confirm_pwd:
             user.set_password(new_pwd)
             user.save()
-            return redirect('/user/login/')
+            return redirect('auth:login')
         else:
             msg = 'Please Enter New Password and Confirm Password Must be Same!!! '
 
     check_token = token_generator.check_token(user, token)
     if check_token:
-        return render(request, "home/reset_password.html", {'msg': msg})
+        return render(request, "user/reset_password.html", {'msg': msg})
     else:
         send_email(user.pk, "forgot_password")
         msg = 'Link was expired. Please check your inbox again.'
@@ -185,9 +186,9 @@ def change_password(request):
                     user.set_password(request.POST.get('new_password'))
                     user.save()
                     send_email(user.id, "change_password")
-                    return redirect('/user/login/')
+                    return redirect('auth:login')
                 else:
                     msg = "New password and Confirm Password Must be Same!!!"
         else:
             msg = "Current password is Wrong!!!"
-    return render(request, "home/change_user_password.html", {"msg": msg})
+    return render(request, "user/change_user_password.html", {"msg": msg})
