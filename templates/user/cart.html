@@ -55,7 +55,7 @@
                                         <p>{{ row.qty|multiply:row.product.price }}</p>
                                     </td>
                                     <td class="remove-pr">
-                                        <a href="#"><i class="fas fa-times"></i></a>
+                                        <a href="{% url 'user:remove-cart' pk=row.pk %}"><i class="fas fa-times"></i></a>
                                     </td>
                                 </tr>
                                 {% endfor %}

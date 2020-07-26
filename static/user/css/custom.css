@@ -1,2 +1,7 @@
 
 /** ADD YOUR AWESOME CODES HERE **/
+.round_logo {
+  height: 28px;
+  width: 28px;
+  border-radius: 50%;
+}
