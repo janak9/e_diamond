@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+
+    <h5>Hi, <b>{{ user.get_full_name }}</b></h5>
+    <p><b>{{ message|linebreaksbr }}</b></p>
+    <br>
+    <p>Client Details...</p>
+    <p>Name : {{ from_user.get_full_name }}</p>
+    <p>Email : {{ from_user.email }}</p>
+    <p>Phone No. : {{ from_user.phno }}</p>
+</body>
+
+</html>

@@ -1,0 +1,134 @@
+{% extends 'user/base.html' %}
+{% block content %}
+{% load static %}
+{% load custom_tag %}
+<!-- Start All Title Box -->
+<div class="all-title-box">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2>Product Detail</h2>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'user:home' %}">Home</a></li>
+                    <li class="breadcrumb-item"><a
+                            href="{% url 'user:products' main_category_id=product.main_category.pk %}">Products</a></li>
+                    <li class="breadcrumb-item active">Product Detail</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End All Title Box -->
+
+<!-- Start Shop Detail  -->
+<div class="shop-detail-box-main">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-5 col-lg-5 col-md-6">
+                <div id="carousel-example-1" class="single-product-slider carousel slide" data-ride="carousel">
+                    <div class="carousel-inner" role="listbox">
+                        {% for row in product.images.all %}
+                        <div class="carousel-item {% if forloop.counter == 1 %}active{% endif %}"> <img
+                                class="d-block w-100" src="{{ row.src.url }}" alt="{{ row.title }}"> </div>
+                        {% endfor %}
+                    </div>
+                    <a class="carousel-control-prev" href="#carousel-example-1" role="button" data-slide="prev">
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carousel-example-1" role="button" data-slide="next">
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                        <span class="sr-only">Next</span>
+                    </a>
+                    <ol class="carousel-indicators">
+                        {% for row in product.images.all %}
+                        <li data-target="#carousel-example-1" data-slide-to="{{ forloop.counter0 }}" class="active">
+                            <img class="d-block w-100 img-fluid" src="{{ row.src.url }}" alt="{{ row.title }}" />
+                        </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+            <div class="col-xl-7 col-lg-7 col-md-6">
+                <div class="single-product-details">
+                    <h2>{{ product.title }}</h2>
+                    <h5><i class="fas fa-rupee-sign"></i> {{ product.price }}</h5>
+                    <p class="available-stock"><span> More than {{ product.available_qty }} available / <a
+                                href="#">{{ product.qty|sub:product.available_qty }} sold </a></span>
+                    <p>
+                    <h4>Description:</h4>
+                    <p>
+                        {{ product.description }}
+                    </p>
+                    <label style="float:left; margin-right:15px;">Quantity : </label> <input class="form-control" value="1" min="1" type="number" style="max-width:150px;"><br>
+                    <div class="price-box-bar">
+                        <div class="cart-and-bay-btn">
+                            <a class="btn hvr-hover" data-fancybox-close="" href="#">Buy Now</a>
+                            <a class="btn hvr-hover" data-fancybox-close="" href="#">Add to cart</a>
+                        </div>
+                    </div>
+
+                    <div class="add-to-btn">
+                        <div class="add-comp">
+                            <a class="btn hvr-hover" href="#"><i class="fas fa-heart"></i> Add to wishlist</a>
+                            <a class="btn hvr-hover" href="#"><i class="fas fa-sync-alt"></i> Add to Compare</a>
+                        </div>
+                        <div class="share-bar">
+                            {% for social_link in product.social_links.all %}
+                                <a class="btn hvr-hover" href="{{ social_link.link }}" target="_blank"><i class="{{ social_link.social_icon }}" aria-hidden="true"></i></a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <br><br>
+                    <h4>Additional Information:</h4>
+                    <table class="table table-bordered table-striped table-hover">
+                        {% for info in product.additional_information.all %}
+                            <tr>
+                                <td>{{ info.title }}</td>
+                                <td>{{ info.description }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="row my-5">
+            <div class="col-lg-12">
+                <div class="title-all text-center">
+                    <h1>Related Products</h1>
+                </div>
+                <div class="featured-products-box owl-carousel owl-theme">
+                    {% if product.sub_category.product.all|length <= 1 %} <strong>Oops, no related product found!</strong>{% endif %}
+                    {% for row in product.sub_category.product.all %}
+                        {% if row.pk != product.pk %}
+                        <div class="item">
+                            <div class="products-single fix">
+                                <div class="box-img-hover">
+                                    <a href="{% url 'user:product-details' pk=row.pk %}">
+                                    <img src="{{ row.images.first.src.url }}" class="img-fluid" alt="{{ row.title }}">
+                                    </a>
+                                    <div class="mask-icon">
+                                        <ul>
+                                            <li><a href="{% url 'user:product-details' pk=row.pk %}" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
+                                            <li><a href="" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
+                                            <li><a href="" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
+                                        </ul>
+                                        <a class="cart" href="">Add to Cart</a>
+                                    </div>
+                                </div>
+                                <div class="why-text">
+                                    <h4><a href="{% url 'user:product-details' pk=row.pk %}">{{ row.title }}</a></h4>
+                                    <h5><i class="fas fa-rupee-sign"></i> {{ row.price }}</h5>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Cart -->
+{% endblock content %}

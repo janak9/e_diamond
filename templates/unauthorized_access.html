@@ -1,0 +1,8 @@
+{% load static %}
+<html>
+    <body style="background-color:#CCC">
+        <center style="margin-top: 13%;"><img src="{% static 'user/images/unauthorized_access.png' %}" height="200px;width:300px"><h1>Unauthorized Access Denied!!!!!</h1>
+        <h3><a href="{% url 'user:home' %}">Go to Home</a></h3>
+        </center>
+    </body>
+</html>
