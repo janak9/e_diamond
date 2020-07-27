@@ -86,14 +86,6 @@ def wishlist(request):
     context['wishlists'] = Wishlist.objects.filter(user_id=request.user.id).order_by('-timestamp')
     return render(request, 'user/wishlist.html', context)
 
-@checkLogin('both')
-def cart(request):
-    context = {}
-    context['active'] = 'my_account'
-    get_common_context(context)
-    context['carts'] = Cart.objects.filter(user_id=request.user.id).order_by('-timestamp')
-    return render(request, 'user/cart.html', context)
-
 @csrf_exempt
 @checkLogin('both')
 def add_wishlist(request):
@@ -123,6 +115,14 @@ def remove_wishlist(request, pk):
     wishlist.delete()
     return redirect("user:wishlist")
 
+@checkLogin('both')
+def cart(request):
+    context = {}
+    context['active'] = 'my_account'
+    get_common_context(context)
+    context['carts'] = Cart.objects.filter(user_id=request.user.id).order_by('-timestamp')
+    return render(request, 'user/cart.html', context)
+
 @csrf_exempt
 @checkLogin('both')
 def add_cart(request):
@@ -137,14 +137,45 @@ def add_cart(request):
             if (cart[0].qty != qty):
                 cart[0].qty = qty
                 cart[0].save()
-            result['status'] = 'updated'
-            result['msg'] = 'cart successfully updated'
+                result['status'] = 'updated'
+                result['msg'] = 'cart successfully updated'
         else:
             Cart.objects.create(user_id=user_id, product_id=product_id, qty=qty)
-            result['status'] = 'success'
-            result['msg'] = 'successfully added to cart'
+        result['status'] = 'success'
+        result['msg'] = 'successfully added to cart'
     except Exception as err:
         print(err)
+        result['status'] = 'error'
+        result['msg'] = 'something is wrong!'
+
+    return HttpResponse(json.dumps(result))
+
+@csrf_exempt
+@checkLogin('both')
+def update_cart(request):
+    result = {}
+    try:
+        data = json.loads(request.POST.get('data'))
+        product_id = data['product_id']
+        qty = data['qty']
+        coupon_code = data['coupon_code']
+        user_id = request.user.id
+        cart = Cart.objects.filter(user_id=user_id, product_id=product_id)
+        if (cart.count() <= 0):
+            result['status'] = 'error'
+            result['msg'] = 'product not found in cart!'
+            return HttpResponse(json.dumps(result))
+        else:
+            cart = cart.get()
+            if (cart.qty != qty):
+                cart.qty = qty
+                cart.save()
+                print('save--------')
+            calculate_cart({ 'user_id': user_id, 'coupon_code': coupon_code }, result)
+            result['status'] = 'success'
+            result['msg'] = 'cart successfully updated'
+    except Exception as err:
+        print('update_cart - ', err)
         result['status'] = 'error'
         result['msg'] = 'something is wrong!'
 
@@ -155,3 +186,22 @@ def remove_cart(request, pk):
     cart = Cart.objects.get(id=pk)
     cart.delete()
     return redirect("user:cart")
+
+def calculate_cart(input, result):
+    try:
+        carts = Cart.objects.filter(user_id=input['user_id']).all()
+        result['sub_total'] = 0
+        result['coupon_discount'] = 0
+        for cart in carts:
+            print(cart.qty, cart.product.price)
+            result['sub_total'] += (cart.qty * cart.product.price)
+            print(result['sub_total'])
+        
+        # TODO : check coupon
+        result['grand_total'] = result['sub_total'] - result['coupon_discount']
+    except Exception as err:
+        print('calculate_cart - ', err)
+        result['status'] = 'error'
+        result['msg'] = 'something is wrong!'
+        raise err
+

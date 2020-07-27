@@ -51,7 +51,6 @@ function add_wishlist(product_id, event = undefined) {
 // }
 
 function add_cart(product_id, qty = 1, event = undefined) {
-  event && event.preventDefault();
   if (product_id > 0 && qty > 0) {
     $.ajax({
       type: 'POST',
@@ -65,8 +64,41 @@ function add_cart(product_id, qty = 1, event = undefined) {
       success: function (response) {
         response = JSON.parse(response);
         console.log(response);
-        // if (response.status != "updated")
-        alert(response.msg);
+        if (response.status == "error")
+          alert(response.msg);
+      },
+      error: function (msg) {
+        console.log(msg);
+      }
+    });
+  }
+}
+
+function update_cart(product_id, qty = 1, event = undefined) {
+  if (product_id > 0 && qty > 0) {
+    const coupon_code = document.getElementById('coupon_code');
+    $.ajax({
+      type: 'POST',
+      url: host + "/update_cart/",
+      data: {
+        "data": JSON.stringify({
+          'product_id': product_id,
+          'qty': qty,
+          'coupon_code': coupon_code
+        })
+      },
+      success: function (response) {
+        response = JSON.parse(response);
+        console.log(response);
+        if (response.status == "success"){
+          document.getElementById('sub_total').innerHTML = response.sub_total;
+          document.getElementById('coupon_discount').innerHTML = response.sub_total;
+          document.getElementById('tax').innerHTML = response.sub_total;
+          document.getElementById('shipping_cost').innerHTML = response.sub_total;
+          document.getElementById('grand_total').innerHTML = response.sub_total;
+        } else {
+          alert(response.msg);
+        }
       },
       error: function (msg) {
         console.log(msg);

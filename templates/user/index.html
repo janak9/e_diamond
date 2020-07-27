@@ -94,7 +94,7 @@
                                         <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
                                         <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"  onclick="add_wishlist('{{ row.pk }}', event)"><i class="far fa-heart"></i></a></li>
                                     </ul>
-                                    <a class="cart" href="#" onclick="add_cart('{{ row.pk }}', 1, event)">Add to Cart</a>
+                                    <a class="cart" href="{% url 'user:cart' %}" onclick="add_cart('{{ row.pk }}', 1, event)">Add to Cart</a>
                                 </div>
                             </div>
                             <div class="why-text">

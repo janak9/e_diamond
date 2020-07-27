@@ -198,7 +198,7 @@
                                                                 <li><a href="" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
                                                                 <li><a href="" data-toggle="tooltip" data-placement="right" title="Add to Wishlist" onclick="add_wishlist('{{ row.pk }}', event)"><i class="far fa-heart"></i></a></li>
                                                             </ul>
-                                                            <a class="cart" href="" onclick="add_cart('{{ row.pk }}', 1, event)">Add to Cart</a>
+                                                            <a class="cart" href="{% url 'user:cart' %}" onclick="add_cart('{{ row.pk }}', 1, event)">Add to Cart</a>
                                                         </div>
                                                     </div>
                                                     <div class="why-text">
@@ -238,7 +238,7 @@
                                                         <a href="{% url 'user:product-details' pk=row.pk %}" style="padding:0px;" ><h4>{{ row.title }}</h4></a>
                                                         <h5><i class="fas fa-rupee-sign"></i> {{ row.price }}</h5>
                                                         <p style="min-height: 90px;max-height: 100px;overflow-y: hidden;">{{ row.description|safe }}</p>
-                                                        <a class="btn hvr-hover" href="#" style="margin-top: 10px;" onclick="add_cart('{{ row.pk }}', 1, event)">Add to Cart</a>
+                                                        <a class="btn hvr-hover" href="{% url 'user:cart' %}" style="margin-top: 10px;" onclick="add_cart('{{ row.pk }}', 1, event)">Add to Cart</a>
                                                     </div>
                                                 </div>
                                             </div>

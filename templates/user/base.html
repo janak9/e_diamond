@@ -131,10 +131,10 @@
                             {% endif %}">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"> <img class="img-fluid round_logo" src="{{ user.profile_pic.url }}" /> {{ user.get_short_name }} <i class="fa fa-angle-down"></i></a>
                             <ul class="dropdown-menu">
+                                <li><a href="{% url 'user:wishlist' %}">Wishlist</a></li>
                                 <li><a href="{% url 'user:cart' %}">Cart</a></li>
                                 <li><a href="checkout.html">Checkout</a></li>
                                 <li><a href="my-account.html">My Account</a></li>
-                                <li><a href="{% url 'user:wishlist' %}">Wishlist</a></li>
                                 <li><a href="{% url 'auth:logout' %}">Logout</a></li>
                             </ul>
                         </li>
