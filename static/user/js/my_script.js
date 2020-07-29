@@ -90,12 +90,13 @@ function update_cart(product_id, qty = 1, event = undefined) {
       success: function (response) {
         response = JSON.parse(response);
         console.log(response);
+        console.log(response.cart_bill);
         if (response.status == "success"){
-          document.getElementById('sub_total').innerHTML = response.sub_total;
-          document.getElementById('coupon_discount').innerHTML = response.sub_total;
-          document.getElementById('tax').innerHTML = response.sub_total;
-          document.getElementById('shipping_cost').innerHTML = response.sub_total;
-          document.getElementById('grand_total').innerHTML = response.sub_total;
+          document.getElementById('sub_total').innerHTML = response.cart_bill.sub_total;
+          document.getElementById('coupon_discount').innerHTML = response.cart_bill.coupon_discount;
+          document.getElementById('tax').innerHTML = response.cart_bill.tax;
+          document.getElementById('shipping_cost').innerHTML = response.cart_bill.shipping_cost;
+          document.getElementById('grand_total').innerHTML = response.cart_bill.grand_total;
         } else {
           alert(response.msg);
         }

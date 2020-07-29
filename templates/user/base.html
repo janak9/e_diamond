@@ -61,9 +61,7 @@
                     </div>
                     <div class="our-link">
                         <ul>
-                            <li><a href="#">My Account</a></li>
-                            <li><a href="#">Our location</a></li>
-                            <li><a href="#">Contact Us</a></li>
+                            <li><a href="{% url 'user:my_account' %}">My Account</a></li>
                         </ul>
                     </div>
                 </div>
@@ -133,8 +131,8 @@
                             <ul class="dropdown-menu">
                                 <li><a href="{% url 'user:wishlist' %}">Wishlist</a></li>
                                 <li><a href="{% url 'user:cart' %}">Cart</a></li>
-                                <li><a href="checkout.html">Checkout</a></li>
-                                <li><a href="my-account.html">My Account</a></li>
+                                <li><a href="{% url 'user:checkout' %}">Checkout</a></li>
+                                <li><a href="{% url 'user:my_account' %}">My Account</a></li>
                                 <li><a href="{% url 'auth:logout' %}">Logout</a></li>
                             </ul>
                         </li>
@@ -293,7 +291,7 @@
     <script type="text/javascript" src="{% static 'user/js/baguetteBox.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'user/js/form-validator.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'user/js/contact-form-script.js' %}"></script>
-    <script type="text/javascript" src="{% static 'user/fontawesome/js/all.js' %}"></script>
+    {% comment %} <script type="text/javascript" src="{% static 'user/fontawesome/js/all.js' %}"></script> {% endcomment %}
     <script type="text/javascript" src="{% static 'user/js/custom.js' %}"></script>
     <script type="text/javascript" src="{% static 'user/js/my_script.js' %}"></script>
 </body>

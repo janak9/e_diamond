@@ -1,0 +1,169 @@
+{% extends 'user/base.html' %}
+{% block content %}
+{% load static %}
+    <!-- Start All Title Box -->
+    <div class="all-title-box">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2>Address</h2>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'user:home' %}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'user:my_account' %}">My Account</a></li>
+                        <li class="breadcrumb-item active">Address</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End All Title Box -->
+
+    <!-- Start Address  -->
+    <div class="cart-box-main">
+        <div class="container">
+            <form class="mt-3 review-form-box" action="" method="post">
+            {% csrf_token %}
+                <div class="row new-account-login">
+                    <div class="col-sm-6 col-lg-6 mb-3">
+                        <div class="title-left">
+                            <h3>Billing Address</h3>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="billing_first_name">First name *</label>
+                                <input type="text" class="form-control" id="billing_first_name" name="billing_first_name" placeholder="Enter First Name" value="{{ billing_address.first_name }}" required>
+                                <div class="invalid-feedback"> Valid first name is required. </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="billing_last_name">Last name *</label>
+                                <input type="text" class="form-control" id="billing_last_name" name="billing_last_name" placeholder="Enter Last Name" value="{{ billing_address.first_name }}" required>
+                                <div class="invalid-feedback"> Valid last name is required. </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="billing_company_name">Company Name</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="billing_company_name" name="billing_company_name" placeholder="Enter Company Name" value="{{ billing_address.first_name }}">
+                                <div class="invalid-feedback" style="width: 100%;"> Your username is required. </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="billing_appartment">Appartment *</label>
+                            <input type="text" class="form-control" id="billing_appartment" name="billing_appartment" placeholder="Enter Appartment" value="{{ billing_address.first_name }}" required>
+                            <div class="invalid-feedback"> Please enter a valid email address for billing updates. </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="billing_street_address">Address *</label>
+                            <input type="text" class="form-control" id="billing_street_address" name="billing_street_address" placeholder="Enter Address" value="{{ billing_address.first_name }}" required>
+                            <div class="invalid-feedback"> Please enter your billing address. </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 mb-3">
+                                <label for="billing_country">Country *</label>
+                                <input type="text" class="form-control" id="billing_country" name="billing_country" placeholder="Enter Country" value="{{ billing_address.first_name }}" required>
+                                <div class="invalid-feedback"> Please select a valid country. </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="billing_city">City *</label>
+                                <input type="text" class="form-control" id="billing_city" name="billing_city" placeholder="Enter City" value="{{ billing_address.first_name }}" required>
+                                <div class="invalid-feedback"> Please provide a valid City. </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="billing_pin_code">Pin Code *</label>
+                                <input type="text" class="form-control" id="billing_pin_code" name="billing_pin_code" placeholder="Enter Pin Code" value="{{ billing_address.first_name }}" required>
+                                <div class="invalid-feedback"> Pin code required. </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-6 mb-3">
+                        <div class="title-left">
+                            <h3>Shipping Address</h3>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="shipping_first_name">First name *</label>
+                                <input type="text" class="form-control" id="shipping_first_name" name="shipping_first_name" placeholder="Enter First Name" value="" required>
+                                <div class="invalid-feedback"> Valid first name is required. </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="shipping_last_name">Last name *</label>
+                                <input type="text" class="form-control" id="shipping_last_name" name="shipping_last_name" placeholder="Enter Last Name" value="" required>
+                                <div class="invalid-feedback"> Valid last name is required. </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="shipping_company_name">Company Name</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="shipping_company_name" name="shipping_company_name" placeholder="Enter Company Name">
+                                <div class="invalid-feedback" style="width: 100%;"> Your username is required. </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="shipping_appartment">Appartment *</label>
+                            <input type="text" class="form-control" id="shipping_appartment" name="shipping_appartment" placeholder="Enter Appartment" required>
+                            <div class="invalid-feedback"> Please enter a valid email address for shipping updates. </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="shipping_street_address">Address *</label>
+                            <input type="text" class="form-control" id="shipping_street_address" name="shipping_street_address" placeholder="Enter Address" required>
+                            <div class="invalid-feedback"> Please enter your shipping address. </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 mb-3">
+                                <label for="shipping_country">Country *</label>
+                                <input type="text" class="form-control" id="shipping_country" name="shipping_country" placeholder="Enter Country" required>
+                                <div class="invalid-feedback"> Please select a valid country. </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="shipping_city">City *</label>
+                                <input type="text" class="form-control" id="shipping_city" name="shipping_city" placeholder="Enter City" required>
+                                <div class="invalid-feedback"> Please provide a valid City. </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="shipping_pin_code">Pin Code *</label>
+                                <input type="text" class="form-control" id="shipping_pin_code" name="shipping_pin_code" placeholder="Enter Pin Code" required>
+                                <div class="invalid-feedback"> Pin code required. </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="same_address" name="same_address">
+                    <label class="custom-control-label" for="same_address">Shipping address is the same as my billing address</label>
+                </div>
+                <button type="submit" class="btn hvr-hover">Submit</button>
+            </form>
+        </div>
+    </div>
+    <!-- End Cart -->
+<script type="text/javascript">
+$(document).ready(function(){
+    $("#same_address").on('change', (event) => {
+        const same_address = event.target.checked;
+        same_address_change(same_address);
+    });
+    $("input[name^='billing']").on('keyup', (event) => {
+        const same_address = $("#same_address").is(':checked');
+        if (same_address) {
+            const target_id = event.target.id;
+            const shipping_id = target_id.replace('billing', 'shipping');
+            $('#'+shipping_id).val(event.target.value);
+        }
+    });
+});
+
+function same_address_change(same_address) {
+    $("input[name^='shipping']").attr("readonly", same_address);
+    if (same_address) {
+        $('#shipping_first_name').val($('#billing_first_name').val());
+        $('#shipping_last_name').val($('#billing_last_name').val());
+        $('#shipping_company_name').val($('#billing_company_name').val());
+        $('#shipping_appartment').val($('#billing_appartment').val());
+        $('#shipping_street_address').val($('#billing_street_address').val());
+        $('#shipping_country').val($('#billing_country').val());
+        $('#shipping_city').val($('#billing_city').val());
+        $('#shipping_pin_code').val($('#billing_pin_code').val());
+    }
+}
+</script>
+{% endblock content %}

@@ -2,10 +2,11 @@ from django.shortcuts import render, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+from base import const
 from auth_user.decorator import checkLogin
 from product.models import MainCategory, Category, SubCategory, Product
 from main_admin.models import Image, AboutUs, Offer
-from user.models import Wishlist, Cart, Compare
+from user.models import Wishlist, Cart, Compare, Address
 import sys
 import json
 
@@ -22,7 +23,6 @@ def home(request):
     context['active'] = 'home'
     get_common_context(context)
     return render(request, 'user/index.html', context)
-
 
 def about(request):
     context = {}
@@ -120,6 +120,8 @@ def cart(request):
     context = {}
     context['active'] = 'my_account'
     get_common_context(context)
+
+    context['cart_bill'] = calculate_bill({ 'user_id': request.user.id })
     context['carts'] = Cart.objects.filter(user_id=request.user.id).order_by('-timestamp')
     return render(request, 'user/cart.html', context)
 
@@ -170,8 +172,7 @@ def update_cart(request):
             if (cart.qty != qty):
                 cart.qty = qty
                 cart.save()
-                print('save--------')
-            calculate_cart({ 'user_id': user_id, 'coupon_code': coupon_code }, result)
+            result['cart_bill'] = calculate_bill({ 'user_id': user_id, 'coupon_code': coupon_code })
             result['status'] = 'success'
             result['msg'] = 'cart successfully updated'
     except Exception as err:
@@ -187,21 +188,64 @@ def remove_cart(request, pk):
     cart.delete()
     return redirect("user:cart")
 
-def calculate_cart(input, result):
+def calculate_bill(input):
     try:
+        result = {}
         carts = Cart.objects.filter(user_id=input['user_id']).all()
+        result['tax'] = 0
+        result['shipping_cost'] = 0
         result['sub_total'] = 0
         result['coupon_discount'] = 0
         for cart in carts:
-            print(cart.qty, cart.product.price)
             result['sub_total'] += (cart.qty * cart.product.price)
-            print(result['sub_total'])
         
         # TODO : check coupon
-        result['grand_total'] = result['sub_total'] - result['coupon_discount']
+        result['grand_total'] = result['sub_total'] - result['coupon_discount'] + result['tax']
+        return result
     except Exception as err:
-        print('calculate_cart - ', err)
-        result['status'] = 'error'
-        result['msg'] = 'something is wrong!'
+        print('calculate_bill - ', err)
         raise err
 
+@checkLogin('both')
+def checkout(request):
+    context = {}
+    context['active'] = 'my_account'
+    get_common_context(context)
+    return render(request, 'user/checkout.html', context)
+
+@checkLogin('both')
+def my_account(request):
+    context = {}
+    context['active'] = 'my_account'
+    get_common_context(context)
+    return render(request, 'user/my_account.html', context)
+
+@checkLogin('both')
+def address(request):
+    context = {}
+    context['active'] = 'my_account'
+    get_common_context(context)
+    context['billing_address'] = Address.objects.filter(user_id=request.user.id, address_type=const.BILLING)
+    context['shipping_address'] = Address.objects.filter(user_id=request.user.id, address_type=const.SHIPPING)
+
+    if (request.method == 'POST'):
+        data = request.POST.dict()
+        tmp = ['csrfmiddlewaretoken', 'same_address']
+        list(map(data.pop, tmp)) # remove extra fields
+        billing = {k.replace('billing_', ''): v for k, v in data.items() if k.startswith('billing')}
+        shipping = {k.replace('shipping_', ''): v for k, v in data.items() if k.startswith('shipping')}
+        if (context['billing_address'].count() <= 0):
+            billing['user_id'] = request.user.id
+            billing['address_type'] = const.BILLING
+            context['billing_address'] = Address.objects.create(**billing)
+        else:
+            context['billing_address'].update(**billing)
+
+        if (context['shipping_address'].count() <= 0):
+            shipping['user_id'] = request.user.id
+            shipping['address_type'] = const.SHIPPING
+            context['shipping_address'] = Address.objects.create(**shipping)
+        else:
+            context['shipping_address'].update(**shipping)
+    
+    return render(request, 'user/address.html', context)
