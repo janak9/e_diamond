@@ -181,8 +181,6 @@ def change_password(request):
                 msg = "New Password cannot be same as your current password. Please choose a different password."
             else:
                 if request.POST.get('new_password') == request.POST.get('confirm_password'):
-                    print(user.id)
-                    print(request.POST.get('new_password'))
                     user.set_password(request.POST.get('new_password'))
                     user.save()
                     send_email(user.id, "change_password")

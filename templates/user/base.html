@@ -61,9 +61,16 @@
                     </div>
                     <div class="our-link">
                         <ul>
+                            <li><a href="{% url 'user:post-requirment' %}">Post Requirment</a></li>
+                        </ul>
+                    </div>
+                    {% if user.is_authenticated %}
+                    <div class="our-link">
+                        <ul>
                             <li><a href="{% url 'user:my_account' %}">My Account</a></li>
                         </ul>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -124,18 +131,18 @@
                             active
                             {% endif %}"><a class="nav-link" href="{% url 'user:contact-us' %}">Contact Us</a></li>
                         {% if user.is_authenticated %}
-                        <li class="dropdown {% if active == 'my_account' %}
-                            active
-                            {% endif %}">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"> <img class="img-fluid round_logo" src="{{ user.profile_pic.url }}" /> {{ user.get_short_name }} <i class="fa fa-angle-down"></i></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="{% url 'user:wishlist' %}">Wishlist</a></li>
-                                <li><a href="{% url 'user:cart' %}">Cart</a></li>
-                                <li><a href="{% url 'user:checkout' %}">Checkout</a></li>
-                                <li><a href="{% url 'user:my_account' %}">My Account</a></li>
-                                <li><a href="{% url 'auth:logout' %}">Logout</a></li>
-                            </ul>
-                        </li>
+                            <li class="dropdown {% if active == 'my_account' %}
+                                active
+                                {% endif %}">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"> <img class="img-fluid round_logo" src="{{ user.profile_pic.url }}" /> {{ user.get_short_name }} <i class="fa fa-angle-down"></i></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="{% url 'user:wishlist' %}">Wishlist</a></li>
+                                    <li><a href="{% url 'user:cart' %}">Cart</a></li>
+                                    <li><a href="{% url 'user:checkout' %}">Checkout</a></li>
+                                    <li><a href="{% url 'user:my_account' %}">My Account</a></li>
+                                    <li><a href="{% url 'auth:logout' %}">Logout</a></li>
+                                </ul>
+                            </li>
                         {% else %}
                             <li class="nav-item"><a class="nav-link" href="{% url 'auth:login' %}">Login</a></li>
                             <li class="nav-item"><a class="nav-link" href="{% url 'auth:signup' %}">Sign Up</a></li>

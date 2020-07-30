@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from base import const
 from auth_user.decorator import checkLogin
 from product.models import MainCategory, Category, SubCategory, Product
-from main_admin.models import Image, AboutUs, Offer
+from main_admin.models import Image, AboutUs, Offer, Contact
 from user.models import Wishlist, Cart, Compare, Address
 import sys
 import json
@@ -34,7 +34,38 @@ def contact_us(request):
     context = {}
     context['active'] = 'contact_us'
     get_common_context(context)
+
+    try:
+        if (request.method == 'POST'):
+            data = request.POST.dict()
+            tmp = ['csrfmiddlewaretoken']
+            list(map(data.pop, tmp)) # remove extra fields
+            Contact.objects.create(**data)
+            context['msg'] = "Thank You! For reaching us, will you contact soon."
+    except Exception as err:
+        print(err)
+        context['msg'] = "Oops, Something was wrong! Please try again."
+
     return render(request, 'user/contact_us.html', context)
+
+def post_requirment(request):
+    context = {}
+    context['active'] = 'post_requirment'
+    get_common_context(context)
+
+    try:
+        if (request.method == 'POST'):
+            data = request.POST.dict()
+            tmp = ['csrfmiddlewaretoken']
+            list(map(data.pop, tmp)) # remove extra fields
+            data['contact_type'] = const.POST_REQUIRMENT
+            Contact.objects.create(**data)
+            context['msg'] = "Thank You! For reaching us, will you contact soon."
+    except Exception as err:
+        print(err)
+        context['msg'] = "Oops, Something was wrong! Please try again."
+
+    return render(request, 'user/post_requirment.html', context)
 
 def products(request, main_category_id):
     context = {}
@@ -60,15 +91,15 @@ def products(request, main_category_id):
     else:
         products_list = Product.objects.filter(main_category__pk=main_category_id, price__range=(filter_attr['min_amount'], filter_attr['max_amount'])).order_by(*orderbyList)
 
-    page = request.GET.get('page', 1)
-    paginator = Paginator(products_list, 20)
-    try:
-        products = paginator.page(page)
-    except PageNotAnInteger:
-        products = paginator.page(1)
-    except EmptyPage:
-        products = paginator.page(paginator.num_pages)
-    context['products'] = products
+    # page = request.GET.get('page', 1)
+    # paginator = Paginator(products_list, 20)
+    # try:
+    #     products = paginator.page(page)
+    # except PageNotAnInteger:
+    #     products = paginator.page(1)
+    # except EmptyPage:
+    #     products = paginator.page(paginator.num_pages)
+    context['products'] = products_list
     return render(request, 'user/products.html', context)
 
 def product_details(request, pk):
@@ -120,7 +151,6 @@ def cart(request):
     context = {}
     context['active'] = 'my_account'
     get_common_context(context)
-
     context['cart_bill'] = calculate_bill({ 'user_id': request.user.id })
     context['carts'] = Cart.objects.filter(user_id=request.user.id).order_by('-timestamp')
     return render(request, 'user/cart.html', context)
@@ -211,6 +241,10 @@ def checkout(request):
     context = {}
     context['active'] = 'my_account'
     get_common_context(context)
+    context['billing_address'] = Address.objects.filter(user_id=request.user.id, address_type=const.BILLING)
+    context['shipping_address'] = Address.objects.filter(user_id=request.user.id, address_type=const.SHIPPING)
+    context['cart_bill'] = calculate_bill({ 'user_id': request.user.id })
+    context['carts'] = Cart.objects.filter(user_id=request.user.id).order_by('-timestamp')
     return render(request, 'user/checkout.html', context)
 
 @checkLogin('both')
@@ -219,6 +253,13 @@ def my_account(request):
     context['active'] = 'my_account'
     get_common_context(context)
     return render(request, 'user/my_account.html', context)
+
+@checkLogin('both')
+def login_security(request):
+    context = {}
+    context['active'] = 'my_account'
+    get_common_context(context)
+    return render(request, 'user/login_security.html', context)
 
 @checkLogin('both')
 def address(request):
@@ -230,14 +271,16 @@ def address(request):
 
     if (request.method == 'POST'):
         data = request.POST.dict()
-        tmp = ['csrfmiddlewaretoken', 'same_address']
+        tmp = ['csrfmiddlewaretoken']
+        if 'same_address' in data:
+            del data['same_address']
         list(map(data.pop, tmp)) # remove extra fields
         billing = {k.replace('billing_', ''): v for k, v in data.items() if k.startswith('billing')}
         shipping = {k.replace('shipping_', ''): v for k, v in data.items() if k.startswith('shipping')}
         if (context['billing_address'].count() <= 0):
             billing['user_id'] = request.user.id
             billing['address_type'] = const.BILLING
-            context['billing_address'] = Address.objects.create(**billing)
+            address = Address.objects.create(**billing)
         else:
             context['billing_address'].update(**billing)
 

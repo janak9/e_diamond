@@ -18,7 +18,7 @@ class Address(models.Model):
     last_name = models.CharField(_('last name'), max_length=30, blank=True, validators=[MyValidation.ALPHA])
     company_name = models.CharField(_('company name'), max_length=50, blank=True, null=True)
     appartment = models.CharField(_('appartment'), max_length=20, blank=False, null=False)
-    street_address = models.CharField(_('street address'), max_length=50, blank=False, null=False)
+    street_address = models.CharField(_('street address'), max_length=80, blank=False, null=False)
     city = models.CharField(_('city'), max_length=20, blank=False, null=False, validators=[MyValidation.ALPHA])
     country = models.CharField(_('country'), max_length=20, blank=False, null=False, validators=[MyValidation.ALPHA])
     pin_code = models.CharField(_('pin code'), max_length=6, blank=False, null=False, validators=[MyValidation.NUM])

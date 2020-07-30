@@ -46,3 +46,10 @@ DETAILS_TYPE_CHOICES = (
     (RETURN_POLICY, 'Return Policy'),
     (FAQ, 'FAQ'),
 )
+
+FLAT = 0
+PERCENTAGE = 1
+OFFER_TYPE_CHOICES = (
+    (FLAT, 'Flat'),
+    (PERCENTAGE, '%'),
+)

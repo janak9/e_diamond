@@ -1,20 +1,20 @@
 - User:
-    login/register
-    view product
-    add/remove product from wishlist
-    add/remove product from cart
-    filter based on category
+    ✔ login/register @done(20-07-31 00:37)
+    ✔ view product @done(20-07-31 00:37)
+    ✔ add/remove product from wishlist @done(20-07-31 00:37)
+    ✔ add/remove product from cart @done(20-07-31 00:37)
+    ✔ filter based on category @done(20-07-31 00:37)
     payment module
     view orders
-    post requirments
-    contact using social media
+    ✔ post requirments @done(20-07-31 01:09)
+    ✔ contact using social media @done(20-07-31 00:37)
     give review
     Give Feedback
     view/comment Event
     view/comment Blogs
     take Appointments
     compare products
-    View Offer
+    ☐ View Offer
     send message
 
 

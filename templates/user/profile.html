@@ -1,0 +1,89 @@
+{% extends 'user/base.html' %}
+{% block content %}
+{% load static %}
+    <!-- Start All Title Box -->
+    <div class="all-title-box">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2>Profile</h2>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'user:home' %}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'user:my_account' %}">My Account</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'user:login-security' %}">Login & security</a></li>
+                        <li class="breadcrumb-item active">Profile</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End All Title Box -->
+
+    <!-- Start Address  -->
+    <div class="cart-box-main">
+        <div class="container">
+            <form class="mt-3 review-form-box" action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+                <div class="row new-account-login" style="margin:10px;">
+                    <div class="col-lg-6 col-sm-12 mb-3" style="margin:15px auto;">
+                        <div class="title-left">
+                            <h3>Profile</h3>
+                        </div>
+                        {% if msg %}
+                            <div class="alert alert-success radius-both">
+                                <p>{{ msg }}</p>
+                            </div>
+                        {% endif %}
+                        <div class="mb-3">
+                            <label for="first_name">First Name :</label>
+                            <div class="alert-danger" style="background-color: transparent;">
+                                {{ form.first_name.errors }}
+                            </div>  
+                            <input type="text" name="first_name" value="{{ user.first_name }}" maxlength="30" class="form-control radius-both" placeholder="First Name" required="" id="first_name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="last_name">Last Name :</label>
+                            <div class="alert-danger" style="background-color: transparent;">
+                                {{ form.last_name.errors }}
+                            </div>  
+                            <input type="text" name="last_name" value="{{ user.last_name }}" maxlength="30" class="form-control radius-both" placeholder="Last Name" required="" id="last_name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="email">Email :</label>
+                            <div class="alert-danger" style="background-color: transparent;">
+                                {{ form.email.errors }}
+                            </div>
+                            <input type="email" name="email" value="{{ user.email }}" class="form-control radius-both" placeholder="Email" required="" readonly id="email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone">Contact No :</label>
+                            <div class="alert-danger" style="background-color: transparent;">
+                                {{ form.phone.errors }}
+                            </div>
+                            <input type="text" name="phone" value="{{ user.phone|default_if_none:'' }}" minlength="10" maxlength="18" class="form-control radius-both" placeholder="Contact No" required id="phone">
+                        </div>
+                        <div class="mb-3">
+                            <label for="gender">Gender :</label>
+                            <input type="radio" name="gender" value="{{ user.MALE }}" class="radius-both" id="male" checked />
+                            <label for="male">&nbsp;Male</label>&nbsp;&nbsp;&nbsp;
+                            <input type="radio" name="gender" value="{{ user.FEMALE }}" class="radius-both" id="female"
+                            {% if user.gender == user.FEMALE %}
+                                checked
+                            {% endif %}/><label for="female">&nbsp;Female</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="profile_pic">Profile Pic :</label>
+                            <div class="alert-danger" style="background-color: transparent;">
+                                {{ form.profile_pic.errors }}
+                            </div>
+                            <input type="file" name="profile_pic" class="form-control radius-both" placeholder="Profile Pic" onchange="loadImage(event,'profile_pic_preview')">
+                            <img id="profile_pic_preview" src="{{ user.profile_pic.url|default_if_none:'' }}" height="150" width="150"/>
+                        </div>
+                        <button type="submit" class="btn hvr-hover">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- End Cart -->
+{% endblock content %}

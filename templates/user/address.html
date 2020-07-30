@@ -31,47 +31,47 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="billing_first_name">First name *</label>
-                                <input type="text" class="form-control" id="billing_first_name" name="billing_first_name" placeholder="Enter First Name" value="{{ billing_address.first_name }}" required>
+                                <input type="text" class="form-control" id="billing_first_name" name="billing_first_name" placeholder="Enter First Name" value="{{ billing_address.first.first_name }}" maxlength="30" required>
                                 <div class="invalid-feedback"> Valid first name is required. </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="billing_last_name">Last name *</label>
-                                <input type="text" class="form-control" id="billing_last_name" name="billing_last_name" placeholder="Enter Last Name" value="{{ billing_address.first_name }}" required>
+                                <input type="text" class="form-control" id="billing_last_name" name="billing_last_name" placeholder="Enter Last Name" value="{{ billing_address.first.last_name }}" maxlength="30" required>
                                 <div class="invalid-feedback"> Valid last name is required. </div>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="billing_company_name">Company Name</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="billing_company_name" name="billing_company_name" placeholder="Enter Company Name" value="{{ billing_address.first_name }}">
+                                <input type="text" class="form-control" id="billing_company_name" name="billing_company_name" placeholder="Enter Company Name" value="{{ billing_address.first.company_name }}" maxlength="50">
                                 <div class="invalid-feedback" style="width: 100%;"> Your username is required. </div>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="billing_appartment">Appartment *</label>
-                            <input type="text" class="form-control" id="billing_appartment" name="billing_appartment" placeholder="Enter Appartment" value="{{ billing_address.first_name }}" required>
+                            <input type="text" class="form-control" id="billing_appartment" name="billing_appartment" placeholder="Enter Appartment" value="{{ billing_address.first.appartment }}" maxlength="20" required>
                             <div class="invalid-feedback"> Please enter a valid email address for billing updates. </div>
                         </div>
                         <div class="mb-3">
                             <label for="billing_street_address">Address *</label>
-                            <input type="text" class="form-control" id="billing_street_address" name="billing_street_address" placeholder="Enter Address" value="{{ billing_address.first_name }}" required>
+                            <input type="text" class="form-control" id="billing_street_address" name="billing_street_address" placeholder="Enter Address" value="{{ billing_address.first.street_address }}" maxlength="80" required>
                             <div class="invalid-feedback"> Please enter your billing address. </div>
                         </div>
                         <div class="row">
                             <div class="col-md-5 mb-3">
                                 <label for="billing_country">Country *</label>
-                                <input type="text" class="form-control" id="billing_country" name="billing_country" placeholder="Enter Country" value="{{ billing_address.first_name }}" required>
+                                <input type="text" class="form-control" id="billing_country" name="billing_country" placeholder="Enter Country" value="{{ billing_address.first.country }}" maxlength="20" required>
                                 <div class="invalid-feedback"> Please select a valid country. </div>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="billing_city">City *</label>
-                                <input type="text" class="form-control" id="billing_city" name="billing_city" placeholder="Enter City" value="{{ billing_address.first_name }}" required>
+                                <input type="text" class="form-control" id="billing_city" name="billing_city" placeholder="Enter City" value="{{ billing_address.first.city }}" maxlength="20" required>
                                 <div class="invalid-feedback"> Please provide a valid City. </div>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="billing_pin_code">Pin Code *</label>
-                                <input type="text" class="form-control" id="billing_pin_code" name="billing_pin_code" placeholder="Enter Pin Code" value="{{ billing_address.first_name }}" required>
-                                <div class="invalid-feedback"> Pin code required. </div>
+                                <input type="text" class="form-control" id="billing_pin_code" name="billing_pin_code" placeholder="Enter Pin Code" value="{{ billing_address.first.pin_code }}" maxlength="6" pattern="[0-9]{6}" title="please enter Six digit pin code" required>
+                                <div class="invalid-feedback"></div>
                             </div>
                         </div>
                     </div>
@@ -82,46 +82,46 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="shipping_first_name">First name *</label>
-                                <input type="text" class="form-control" id="shipping_first_name" name="shipping_first_name" placeholder="Enter First Name" value="" required>
+                                <input type="text" class="form-control" id="shipping_first_name" name="shipping_first_name" placeholder="Enter First Name" value="{{ shipping_address.first.first_name }}" maxlength="30" required>
                                 <div class="invalid-feedback"> Valid first name is required. </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="shipping_last_name">Last name *</label>
-                                <input type="text" class="form-control" id="shipping_last_name" name="shipping_last_name" placeholder="Enter Last Name" value="" required>
+                                <input type="text" class="form-control" id="shipping_last_name" name="shipping_last_name" placeholder="Enter Last Name" value="{{ shipping_address.first.last_name }}" maxlength="30" required>
                                 <div class="invalid-feedback"> Valid last name is required. </div>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="shipping_company_name">Company Name</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="shipping_company_name" name="shipping_company_name" placeholder="Enter Company Name">
+                                <input type="text" class="form-control" id="shipping_company_name" name="shipping_company_name" placeholder="Enter Company Name" value="{{ shipping_address.first.company_name }}" maxlength="50">
                                 <div class="invalid-feedback" style="width: 100%;"> Your username is required. </div>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="shipping_appartment">Appartment *</label>
-                            <input type="text" class="form-control" id="shipping_appartment" name="shipping_appartment" placeholder="Enter Appartment" required>
+                            <input type="text" class="form-control" id="shipping_appartment" name="shipping_appartment" placeholder="Enter Appartment" value="{{ shipping_address.first.appartment }}" maxlength="20" required>
                             <div class="invalid-feedback"> Please enter a valid email address for shipping updates. </div>
                         </div>
                         <div class="mb-3">
                             <label for="shipping_street_address">Address *</label>
-                            <input type="text" class="form-control" id="shipping_street_address" name="shipping_street_address" placeholder="Enter Address" required>
+                            <input type="text" class="form-control" id="shipping_street_address" name="shipping_street_address" placeholder="Enter Address" value="{{ shipping_address.first.street_address }}" maxlength="80" required>
                             <div class="invalid-feedback"> Please enter your shipping address. </div>
                         </div>
                         <div class="row">
                             <div class="col-md-5 mb-3">
                                 <label for="shipping_country">Country *</label>
-                                <input type="text" class="form-control" id="shipping_country" name="shipping_country" placeholder="Enter Country" required>
+                                <input type="text" class="form-control" id="shipping_country" name="shipping_country" placeholder="Enter Country" value="{{ shipping_address.first.country }}" maxlength="20" required>
                                 <div class="invalid-feedback"> Please select a valid country. </div>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="shipping_city">City *</label>
-                                <input type="text" class="form-control" id="shipping_city" name="shipping_city" placeholder="Enter City" required>
+                                <input type="text" class="form-control" id="shipping_city" name="shipping_city" placeholder="Enter City" value="{{ shipping_address.first.city }}" maxlength="20" required>
                                 <div class="invalid-feedback"> Please provide a valid City. </div>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="shipping_pin_code">Pin Code *</label>
-                                <input type="text" class="form-control" id="shipping_pin_code" name="shipping_pin_code" placeholder="Enter Pin Code" required>
+                                <input type="text" class="form-control" id="shipping_pin_code" name="shipping_pin_code" placeholder="Enter Pin Code" value="{{ shipping_address.first.pin_code }}" maxlength="6" pattern="[0-9]{6}" title="please enter Six digit pin code" required>
                                 <div class="invalid-feedback"> Pin code required. </div>
                             </div>
                         </div>

@@ -97,6 +97,9 @@ class Offer(models.Model):
     discount_percentage = models.FloatField(_('discount percentage'), blank=False, null=False, default=0, validators=[MinValueValidator(0.01), MaxValueValidator(100)])
     start_time = models.DateTimeField(_('start time'), blank=False, null=False, help_text=_('offer start time'))
     end_time = models.DateTimeField(_('end time'), blank=False, null=False, help_text=_('end start time'))
+    minimun_order_price = models.FloatField(_('minimum order price'), blank=True, null=True)
+    maximun_discount = models.FloatField(_('maximum discount'), blank=True, null=True)
+    offer_type = models.PositiveSmallIntegerField(choices=const.OFFER_TYPE_CHOICES, default=const.FLAT)
     status = models.PositiveSmallIntegerField(choices=const.STATUS_CHOICES, default=const.ACTIVE)
     timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
 
