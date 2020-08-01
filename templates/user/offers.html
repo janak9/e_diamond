@@ -1,0 +1,61 @@
+{% extends 'user/base.html' %}
+{% block content %}
+{% load static %}
+<style type="text/css">
+.lead {
+  font-size: 21px;
+  font-height: 120%;
+  color: #1f1f1f;
+  padding: 15px 0;
+}
+@media (min-width: 768px){
+  .lead {
+      font-size: 21px;
+  }
+}
+</style>
+    <!-- Start All Title Box -->
+    <div class="all-title-box">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2>Offers</h2>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'user:home' %}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'user:my_account' %}">My Account</a></li>
+                        <li class="breadcrumb-item active">Offers</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End All Title Box -->
+
+    <!-- Start Address  -->
+    <div class="cart-box-main">
+        <div class="container">
+          <div class="row">
+            {% if offers|length <= 0 %} <strong>Oops, no related product found!</strong>{% endif %}
+            {% for offer in offers %}
+              <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                <div class="listing listing-radius listing-success">
+                    <div class="shape">
+                        <div class="shape-text">{{ offer.discount|floatformat }} {{ offer.get_offer_type_display }}</div>
+                    </div>
+                    <div class="listing-content">
+                        <h3 class="lead">{{ offer.title }}</h3>
+                        <p><b>Coupon Code:</b> <strong>{{ offer.code }}</strong></p>
+                        <p><b>Start Time:</b> {{ offer.start_time }}</p>
+                        <p><b>Remaining Time:</b> {{ offer.end_time|timeuntil }}</p>
+                        <p>Applicable for Minimun Order Price {{ offer.minimun_order_price|floatformat }}.</p>
+                        <p>Get {{ offer.discount|floatformat }} {{ offer.get_offer_type_display }} Discount{% if offer.maximun_discount %} upto {{ offer.maximun_discount|floatformat }}{% endif %}.</p>
+                        <p><b>Description:</b> {{ offer.description }}</p>
+                    </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+    </div>
+    <!-- End Cart -->
+{% endblock content %}

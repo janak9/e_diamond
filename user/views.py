@@ -262,6 +262,14 @@ def login_security(request):
     return render(request, 'user/login_security.html', context)
 
 @checkLogin('both')
+def offers(request):
+    context = {}
+    context['active'] = 'my_account'
+    get_common_context(context)
+    context['offers'] = Offer.objects.all()
+    return render(request, 'user/offers.html', context)
+
+@checkLogin('both')
 def address(request):
     context = {}
     context['active'] = 'my_account'

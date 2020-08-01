@@ -29,4 +29,5 @@ urlpatterns = [
     path("my_account/", views.my_account, name="my_account"),
     path("address/", views.address, name="address"),
     path("login_security/", views.login_security, name="login-security"),
+    path("offers", views.offers, name="offers"),
 ]

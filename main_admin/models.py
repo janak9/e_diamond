@@ -94,7 +94,7 @@ class Offer(models.Model):
     title = models.CharField(_('title'), max_length=150, blank=False, null=False)
     description = models.TextField(_('description'), blank=True, null=True)
     code = models.CharField(_('coupon code'), max_length=10, unique=True, blank=False, null=False)
-    discount_percentage = models.FloatField(_('discount percentage'), blank=False, null=False, default=0, validators=[MinValueValidator(0.01), MaxValueValidator(100)])
+    discount = models.FloatField(_('discount'), blank=False, null=False, default=0, validators=[MinValueValidator(0.01), MaxValueValidator(100)])
     start_time = models.DateTimeField(_('start time'), blank=False, null=False, help_text=_('offer start time'))
     end_time = models.DateTimeField(_('end time'), blank=False, null=False, help_text=_('end start time'))
     minimun_order_price = models.FloatField(_('minimum order price'), blank=True, null=True)
