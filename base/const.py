@@ -53,3 +53,16 @@ OFFER_TYPE_CHOICES = (
     (FLAT, 'Flat'),
     (PERCENTAGE, '%'),
 )
+
+PENDING = 0
+PROCESSING = 1
+PAID = 2
+CANCELLED = 3
+FAILED = 4
+PAYMENT_STATUS_CHOICES = (
+    (PENDING, 'Pending'),
+    (PROCESSING, 'Processing'),
+    (PAID, 'Paid'),
+    (CANCELLED, 'Cancelled'),
+    (FAILED, 'Failed'),
+)

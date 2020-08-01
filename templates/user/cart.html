@@ -37,7 +37,7 @@
                             </thead>
                             <tbody>
                                 {% if carts|length == 0 %}
-                                    <strong>Oops, you didn't add any item in cart yet.</strong>
+                                    <strong class="alert alert-warning">Oops, you didn't add any item in cart yet.</strong>
                                 {% endif %}
                                 {% for row in carts %}
                                 <tr>
@@ -103,7 +103,7 @@
                         </div>
                         <div class="d-flex">
                             <h4>Shipping Cost</h4>
-                            <div class="ml-auto font-weight-bold"> <span id="shipping_cost">{{ cart_bill.shipping_cost }}</span> </div>
+                            <div class="ml-auto font-weight-bold"><i class="fas fa-rupee-sign"></i> <span id="shipping_cost">{{ cart_bill.shipping_cost }}</span> </div>
                         </div>
                         <hr>
                         <div class="d-flex gr-total">

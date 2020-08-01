@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>{{ app_name }}</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="icon" href="" type="image/x-icon">
+	<link type="text/css" rel="stylesheet" href="{% static 'user/css/bootstrap.min.css' %}">
+  <script type="text/javascript" src="{% static 'user/js/jquery-3.2.1.min.js' %}"></script>
+</head>
+
+<body>
+
+<!-- Bootstrap 4 Navbar  -->
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+	<a href="#" class="navbar-brand">Payment Gateway</a>
+
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+	<div class="collapse navbar-collapse" id="navbarsExampleDefault">
+		<ul class="navbar-nav ml-auto">
+			<li class="nav-item">
+				<a href="{% url 'user:home' %}" class="nav-link">Home</a>
+			</li>
+		</ul>
+	</div>
+	
+</nav>	
+<!-- End Bootstrap 4 Navbar -->
+<div class="container mt-5">
+<div class="row">
+    <div class="col-md-2"></div>  
+     <div class="col-md-8 text-center">
+     	<div class="card">
+    		<h4 class="card-header">Transaction <label for="failure" class="badge badge-danger">Failed</label></h4>
+    		<div class="card-body">
+				<p>Your order status is {{ payment_order.get_status_display }}</br>
+				Your transaction id for this transaction is txnid_#{{ payment_order. }}</br>Contact our customer support.</p>
+    		</div>
+    	</div>
+     </div> 
+    <div class="col-md-2"></div>
+</div>
+<!-- Footer -->
+
+<footer style="position: absolute;bottom:0; width: 90%;">
+	<hr>
+	<p>&copy;Copyright {% now 'Y' %} by {{ app_name }}</p>
+</footer>
+</div> 
+
+</body>
+</html>

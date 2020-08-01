@@ -30,4 +30,7 @@ urlpatterns = [
     path("address/", views.address, name="address"),
     path("login_security/", views.login_security, name="login-security"),
     path("offers", views.offers, name="offers"),
+    path("orders", views.orders, name="orders"),
+    path("payments", views.payments, name="payments"),
+    path("invoice/<int:pk>", views.invoice, name="invoice"),
 ]

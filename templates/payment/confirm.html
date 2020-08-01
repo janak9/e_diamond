@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>{{ app_name }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" href="" type="image/x-icon">
+  <link type="text/css" rel="stylesheet" href="{% static 'user/css/bootstrap.min.css' %}">
+  <script type="text/javascript" src="{% static 'user/js/jquery-3.2.1.min.js' %}"></script>
+</head>
+
+<body>
+  <!-- Bootstrap 4 Navbar  -->
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <a href="#" class="navbar-brand">Payment Gateway</a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+      aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  </nav>
+  <!-- End Bootstrap 4 Navbar -->
+
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-md-8">
+        <div class="card">
+          <h5 class="card-header bg-success text-white">Checkout Confirmation</h5>
+          <div class="card-body">
+            <form action="" method="post" name="paymentForm">
+            {% csrf_token %}
+              <div class="form-group">
+                <label class="control-label">Total Payable Amount(Rs.)</label>
+                <input class="form-control" type="number" pattern="[0-9]" name="amount" value="{{ payment_order.price }}" readonly/>
+              </div>
+              <div class="form-group">
+                <label class="control-label">Your Name</label>
+                <input class="form-control" name="firstname" id="firstname" value="{{ user.get_full_name }}" readonly />
+              </div>
+              <div class="form-group">
+                <label class="control-label">Email</label>
+                <input class="form-control" name="email" id="email" value="{{ user.email }}" readonly />
+              </div>
+              <div class="form-group">
+                <label class="control-label">Phone</label>
+                <input class="form-control" name="phone" value="{{ user.phone|default:'' }}" readonly />
+              </div>
+              <div class="form-group float-right">
+                <input id="rzp-submit" type="submit" value="Pay Now" class="btn btn-success" />
+              </div>
+              <div class="form-group">
+                <input type="submit" value="Cancel Order" class="btn btn-danger" />
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2"></div>
+    </div>
+    <!-- Footer -->
+    <footer>
+      <hr>
+      <p>&copy;Copyright {% now 'Y' %} by {{ app_name }} </p>
+    </footer>
+  </div>
+
+</body>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+var options = {{ options|safe }};
+var rzp1 = new Razorpay(options);
+document.getElementById('rzp-submit').onclick = function(e){
+    rzp1.open();
+    e.preventDefault();
+}
+</script>
+</html>

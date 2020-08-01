@@ -4,3 +4,4 @@ pymysql
 Pillow
 python-decouple
 django-softdelete
+razorpay>=1.2.0

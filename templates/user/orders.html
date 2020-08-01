@@ -1,15 +1,17 @@
 {% extends 'user/base.html' %}
 {% block content %}
 {% load static %}
+{% load custom_tag %}
     <!-- Start All Title Box -->
     <div class="all-title-box">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <h2>Wishlist</h2>
+                    <h2>Orders</h2>
                     <ul class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{% url 'user:home' %}">Home</a></li>
-                        <li class="breadcrumb-item active">Wishlist</li>
+                        <li class="breadcrumb-item"><a href="{% url 'user:my_account' %}">My Account</a></li>
+                        <li class="breadcrumb-item active">Orders</li>
                     </ul>
                 </div>
             </div>
@@ -17,7 +19,7 @@
     </div>
     <!-- End All Title Box -->
 
-    <!-- Start Wishlist  -->
+    <!-- Start Orders  -->
     <div class="wishlist-box-main">
         <div class="container">
             <div class="row">
@@ -28,16 +30,17 @@
                                 <tr>
                                     <th>Images</th>
                                     <th>Product Name</th>
-                                    <th>Unit Price </th>
-                                    <th>Add Item</th>
-                                    <th>Remove</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                    <th>Date/Time</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% if wishlists|length == 0 %}
-                                    <strong class="alert alert-warning">Oops, you didn't add any item in wishlist yet.</strong>
+                                {% if orders|length == 0 %}
+                                    <strong class="alert alert-warning">Oops, you didn't placed any order yet.</strong>
                                 {% endif %}
-                                {% for row in wishlists %}
+                                {% for row in orders %}
                                 <tr>
                                     <td class="thumbnail-img">
                                         <a href="{% url 'user:product-details' pk=row.product.pk %}"><img class="img-fluid" src="{{ row.product.images.first.src.url }}" alt="{{ row.product.images.first.title }}" /></a>
@@ -46,13 +49,16 @@
                                         <a href="{% url 'user:product-details' pk=row.product.pk %}">{{ row.product.title }}</a>
                                     </td>
                                     <td class="price-pr">
-                                        <p>{{ row.product.price }}</p>
+                                        <p>{{ row.price }}</p>
                                     </td>
-                                    <td class="add-pr">
-                                        <a class="btn hvr-hover" href="#" onclick="add_cart('{{ row.product.pk }}', 1, event)">Add to Cart</a>
+                                    <td class="price-pr">
+                                        <p>{{ row.qty }}</p>
                                     </td>
-                                    <td class="remove-pr">
-                                        <a href="{% url 'user:remove-wishlist' pk=row.pk %}"><i class="fas fa-times"></i></a>
+                                    <td class="total-pr">
+                                        <p class="total_price">{{ row.qty|multiply:row.price }}</p>
+                                    </td>
+                                    <td class="price-pr">
+                                        <p>{{ row.timestamp }}</p>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -63,5 +69,5 @@
             </div>
         </div>
     </div>
-    <!-- End Wishlist -->
+    <!-- End Orders -->
 {% endblock content %}

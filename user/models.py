@@ -18,7 +18,7 @@ class Address(models.Model):
     last_name = models.CharField(_('last name'), max_length=30, blank=True, validators=[MyValidation.ALPHA])
     company_name = models.CharField(_('company name'), max_length=50, blank=True, null=True)
     appartment = models.CharField(_('appartment'), max_length=20, blank=False, null=False)
-    street_address = models.CharField(_('street address'), max_length=80, blank=False, null=False)
+    street_address = models.CharField(_('street address'), max_length=150, blank=False, null=False)
     city = models.CharField(_('city'), max_length=20, blank=False, null=False, validators=[MyValidation.ALPHA])
     country = models.CharField(_('country'), max_length=20, blank=False, null=False, validators=[MyValidation.ALPHA])
     pin_code = models.CharField(_('pin code'), max_length=6, blank=False, null=False, validators=[MyValidation.NUM])
@@ -69,9 +69,7 @@ class Order(models.Model):
 
     user = models.ForeignKey(get_user_model(), related_name="order", on_delete=models.CASCADE, blank=False, null=False)
     product = models.ForeignKey(Product, related_name="order", on_delete=models.DO_NOTHING, blank=False, null=False)
-    offer = models.ForeignKey(Offer, related_name="order", on_delete=models.DO_NOTHING, blank=True, null=True)
     qty = models.FloatField(_('quantity'), blank=False, null=False)
     price = models.FloatField(_('price'), blank=False, null=False)
-    discount_price = models.FloatField(_('discount price'), blank=False, null=False)
     timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
     status = models.PositiveSmallIntegerField(choices=const.STATUS_CHOICES, default=const.ACTIVE)

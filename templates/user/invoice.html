@@ -1,0 +1,177 @@
+{% load static %}
+{% load custom_tag %}
+<html>
+
+<head>
+  <title>{{ app_name }}</title>
+  <link rel="icon" type="image/png" href="#">
+  <link rel="icon" href="#">
+  <meta charset="UTF-8">
+  <link type="text/css" rel="stylesheet" href="{% static 'user/css/bootstrap.min.css' %}">
+  <script type="text/javascript" src="{% static 'user/js/jquery-3.2.1.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'user/js/popper.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'user/js/bootstrap.min.js' %}"></script>
+  <style type="text/css" media="all">
+    body {
+      background-color: #000
+    }
+
+    .padding {
+      padding: 2rem !important
+    }
+
+    .card {
+      margin-bottom: 30px;
+      border: none;
+      -webkit-box-shadow: 0px 1px 2px 1px rgba(154, 154, 204, 0.22);
+      -moz-box-shadow: 0px 1px 2px 1px rgba(154, 154, 204, 0.22);
+      box-shadow: 0px 1px 2px 1px rgba(154, 154, 204, 0.22)
+    }
+
+    .card-header {
+      background-color: #fff;
+      border-bottom: 1px solid #e6e6f2
+    }
+
+    h3 {
+      font-size: 20px
+    }
+
+    h5 {
+      font-size: 15px;
+      line-height: 26px;
+      color: #3d405c;
+      margin: 0px 0px 15px 0px;
+      font-family: 'Circular Std Medium'
+    }
+
+    .text-dark {
+      color: #3d405c !important
+    }
+  </style>
+
+  <style type="text/css" media="print">
+    .btnprint {
+      display: none;
+    }
+  </style>
+
+  <script type="text/javascript">
+    function printPage(obj) {
+      //document.getElementById("hide").style.display="none";
+      window.print();
+    }
+  </script>
+</head>
+
+<body>
+  <div id="hide">
+    <input type="button" class="btnprint" name="" value="PRINT" onclick="printPage(this)">
+  </div>
+  <div class="offset-xl-2 col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12 padding">
+    <div class="card">
+      <div class="card-header p-4">
+        <a class="pt-2 d-inline-block" href="index.html" data-abc="true">{{ app_name }}</a>
+        <div class="float-right">
+          <h3 class="mb-0">Invoice #{{ payment.payment_order.receipt }}</h3>
+          Date: {{ payment.timestamp }}
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row mb-4">
+          <div class="col-sm-4">
+            <h5 class="mb-3">From:</h5>
+            <h3 class="text-dark mb-1">{{ app_name }}</h3>
+            <div>{{ about_us.address }}</div>
+            <div>Email: {{ about_us.email }}</div>
+            <div>Phone: {{ about_us.phone }}</div>
+          </div>
+          <div class="col-sm-4 ">
+            <h5 class="mb-3">Billing Address:</h5>
+            <h3 class="text-dark mb-1">{{ billing_address.first.first_name }} {{ billing_address.first.last_name }}</h3>
+            {% if billing_address.first.company_name %}<div>{{ billing_address.first.company_name }}</div>{% endif %}
+            <div>{{ billing_address.first.appartment }}, {{ billing_address.first.street_address }}</div>
+            <div>{{ billing_address.first.city }}, {{ billing_address.first.country }} - {{ billing_address.first.pin_code }}</div>
+          </div>
+          <div class="col-sm-4 ">
+            <h5 class="mb-3">Shipping Address:</h5>
+            <h3 class="text-dark mb-1">{{ shipping_address.first.first_name }} {{ shipping_address.first.last_name }}</h3>
+            {% if shipping_address.first.company_name %}<div>{{ shipping_address.first.company_name }}</div>{% endif %}
+            <div>{{ shipping_address.first.appartment }}, {{ shipping_address.first.street_address }}</div>
+            <div>{{ shipping_address.first.city }}, {{ shipping_address.first.country }} - {{ shipping_address.first.pin_code }}</div>
+          </div>
+        </div>
+        <div class="table-responsive-sm">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th class="center">#</th>
+                <th>Item</th>
+                <th class="right">Price</th>
+                <th class="center">Qty</th>
+                <th class="right">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in payment.payment_order.order.all %}
+                <tr>
+                  <td class="center">{{ forloop.counter }}</td>
+                  <td class="left strong">{{ order.product.title }}</td>
+                  <td class="left">{{ order.price }}</td>
+                  <td class="right">{{ order.qty }}</td>
+                  <td class="right">{{ order.price|multiply:order.qty }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 col-sm-5">
+          </div>
+          <div class="col-lg-4 col-sm-5 ml-auto">
+            <table class="table table-clear">
+              <tbody>
+                <tr>
+                  <td class="left">
+                    <strong class="text-dark">Subtotal</strong>
+                  </td>
+                  <td class="right">{{ bill.sub_total }}</td>
+                </tr>
+                <tr>
+                  <td class="left">
+                    <strong class="text-dark">Discount</strong>
+                  </td>
+                  <td class="right">{{ bill.coupon_discount }}</td>
+                </tr>
+                <tr>
+                  <td class="left">
+                    <strong class="text-dark">Shipping Cost</strong>
+                  </td>
+                  <td class="right">{{ bill.shipping_cost }}</td>
+                </tr>
+                <tr>
+                  <td class="left">
+                    <strong class="text-dark">Tax</strong>
+                  </td>
+                  <td class="right">{{ bill.tax }}</td>
+                </tr>
+                <tr>
+                  <td class="left">
+                    <strong class="text-dark">Total</strong> </td>
+                  <td class="right">
+                    <strong class="text-dark">{{ bill.grand_total }}</strong>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer bg-white">
+        <p class="mb-0">BBBootstrap.com, Sounth Block, New delhi, 110034</p>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

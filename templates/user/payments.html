@@ -1,0 +1,89 @@
+{% extends 'user/base.html' %}
+{% block content %}
+{% load static %}
+{% load custom_tag %}
+    <!-- Start All Title Box -->
+    <div class="all-title-box">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2>Payments</h2>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'user:home' %}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'user:my_account' %}">My Account</a></li>
+                        <li class="breadcrumb-item active">Payments</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End All Title Box -->
+
+    <!-- Start Payments  -->
+    <div class="wishlist-box-main">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="table-main table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Products</th>
+                                    <th>Price</th>
+                                    <th>Receipt id</th>
+                                    <th>Payment Status</th>
+                                    <th>Invoice</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if payments|length == 0 %}
+                                    <strong class="alert alert-warning">Oops, you didn't placed any payment yet.</strong>
+                                {% endif %}
+                                {% for row in payments %}
+                                <tr>
+                                    <td class="thumbnail-img">
+                                        <p>{{ forloop.counter }}</p>
+                                    </td>
+                                    <td class="name-pr">
+                                        <p>
+                                        {% for order in row.order.all %}
+                                            <a href="{% url 'user:product-details' pk=order.product.pk %}">{{ order.product.title }}</a>{% if not forloop.last %}, {% endif %}
+                                        {% endfor %}
+                                        </p>
+                                    </td>
+                                    <td class="price-pr">
+                                        <p>{{ row.price }}</p>
+                                    </td>
+                                    <td class="price-pr">
+                                        <p>{{ row.receipt }}</p>
+                                    </td>
+                                    <td class="price-pr">
+                                        {% if row.get_status_display == 'Paid' %}
+                                            <span class="badge badge-success">{{ row.get_status_display }}</span>
+                                        {% elif row.get_status_display == 'Pending' %}
+                                            <span class="badge badge-primary">{{ row.get_status_display }}</span>
+                                        {% elif row.get_status_display == 'Processing' %}
+                                            <span class="badge badge-info">{{ row.get_status_display }}</span>
+                                        {% elif row.get_status_display == 'Cancelled' %}
+                                            <span class="badge badge-warning">{{ row.get_status_display }}</span>
+                                        {% elif row.get_status_display == 'Failed' %}
+                                            <span class="badge badge-danger">{{ row.get_status_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="add-pr">
+                                        {% if row.get_status_display == 'Paid' %}
+                                            <a class="btn hvr-hover" href="{% url 'user:invoice' pk=row.payment.all.first.pk %}">Download</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Payments -->
+{% endblock content %}

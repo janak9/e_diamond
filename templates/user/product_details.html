@@ -100,7 +100,7 @@
                     <h1>Related Products</h1>
                 </div>
                 <div class="featured-products-box owl-carousel owl-theme">
-                    {% if product.sub_category.product.all|length <= 1 %} <strong>Oops, no related product found!</strong>{% endif %}
+                    {% if product.sub_category.product.all|length <= 1 %} <strong class="alert alert-warning">Oops, no related product found!</strong>{% endif %}
                     {% for row in product.sub_category.product.all %}
                         {% if row.pk != product.pk %}
                         <div class="item">

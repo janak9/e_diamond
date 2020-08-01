@@ -1,17 +1,20 @@
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from base import const
 from auth_user.decorator import checkLogin
 from product.models import MainCategory, Category, SubCategory, Product
 from main_admin.models import Image, AboutUs, Offer, Contact
-from user.models import Wishlist, Cart, Compare, Address
+from user.models import Wishlist, Cart, Compare, Address, Order
+from payment.models import PaymentOrder, Payment
+from decouple import config
 import sys
 import json
 
 def get_common_context(context):
-    context['test'] = 'test'
+    context['app_name'] = config('APP_NAME')
     context['main_categories'] = MainCategory.objects.all()
     context['categories'] = Category.objects.all()
     context['about_us'] = AboutUs.objects.all()[0]
@@ -245,6 +248,46 @@ def checkout(request):
     context['shipping_address'] = Address.objects.filter(user_id=request.user.id, address_type=const.SHIPPING)
     context['cart_bill'] = calculate_bill({ 'user_id': request.user.id })
     context['carts'] = Cart.objects.filter(user_id=request.user.id).order_by('-timestamp')
+    try:
+        if (request.method == 'POST'):
+            user_id = request.user.id
+            payment_data = {}
+            payment_data['user_id'] = user_id
+            payment_data['price'] = context['cart_bill']['grand_total']
+            payment_data['bill'] = json.dumps(context['cart_bill'])
+            payment_order = PaymentOrder(**payment_data)
+            payment_order.save()
+
+            receipt = str(config('RECEIPT_PREFIX')) + '_' + str(payment_order.pk)
+            payment_order.receipt = receipt
+
+            # create razorpay_order
+            razorpay_order_payload = {}
+            razorpay_order_payload['amount'] = int(payment_data['price']) * 100 # razorpay accept money in 'paisa' so need to convert ruppes to paisa
+            razorpay_order_payload['currency'] = 'INR'
+            razorpay_order_payload['receipt'] = receipt
+            razorpay_order_payload['notes'] = {'user_id': user_id, **context['cart_bill']}
+            razorpay_order_payload['payment_capture'] = '1'
+            print(razorpay_order_payload)
+            razorpay_order = settings.RAZORPAY.order.create(razorpay_order_payload)
+            print(razorpay_order)
+            payment_order.razorpay_order_response = json.dumps(razorpay_order)
+            payment_order.razorpay_order_id = razorpay_order['id']
+            payment_order.save()
+
+            for cart in context['carts']:
+                data = {}
+                data['user_id'] = user_id
+                data['product_id'] = cart.product.pk
+                data['qty'] = cart.qty
+                data['price'] = cart.product.price
+                order = Order.objects.create(**data)
+                payment_order.order.add(order)
+                payment_order.save()
+            return redirect('payment:confirm', pk=payment_order.pk)
+    except Exception as err:
+        print(err)
+        context['msg'] = "Sorry for the inconvenience, Something was wrong! please try again or contact customer support."
     return render(request, 'user/checkout.html', context)
 
 @checkLogin('both')
@@ -300,3 +343,30 @@ def address(request):
             context['shipping_address'].update(**shipping)
     
     return render(request, 'user/address.html', context)
+
+@checkLogin('both')
+def orders(request):
+    context = {}
+    context['active'] = 'my_account'
+    get_common_context(context)
+    context['orders'] = Order.objects.filter(user_id=request.user.id).order_by('-timestamp')
+    return render(request, 'user/orders.html', context)
+
+@checkLogin('both')
+def payments(request):
+    context = {}
+    context['active'] = 'my_account'
+    get_common_context(context)
+    context['payments'] = PaymentOrder.objects.filter(user_id=request.user.id).order_by('-timestamp')
+    return render(request, 'user/payments.html', context)
+
+@checkLogin('both')
+def invoice(request, pk):
+    context = {}
+    context['active'] = 'my_account'
+    get_common_context(context)
+    context['payment'] = Payment.objects.get(pk=pk)
+    context['bill'] = json.loads(context['payment'].payment_order.bill)
+    context['billing_address'] = Address.objects.filter(user_id=request.user.id, address_type=const.BILLING)
+    context['shipping_address'] = Address.objects.filter(user_id=request.user.id, address_type=const.SHIPPING)
+    return render(request, 'user/invoice.html', context)

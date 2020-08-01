@@ -35,7 +35,7 @@
     <div class="cart-box-main">
         <div class="container">
           <div class="row">
-            {% if offers|length <= 0 %} <strong>Oops, no related product found!</strong>{% endif %}
+            {% if offers|length <= 0 %} <strong class="alert alert-warning">Oops, no related product found!</strong>{% endif %}
             {% for offer in offers %}
               <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                 <div class="listing listing-radius listing-success">
