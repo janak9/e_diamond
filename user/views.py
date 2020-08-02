@@ -4,9 +4,10 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from base import const
+from base.utils import Render
 from auth_user.decorator import checkLogin
-from product.models import MainCategory, Category, SubCategory, Product
-from main_admin.models import Image, AboutUs, Offer, Contact
+from product.models import MainCategory, Category, SubCategory, Product, Review
+from main_admin.models import Image, AboutUs, Offer, Contact, Details
 from user.models import Wishlist, Cart, Compare, Address, Order
 from payment.models import PaymentOrder, Payment
 from decouple import config
@@ -32,6 +33,18 @@ def about(request):
     context['active'] = 'about'
     get_common_context(context)
     return render(request, 'user/about.html', context)
+
+def faq(request):
+    context = {}
+    get_common_context(context)
+    context['faq'] = Details.objects.filter(detail_type=const.FAQ).first()
+    return render(request, 'user/faq.html', context)
+
+def return_policy(request):
+    context = {}
+    get_common_context(context)
+    context['return_policy'] = Details.objects.filter(detail_type=const.RETURN_POLICY).first()
+    return render(request, 'user/return_policy.html', context)
 
 def contact_us(request):
     context = {}
@@ -110,7 +123,64 @@ def product_details(request, pk):
     context['active'] = 'products'
     get_common_context(context)
     context['product'] = Product.objects.get(pk=pk)
+    context['reviews'] = Review.objects.filter(product_id=pk).order_by('-timestamp')
     return render(request, 'user/product_details.html', context)
+
+@checkLogin('both')
+def compare(request):
+    context = {}
+    get_common_context(context)
+    context['compare'] = Compare.objects.filter(user_id=request.user.id).first()
+    print(context['compare'])
+    return render(request, 'user/compare.html', context)
+
+@csrf_exempt
+@checkLogin('both')
+def add_compare(request):
+    result = {}
+    try:
+        data = json.loads(request.POST.get('data'))
+        product_id = data['product_id']
+        compare = Compare.objects.filter(user_id=request.user.id).first()
+        if compare is None:
+            compare = Compare.objects.create(user_id=request.user.id)
+            compare.save()
+
+        product = Product.objects.get(pk=product_id)
+        if not product in compare.product.all():
+            compare.product.add(product)
+            compare.save()
+        result['status'] = 'success'
+    except Exception as err:
+        print(err)
+        result['status'] = 'error'
+        result['msg'] = 'something is wrong!'
+
+    return HttpResponse(json.dumps(result))
+
+@csrf_exempt
+@checkLogin('both')
+def add_review(request):
+    result = {}
+    try:
+        data = json.loads(request.POST.get('data'))
+        product_id = data['product_id']
+        comment = data['comment']
+        star = data['star']
+        user_id = request.user.id
+        product = PaymentOrder.objects.filter(user_id=user_id, status=const.PAID, order__product_id=product_id)
+        if (product.count() > 0):
+            Review.objects.create(user_id=user_id, product_id=product_id, star=star, comment=comment)
+            result['status'] = 'success'
+        else:
+            result['status'] = 'not_buy'
+            result['msg'] = "you havn't buy this product. so, you can't give review."
+    except Exception as err:
+        print(err)
+        result['status'] = 'error'
+        result['msg'] = 'something is wrong!'
+
+    return HttpResponse(json.dumps(result))
 
 @checkLogin('both')
 def wishlist(request):
@@ -369,4 +439,6 @@ def invoice(request, pk):
     context['bill'] = json.loads(context['payment'].payment_order.bill)
     context['billing_address'] = Address.objects.filter(user_id=request.user.id, address_type=const.BILLING)
     context['shipping_address'] = Address.objects.filter(user_id=request.user.id, address_type=const.SHIPPING)
+    # pdf_file = Render.render_to_file('user/invoice.html', context)
+    # print(pdf_file)
     return render(request, 'user/invoice.html', context)

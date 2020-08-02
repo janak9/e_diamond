@@ -57,7 +57,7 @@
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                         <div class="shop-cat-box">
                             <img class="img-fluid" src="{{ cat.image.src.url }}" alt="{{ cat.name }}" />
-                            <a class="btn hvr-hover" href="#">{{ cat.name }}</a>
+                            <a class="btn hvr-hover" href="{% url 'user:products' main_category_id=cat.main_category.pk %}">{{ cat.name }}</a>
                         </div>
                     </div>
                     {% endif %}
@@ -87,18 +87,19 @@
                                 {% comment %} <div class="type-lb">
                                     <p class="sale">Sale</p>
                                 </div> {% endcomment %}
-                                <img src="{{ row.images.first.src.url }}" class="img-fluid" alt="{{ row.title }}">
+                                <a href="{% url 'user:product-details' pk=row.pk %}">
+                                <img src="{{ row.images.first.src.url }}" class="img-fluid" alt="{{ row.title }}"></a>
                                 <div class="mask-icon">
                                     <ul>
                                         <li><a href="#" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
-                                        <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
+                                        <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare" onclick="add_compare('{{ row.pk }}', event)"><i class="fas fa-sync-alt"></i></a></li>
                                         <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"  onclick="add_wishlist('{{ row.pk }}', event)"><i class="far fa-heart"></i></a></li>
                                     </ul>
                                     <a class="cart" href="{% url 'user:cart' %}" onclick="add_cart('{{ row.pk }}', 1, event)">Add to Cart</a>
                                 </div>
                             </div>
                             <div class="why-text">
-                                <h4>{{ row.title }}</h4>
+                                <h4><a href="{% url 'user:product-details' pk=row.pk %}">{{ row.title }}</a></h4>
                                 <h5><i class="fas fa-rupee-sign"></i> {{ row.price }}</h5>
                             </div>
                         </div>

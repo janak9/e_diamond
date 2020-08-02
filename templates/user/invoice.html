@@ -71,7 +71,7 @@
   <div class="offset-xl-2 col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12 padding">
     <div class="card">
       <div class="card-header p-4">
-        <a class="pt-2 d-inline-block" href="index.html" data-abc="true">{{ app_name }}</a>
+        <h2 class="pt-2 d-inline-block">{{ app_name }}</h2>
         <div class="float-right">
           <h3 class="mb-0">Invoice #{{ payment.payment_order.receipt }}</h3>
           Date: {{ payment.timestamp }}
@@ -168,7 +168,9 @@
         </div>
       </div>
       <div class="card-footer bg-white">
-        <p class="mb-0">BBBootstrap.com, Sounth Block, New delhi, 110034</p>
+        <p class="mb-0">{{ app_name }} - {{ about_us.address }}</p>
+        <p class="mb-0">Email: {{ about_us.email}}</p>
+        <p class="mb-0">Phone: {{ about_us.phone}}</p>
       </div>
     </div>
   </div>

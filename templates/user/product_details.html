@@ -1,6 +1,7 @@
 {% extends 'user/base.html' %}
 {% block content %}
 {% load static %}
+{% load humanize %}
 {% load custom_tag %}
 <!-- Start All Title Box -->
 <div class="all-title-box">
@@ -53,8 +54,7 @@
                 <div class="single-product-details">
                     <h2>{{ product.title }}</h2>
                     <h5><i class="fas fa-rupee-sign"></i> {{ product.price }}</h5>
-                    <p class="available-stock"><span> More than {{ product.available_qty }} available / <a
-                                href="#">{{ product.qty|sub:product.available_qty }} sold </a></span>
+                    <p class="available-stock"><span> More than {{ product.available_qty }} available / <a href="#">{{ product.qty|sub:product.available_qty }} sold </a></span>
                     <p>
                     <h4>Description:</h4>
                     <p>
@@ -63,7 +63,7 @@
                     <label style="float:left; margin-right:15px;">Quantity : </label> <input id="qty" name="qty" class="form-control" value="1" min="1" type="number" style="max-width:150px;"><br>
                     <div class="price-box-bar">
                         <div class="cart-and-bay-btn">
-                            <a class="btn hvr-hover" data-fancybox-close="" href="#">Buy Now</a>
+                            <a class="btn hvr-hover" data-fancybox-close="" href="{% url 'user:checkout' %}" onclick="add_cart('{{ product.pk }}', qty.value, event)">Buy Now</a>
                             <a class="btn hvr-hover" data-fancybox-close="" href="{% url 'user:cart' %}" onclick="add_cart('{{ product.pk }}', qty.value, event)">Add to cart</a>
                         </div>
                     </div>
@@ -71,7 +71,7 @@
                     <div class="add-to-btn">
                         <div class="add-comp">
                             <a class="btn hvr-hover" href="" onclick="add_wishlist('{{ product.pk }}', event)"><i class="fas fa-heart"></i> Add to wishlist</a></span>
-                            <a class="btn hvr-hover" href="#"><i class="fas fa-sync-alt"></i> Add to Compare</a>
+                            <a class="btn hvr-hover" href="#" onclick="add_compare('{{ row.pk }}', event)"><i class="fas fa-sync-alt"></i> Add to Compare</a>
                         </div>
                         <div class="share-bar">
                             {% for social_link in product.social_links.all %}
@@ -112,7 +112,7 @@
                                     <div class="mask-icon">
                                         <ul>
                                             <li><a href="{% url 'user:product-details' pk=row.pk %}" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
-                                            <li><a href="" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
+                                            <li><a onclick="add_compare('{{ row.pk }}', event)" href="" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
                                             <li><a onclick="add_wishlist({{ row.pk }}, event)" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
                                         </ul>
                                         <a class="cart" href="{% url 'user:cart' %}" onclick="add_cart('{{ row.pk }}', 1, event)">Add to Cart</a>
@@ -134,41 +134,54 @@
         <div class="row my-5">
             <div class="col-lg-12">
                 <div class="title-all text-center">
-                    <h1>Review</h1>
+                    <h1>Give Review</h1>
                 </div>
             </div>
             <div class="col-lg-12">
-                <form class="form-horizontal" action="send.php" method="post">
+                <form class="form-horizontal" action="" method="post">
+                {% csrf_token %}
                     <div class="form-group">
-                        <label class="col-md-3 control-label" for="name">Full Name</label>
+                        <label class="col-md-3 control-label" for="review_comment">Your message</label>
                         <div class="col-md-9">
-                            <input id="name" name="name" type="text" placeholder="Your name" class="form-control">
+                            <textarea class="form-control" id="review_comment" name="review_comment" placeholder="Please enter your review here..." rows="5"></textarea>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label" for="email">Your E-mail</label>
-                        <div class="col-md-9">
-                            <input id="email" name="email" type="text" placeholder="Your email" class="form-control">
-                        </div>
+                    <div class="">
+                        <label class="col-md-3 control-label" for="stars">Your rating</label>
+                        <div class="col-md-9 stars" id="stars"></div>
                     </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label" for="message">Your message</label>
-                        <div class="col-md-9">
-                            <textarea class="form-control" id="message" name="message" placeholder="Please enter your feedback here..." rows="5"></textarea>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label" for="message">Your rating</label>
-                        <div class="col-md-9">
-                            <input id="input-21e" value="0" type="number" class="rating" min=0 max=5 step=0.5 data-size="sm" >
-                        </div>
+                    <div class="add-pr">
+                        <a class="btn hvr-hover" href="" onclick="add_review('{{ product.pk }}', event)">Submit</a>
                     </div>
                 </form>
-                <div class="stars">
-                <form action="" id="container">
-                
-                </form>
-                <button type="button" id="submit">Submit</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="title-all text-center">
+                    <h1>Customer Review</h1>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="list-group">
+                    {% if reviews|length <= 0 %} <strong class="alert alert-warning">Oops, no review found!</strong>{% endif %}
+                    {% for review in reviews %}
+                        <div class="list-group-item list-group-item-action flex-column align-items-start mb-3 review">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1"><img class="img-fluid round_logo" src="{{ review.user.profile_pic.url }}" /><span class="ml-2">{{ review.user.get_full_name }}</span></h5>
+                                <small>{{ review.timestamp|naturaltime }}</small>
+                            </div>
+                            <small class="review_stars">
+                            {% for i in "x"|rjust:"5" %}
+                                <i class="fa fa-star {% if forloop.counter <= review.star %}
+                                active
+                                {% endif %}" aria-hidden="true"></i>
+                            {% endfor %}
+                            </small>
+                            <p class="mb-1">{{ review.comment }}</p>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>

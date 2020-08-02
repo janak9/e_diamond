@@ -86,6 +86,6 @@ class Review(models.Model):
     user = models.ForeignKey(get_user_model(), related_name="review", on_delete=models.CASCADE, blank=False, null=False)
     product = models.ForeignKey(Product, related_name="review", on_delete=models.CASCADE, blank=False, null=False)
     star = models.FloatField(_('star'), blank=False, null=False, default=1.0, validators=[MinValueValidator(0.1), MaxValueValidator(5.0)])
-    comment = models.CharField(_('comment'), max_length=250, blank=False, null=False)
+    comment = models.TextField(_('comment'), blank=False, null=False)
     status = models.PositiveSmallIntegerField(choices=const.STATUS_CHOICES, default=const.ACTIVE)
     timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)

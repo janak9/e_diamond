@@ -1,0 +1,30 @@
+{% extends 'user/base.html' %}
+{% block content %}
+{% load static %}
+    <!-- Start All Title Box -->
+    <div class="all-title-box">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2>Return Policy</h2>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'user:home' %}">Home</a></li>
+                        <li class="breadcrumb-item active">Return Policy</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End All Title Box -->
+
+    <!-- Start About Page  -->
+    <div class="about-box-main">
+        <div class="container">
+            <div class="row">
+                <h2 class="noo-sh-title">Return Policy</h2>
+            </div>
+            {{ return_policy.description|safe }}
+        </div>
+    </div>
+    <!-- End About Page -->
+{% endblock content %}

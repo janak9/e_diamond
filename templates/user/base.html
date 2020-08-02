@@ -96,11 +96,6 @@
                             {% endif %}">
                             <a class="nav-link" href="{% url 'user:home' %}">Home</a>
                         </li>
-                        <li class="nav-item {% if active == 'about' %}
-                            active
-                            {% endif %}">
-                            <a class="nav-link" href="{% url 'user:about' %}">About Us</a>
-                        </li>
                         <li class="dropdown megamenu-fw {% if active == 'products' %}
                             active
                             {% endif %}">
@@ -124,6 +119,11 @@
                                 </li>
                             </ul>
                         </li>
+                        <li class="nav-item {% if active == 'about' %}
+                            active
+                            {% endif %}">
+                            <a class="nav-link" href="{% url 'user:about' %}">About Us</a>
+                        </li>
                         <li class="nav-item  {% if active == 'contact_us' %}
                             active
                             {% endif %}"><a class="nav-link" href="{% url 'user:contact-us' %}">Contact Us</a></li>
@@ -136,6 +136,7 @@
                                     <li><a href="{% url 'user:wishlist' %}">Wishlist</a></li>
                                     <li><a href="{% url 'user:cart' %}">Cart</a></li>
                                     <li><a href="{% url 'user:checkout' %}">Checkout</a></li>
+                                    <li><a href="{% url 'user:compare' %}">Compare</a></li>
                                     <li><a href="{% url 'user:my_account' %}">My Account</a></li>
                                     <li><a href="{% url 'auth:logout' %}">Logout</a></li>
                                 </ul>
@@ -160,7 +161,7 @@
                 <!-- End Atribute Navigation -->
             </div>
             <!-- Start Side Menu -->
-            <div class="side">
+            {% comment %} <div class="side">
                 <a href="#" class="close-side"><i class="fa fa-times"></i></a>
                 <li class="cart-box">
                     <ul class="cart-list">
@@ -185,7 +186,7 @@
                         </li>
                     </ul>
                 </li>
-            </div>
+            </div> {% endcomment %}
             <!-- End Side Menu -->
         </nav>
         <!-- End Navigation -->
@@ -243,12 +244,10 @@
                         <div class="footer-link">
                             <h4>Information</h4>
                             <ul>
-                                <li><a href="#">About Us</a></li>
-                                <li><a href="#">Customer Service</a></li>
-                                <li><a href="#">Our Sitemap</a></li>
-                                <li><a href="#">Terms &amp; Conditions</a></li>
-                                <li><a href="#">Privacy Policy</a></li>
-                                <li><a href="#">Delivery Information</a></li>
+                                <li><a href="{% url 'user:about' %}"><i class="fas fa-angle-right"></i> About Us</a></li>
+                                <li><a href="{% url 'user:return-policy' %}"><i class="fas fa-angle-right"></i> Return Policy</a></li>
+                                <li><a href="{% url 'user:faq' %}"><i class="fas fa-angle-right"></i> FAQ</a></li>
+                                <li><a href="#"><i class="fas fa-angle-right"></i> Terms &amp; Conditions</a></li>
                             </ul>
                         </div>
                     </div>

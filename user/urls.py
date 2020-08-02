@@ -6,12 +6,17 @@ app_name = "user"
 urlpatterns = [
     path("", views.home, name="home"),
     path("about", views.about, name="about"),
+    path("faq", views.faq, name="faq"),
+    path("return_policy", views.return_policy, name="return-policy"),
     path("contact_us", views.contact_us, name="contact-us"),
     path("post_requirment", views.post_requirment, name="post-requirment"),
+    path("compare", views.compare, name="compare"),
+    path("add_compare/", views.add_compare, name="add-compare"),
 
     # product
     path("products/<int:main_category_id>", views.products, name="products"),
     path("product_details/<int:pk>", views.product_details, name="product-details"),
+    path("add_review/", views.add_review, name="add-review"),
 
     # wishlist
     path("wishlist/", views.wishlist, name="wishlist"),
