@@ -1,4 +1,4 @@
-- User:
+User:
     ✔ login/register @done(20-07-31 00:37)
     ✔ view product @done(20-07-31 00:37)
     ✔ add/remove product from wishlist @done(20-07-31 00:37)
@@ -19,7 +19,7 @@
     send message
 
 
-- admin:
+- admin: @started(20-08-04 00:18)
     manage Users
     add/remove main category
     add/remove category

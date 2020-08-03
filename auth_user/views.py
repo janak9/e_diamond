@@ -22,7 +22,7 @@ def manage_redirect(u_type):
     if(u_type == const.USER):
         return redirect('/')
     elif(u_type == const.ADMIN):
-        return redirect('/d_admin')
+        return redirect('/main_admin')
 
 
 def resend_verification_token(request):
