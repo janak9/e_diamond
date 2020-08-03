@@ -184,6 +184,7 @@ function add_compare(product_id, event = undefined) {
       success: function (response) {
         response = JSON.parse(response);
         console.log(response);
+        alert(response.msg);
       },
       error: function (msg) {
         console.log(msg);

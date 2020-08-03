@@ -170,7 +170,7 @@ body{margin-top:20px;}
 }
 
 .comparison-table table {
-    min-width: 41rem;
+    /* min-width: 41rem; */
     table-layout: fixed
 }
 

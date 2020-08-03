@@ -60,7 +60,7 @@
                     <p>
                         {{ product.description }}
                     </p>
-                    <label style="float:left; margin-right:15px;">Quantity : </label> <input id="qty" name="qty" class="form-control" value="1" min="1" type="number" style="max-width:150px;"><br>
+                    <label style="float:left; margin-right:15px;">Quantity : </label> <input id="qty" name="qty" class="form-control" value="1" min="1" max="{{ product.available_qty }}" type="number" style="max-width:150px;"><br>
                     <div class="price-box-bar">
                         <div class="cart-and-bay-btn">
                             <a class="btn hvr-hover" data-fancybox-close="" href="{% url 'user:checkout' %}" onclick="add_cart('{{ product.pk }}', qty.value, event)">Buy Now</a>
@@ -71,7 +71,7 @@
                     <div class="add-to-btn">
                         <div class="add-comp">
                             <a class="btn hvr-hover" href="" onclick="add_wishlist('{{ product.pk }}', event)"><i class="fas fa-heart"></i> Add to wishlist</a></span>
-                            <a class="btn hvr-hover" href="#" onclick="add_compare('{{ row.pk }}', event)"><i class="fas fa-sync-alt"></i> Add to Compare</a>
+                            <a class="btn hvr-hover" href="" onclick="add_compare('{{ product.pk }}', event)"><i class="fas fa-sync-alt"></i> Add to Compare</a>
                         </div>
                         <div class="share-bar">
                             {% for social_link in product.social_links.all %}

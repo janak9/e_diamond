@@ -10,8 +10,6 @@ urlpatterns = [
     path("return_policy", views.return_policy, name="return-policy"),
     path("contact_us", views.contact_us, name="contact-us"),
     path("post_requirment", views.post_requirment, name="post-requirment"),
-    path("compare", views.compare, name="compare"),
-    path("add_compare/", views.add_compare, name="add-compare"),
 
     # product
     path("products/<int:main_category_id>", views.products, name="products"),
@@ -29,12 +27,17 @@ urlpatterns = [
     path("update_cart/", views.update_cart, name="update-cart"),
     path("remove_cart/<int:pk>", views.remove_cart, name="remove-cart"),
 
+    # compare
+    path("compare", views.compare, name="compare"),
+    path("add_compare/", views.add_compare, name="add-compare"),
+    path("remove_compare/<int:product_id>", views.remove_compare, name="remove-compare"),
+
     # my account
     path("checkout/", views.checkout, name="checkout"),
     path("my_account/", views.my_account, name="my_account"),
-    path("address/", views.address, name="address"),
     path("login_security/", views.login_security, name="login-security"),
     path("offers", views.offers, name="offers"),
+    path("address/", views.address, name="address"),
     path("orders", views.orders, name="orders"),
     path("payments", views.payments, name="payments"),
     path("invoice/<int:pk>", views.invoice, name="invoice"),

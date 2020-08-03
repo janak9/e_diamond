@@ -83,6 +83,8 @@ def post_requirment(request):
 
     return render(request, 'user/post_requirment.html', context)
 
+
+# product
 def products(request, main_category_id):
     context = {}
     context['active'] = 'products'
@@ -126,38 +128,6 @@ def product_details(request, pk):
     context['reviews'] = Review.objects.filter(product_id=pk).order_by('-timestamp')
     return render(request, 'user/product_details.html', context)
 
-@checkLogin('both')
-def compare(request):
-    context = {}
-    get_common_context(context)
-    context['compare'] = Compare.objects.filter(user_id=request.user.id).first()
-    print(context['compare'])
-    return render(request, 'user/compare.html', context)
-
-@csrf_exempt
-@checkLogin('both')
-def add_compare(request):
-    result = {}
-    try:
-        data = json.loads(request.POST.get('data'))
-        product_id = data['product_id']
-        compare = Compare.objects.filter(user_id=request.user.id).first()
-        if compare is None:
-            compare = Compare.objects.create(user_id=request.user.id)
-            compare.save()
-
-        product = Product.objects.get(pk=product_id)
-        if not product in compare.product.all():
-            compare.product.add(product)
-            compare.save()
-        result['status'] = 'success'
-    except Exception as err:
-        print(err)
-        result['status'] = 'error'
-        result['msg'] = 'something is wrong!'
-
-    return HttpResponse(json.dumps(result))
-
 @csrf_exempt
 @checkLogin('both')
 def add_review(request):
@@ -182,6 +152,8 @@ def add_review(request):
 
     return HttpResponse(json.dumps(result))
 
+
+# wishlist
 @checkLogin('both')
 def wishlist(request):
     context = {}
@@ -219,6 +191,8 @@ def remove_wishlist(request, pk):
     wishlist.delete()
     return redirect("user:wishlist")
 
+
+# cart
 @checkLogin('both')
 def cart(request):
     context = {}
@@ -309,6 +283,56 @@ def calculate_bill(input):
         print('calculate_bill - ', err)
         raise err
 
+
+# compare
+@checkLogin('both')
+def compare(request):
+    context = {}
+    get_common_context(context)
+    context['products'] = Compare.objects.filter(user_id=request.user.id).first().product.all()
+    print(context['products'])
+    return render(request, 'user/compare.html', context)
+
+@csrf_exempt
+@checkLogin('both')
+def add_compare(request):
+    result = {}
+    try:
+        data = json.loads(request.POST.get('data'))
+        product_id = data['product_id']
+        compare = Compare.objects.filter(user_id=request.user.id).first()
+        if compare is None:
+            compare = Compare.objects.create(user_id=request.user.id)
+            compare.save()
+
+        product = Product.objects.get(pk=product_id)
+        if not product in compare.product.all():
+            compare.product.add(product)
+            compare.save()
+        result['status'] = 'success'
+        result['msg'] = 'Added in compare list'
+    except Exception as err:
+        print(err)
+        result['status'] = 'error'
+        result['msg'] = 'something is wrong!'
+
+    return HttpResponse(json.dumps(result))
+
+@checkLogin('both')
+def remove_compare(request, product_id):
+    try:
+        compare = Compare.objects.filter(user_id=request.user.id).first()
+        if compare is not None:
+            product = Product.objects.get(pk=product_id)
+            compare.product.remove(product)
+            compare.save()
+    except Exception as err:
+        print(err)
+        
+    return redirect('user:compare')
+ 
+
+# my account
 @checkLogin('both')
 def checkout(request):
     context = {}

@@ -7,6 +7,7 @@ from decouple import config
 from base import const
 from auth_user.decorator import checkLogin
 from payment.models import PaymentOrder, Payment
+from product.models import Product
 from user.models import Cart
 import json
 
@@ -61,6 +62,10 @@ def success(request, pk):
                 payload['status'] = const.FAILED
             else:
                 Cart.objects.filter(user_id=context['payment_order'].user_id).delete()
+                for order in context['payment_order'].order.all():
+                    product = Product.objects.get(pk=order.product_id)
+                    product.available_qty -= order.qty
+                    product.save()
             context['payment'] = Payment.objects.create(**payload)
             context['payment_order'].status = payload['status']
             context['payment_order'].save()

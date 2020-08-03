@@ -73,7 +73,9 @@
                                     </td>
                                     <td class="add-pr">
                                         {% if row.get_status_display == 'Paid' %}
-                                            <a class="btn hvr-hover" href="{% url 'user:invoice' pk=row.payment.all.first.pk %}">Download</a>
+                                            <a class="btn hvr-hover" href="{% url 'user:invoice' pk=row.payment.first.pk %}">Download</a>
+                                        {% elif row.get_status_display == 'Pending' %}
+                                            <a class="btn hvr-hover btn-primary" href="{% url 'payment:confirm' pk=row.pk %}">Make Payment</a>
                                         {% endif %}
                                     </td>
                                 </tr>
