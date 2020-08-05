@@ -10,6 +10,7 @@ from payment.models import PaymentOrder, Payment
 from product.models import Product
 from user.models import Cart
 import json
+import traceback
 
 @checkLogin('both')
 def confirm(request, pk):
@@ -40,7 +41,7 @@ def confirm(request, pk):
         print(context['options'])
         return render(request, 'payment/confirm.html', context)
     except Exception as err:
-        print(err)
+        traceback.print_exc()
 
     return HttpResponse("Something was wrong! <a href='" + reverse('user:home') + "'>Back To Home</a>")
 
@@ -77,7 +78,7 @@ def success(request, pk):
                 return redirect('payment:failure', pk=pk)
 
     except Exception as err:
-        print(err)
+        traceback.print_exc()
 
     return HttpResponse("Something was wrong! <a href='" + reverse('user:home') + "'>Back To Home</a>")
 

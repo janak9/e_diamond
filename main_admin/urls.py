@@ -19,5 +19,12 @@ urlpatterns = [
         path('view', views.view_category, name="view-category"),
         path('delete/<int:pk>', views.del_category, name="del-category"),
     ])),
+        
+    path('sub_category/', include([
+        path('', views.add_sub_category, name="add-sub-category"),
+        path('<int:pk>', views.add_sub_category, name="edit-sub-category"),
+        path('view', views.view_sub_category, name="view-sub-category"),
+        path('delete/<int:pk>', views.del_sub_category, name="del-sub-category"),
+    ])),
     
 ]

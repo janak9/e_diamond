@@ -15,7 +15,7 @@
                                 <p style="color:red;">{{ msg }}</p>
                             </div>
                         {% endif %}
-                        <form class="form-horizontal bucket-form" method="post" action="">
+                        <form class="form-horizontal bucket-form" method="post" action="" enctype="multipart/form-data">
                         {% csrf_token %}
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">Main Category</label>
@@ -33,16 +33,22 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">Name</label>
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" name="name" id="name" value="{{ category.name }}">
+                                    <input type="text" class="form-control" name="name" id="name" value="{{ category.name }}" required>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Image</label>
-                                <div class="col-sm-6">
-                                    <input type="file" name="image" class="form-control" placeholder="Category Image" onchange="loadImage(event,'image_preview')">
-                                    <img id="image_preview" src="{{ category.image.src.url|default_if_none:'' }}" height="150" width="150"/>
+                            {{ image_form.management_form }}
+                            {% for form in image_form %}
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Image</label>
+                                    <div class="col-sm-6">
+                                        <input type="file" name="{{ form.src.html_name }}" accept="image/*" class="form-control" id="{{ form.src.auto_id }}" onchange="loadImage(event,'{{ form.src.auto_id }}_preview')" {% ifequal task 'Add' %}required{% endifequal %} >
+                                        <img id="{{ form.src.auto_id }}_preview" src="{% if category.image.src %}{{ category.image.src.url }}{% endif %}" height="150" width="150"/>
+                                    </div>
+                                    <div class="alert-danger" style="background-color: transparent;">
+                                        {{ form.src.errors }}
+                                    </div>
                                 </div>
-                            </div>
+                            {% endfor %}
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">Status</label>
                                 <div class="col-sm-6">

@@ -13,6 +13,7 @@ from payment.models import PaymentOrder, Payment
 from decouple import config
 import sys
 import json
+import traceback
 
 def get_common_context(context):
     context['app_name'] = config('APP_NAME')
@@ -59,7 +60,7 @@ def contact_us(request):
             Contact.objects.create(**data)
             context['msg'] = "Thank You! For reaching us, will you contact soon."
     except Exception as err:
-        print(err)
+        traceback.print_exc()
         context['msg'] = "Oops, Something was wrong! Please try again."
 
     return render(request, 'user/contact_us.html', context)
@@ -78,7 +79,7 @@ def post_requirment(request):
             Contact.objects.create(**data)
             context['msg'] = "Thank You! For reaching us, will you contact soon."
     except Exception as err:
-        print(err)
+        traceback.print_exc()
         context['msg'] = "Oops, Something was wrong! Please try again."
 
     return render(request, 'user/post_requirment.html', context)
@@ -146,7 +147,7 @@ def add_review(request):
             result['status'] = 'not_buy'
             result['msg'] = "you havn't buy this product. so, you can't give review."
     except Exception as err:
-        print(err)
+        traceback.print_exc()
         result['status'] = 'error'
         result['msg'] = 'something is wrong!'
 
@@ -179,7 +180,7 @@ def add_wishlist(request):
             result['status'] = 'success'
             result['msg'] = 'successfully added to wishlist'
     except Exception as err:
-        print(err)
+        traceback.print_exc()
         result['status'] = 'error'
         result['msg'] = 'something is wrong!'
 
@@ -223,7 +224,7 @@ def add_cart(request):
         result['status'] = 'success'
         result['msg'] = 'successfully added to cart'
     except Exception as err:
-        print(err)
+        traceback.print_exc()
         result['status'] = 'error'
         result['msg'] = 'something is wrong!'
 
@@ -312,7 +313,7 @@ def add_compare(request):
         result['status'] = 'success'
         result['msg'] = 'Added in compare list'
     except Exception as err:
-        print(err)
+        traceback.print_exc()
         result['status'] = 'error'
         result['msg'] = 'something is wrong!'
 
@@ -327,7 +328,7 @@ def remove_compare(request, product_id):
             compare.product.remove(product)
             compare.save()
     except Exception as err:
-        print(err)
+        traceback.print_exc()
         
     return redirect('user:compare')
  
@@ -380,7 +381,7 @@ def checkout(request):
                 payment_order.save()
             return redirect('payment:confirm', pk=payment_order.pk)
     except Exception as err:
-        print(err)
+        traceback.print_exc()
         context['msg'] = "Sorry for the inconvenience, Something was wrong! please try again or contact customer support."
     return render(request, 'user/checkout.html', context)
 

@@ -17,16 +17,12 @@ class Image(models.Model):
     class Meta:
         db_table = 'image'
 
-    title = models.CharField(_('title'), max_length=80, blank=False, null=False)
     src = models.ImageField(_('image'), upload_to=get_image_path, blank=False, null=False)
-
-    def __str__(self):
-        return self.title
 
     def save(self, *args, **kwargs):
         try:
             this = Image.objects.get(id=self.id)
-            if this.src in ['product/default-product.jpg', 'logo/share-default.png']:
+            if this.src not in ['product/default-product.jpg', 'logo/share-default.png']:
                 if this.src != self.src:
                     this.src.delete(save=False)
         except:

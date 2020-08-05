@@ -30,6 +30,14 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    def delete(self, *args, **kwargs):
+        try:
+            if self.image.src not in ['product/default-product.jpg', 'logo/share-default.png']:
+                self.image.src.delete(save=False)
+        except:
+            pass
+        super(Category, self).delete(*args, **kwargs)
+
 
 class SubCategory(models.Model):
     class Meta:
@@ -44,6 +52,14 @@ class SubCategory(models.Model):
 
     def __str__(self):
         return self.name
+
+    def delete(self, *args, **kwargs):
+        try:
+            if self.image.src not in ['product/default-product.jpg', 'logo/share-default.png']:
+                self.image.src.delete(save=False)
+        except:
+            pass
+        super(SubCategory, self).delete(*args, **kwargs)
 
 
 class AdditionalInformation(models.Model):
@@ -77,6 +93,15 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+
+    def delete(self, *args, **kwargs):
+        try:
+            for image in self.images:
+                if image.src not in ['product/default-product.jpg', 'logo/share-default.png']:
+                    image.src.delete(save=False)
+        except:
+            pass
+        super(Product, self).delete(*args, **kwargs)
 
 
 class Review(models.Model):
