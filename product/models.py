@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth import get_user_model
-from base import const
+from base import const, managers
 from main_admin.models import Image, SocialLink
 
 class MainCategory(models.Model):
@@ -13,6 +13,9 @@ class MainCategory(models.Model):
 
     name = models.CharField(_('name'), max_length=30, blank=False, null=False)
     status = models.PositiveSmallIntegerField(choices=const.STATUS_CHOICES, default=const.ACTIVE)
+
+    objects = managers.StatusManager()
+    all_objects = managers.StatusManager(active_only=False)
 
     def __str__(self):
         return self.name
@@ -26,6 +29,9 @@ class Category(models.Model):
     name = models.CharField(_('name'), max_length=30, blank=False, null=False)
     image = models.ForeignKey(Image, related_name='category', on_delete=models.SET_NULL, blank=False, null=True)
     status = models.PositiveSmallIntegerField(choices=const.STATUS_CHOICES, default=const.ACTIVE)
+
+    objects = managers.StatusManager()
+    all_objects = managers.StatusManager(active_only=False)
 
     def __str__(self):
         return self.name
@@ -49,6 +55,9 @@ class SubCategory(models.Model):
     image = models.ForeignKey(Image, related_name='sub_category', on_delete=models.SET_NULL, blank=False, null=True)
     status = models.PositiveSmallIntegerField(choices=const.STATUS_CHOICES, default=const.ACTIVE)
     timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
+
+    objects = managers.StatusManager()
+    all_objects = managers.StatusManager(active_only=False)
 
     def __str__(self):
         return self.name
@@ -91,6 +100,9 @@ class Product(models.Model):
     status = models.PositiveSmallIntegerField(choices=const.STATUS_CHOICES, default=const.ACTIVE)
     timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
 
+    objects = managers.StatusManager()
+    all_objects = managers.StatusManager(active_only=False)
+
     def __str__(self):
         return self.title
 
@@ -114,3 +126,6 @@ class Review(models.Model):
     comment = models.TextField(_('comment'), blank=False, null=False)
     status = models.PositiveSmallIntegerField(choices=const.STATUS_CHOICES, default=const.ACTIVE)
     timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
+
+    objects = managers.StatusManager()
+    all_objects = managers.StatusManager(active_only=False)

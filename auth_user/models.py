@@ -19,6 +19,10 @@ def get_profile_path(instance, filename):
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
+    def __init__(self, *args, **kwargs):
+        self.active_only = kwargs.pop('active_only', True)
+        super(UserManager, self).__init__(*args, **kwargs)
+
     def _create_user(self, email, password, **extra_fields):
         """
         Create and save a user with the given email, and password.
@@ -51,6 +55,11 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
+    def get_queryset(self):
+        if self.active_only:
+            return super().get_queryset().filter(status=const.ACTIVE)
+        return super().get_queryset().all()
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
@@ -80,6 +89,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
 
     objects = UserManager()
+    all_objects = UserManager(active_only=False)
 
     def __str__(self):
         return self.email

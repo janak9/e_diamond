@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth import get_user_model
 from base.utils import MyValidation
-from base import const
+from base import const, managers
 from product.models import Product
 from main_admin.models import Offer
 
@@ -34,6 +34,9 @@ class Feedback(models.Model):
     timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
     status = models.PositiveSmallIntegerField(choices=const.STATUS_CHOICES, default=const.ACTIVE)
     read_status = models.PositiveSmallIntegerField(choices=const.READ_STATUS_CHOICES, default=const.NOT_CHECKED)
+
+    objects = managers.StatusManager()
+    all_objects = managers.StatusManager(active_only=False)
 
 
 class Compare(models.Model):
@@ -73,3 +76,6 @@ class Order(models.Model):
     price = models.FloatField(_('price'), blank=False, null=False)
     timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
     status = models.PositiveSmallIntegerField(choices=const.STATUS_CHOICES, default=const.ACTIVE)
+
+    objects = managers.StatusManager()
+    all_objects = managers.StatusManager(active_only=False)

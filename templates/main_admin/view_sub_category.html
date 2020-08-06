@@ -5,13 +5,14 @@
     <div class="table-agile-info">
         <div class="panel panel-default">
             <div class="panel-heading">
-                View Category
+                View Sub Category
             </div>
             <div class="table-responsive">
                 <table class="table table-striped b-t b-light">
                     <thead>
                         <tr>
                             <th>Main Category</th>
+                            <th>Category</th>
                             <th>Name</th>
                             <th>Image</th>
                             <th>Status</th>
@@ -19,17 +20,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for category in categories %}
+                        {% for sub_category in sub_categories %}
                             <tr>
-                                <td>{{ category.main_category.name }}</td>
-                                <td>{{ category.name }}</td>
-                                <td><img src="{% if category.image.src %}{{ category.image.src.url }}{% endif %}" class="img-fluid table_img" /></td>
-                                <td>{{ category.get_status_display }}</td>
+                                <td>{{ sub_category.main_category.name }}</td>
+                                <td>{{ sub_category.category.name }}</td>
+                                <td>{{ sub_category.name }}</td>
+                                <td><img src="{% if sub_category.image.src %}{{ sub_category.image.src.url }}{% endif %}" class="img-fluid table_img" /></td>
+                                <td>{{ sub_category.get_status_display }}</td>
                                 <td>
-                                    <a href="{% url 'main_admin:edit-category' pk=category.pk %}" style="margin-right:10px;">
+                                    <a href="{% url 'main_admin:edit-sub-category' pk=sub_category.pk %}" style="margin-right:10px;">
                                         <i class="fa fa-edit text-success ml-2"></i>
                                     </a>
-                                    <a href="{% url 'main_admin:del-category' pk=category.pk %}">
+                                    <a href="{% url 'main_admin:del-sub-category' pk=sub_category.pk %}">
                                         <i class="fa fa-times text-danger"></i>
                                     </a>
                                 </td>

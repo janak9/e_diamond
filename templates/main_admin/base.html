@@ -277,6 +277,18 @@
                 <li><a href="{% url 'main_admin:view-category' %}">View Category</a></li>
               </ul>
             </li>
+            <li class="sub-menu">
+              <a href="javascript:;" class="{% if active == 'sub_category' %}
+                            active
+                            {% endif %}">
+                <i class="fa fa-book"></i>
+                <span>Sub Category</span>
+              </a>
+              <ul class="sub">
+                <li><a href="{% url 'main_admin:add-sub-category' %}">Add Sub Category</a></li>
+                <li><a href="{% url 'main_admin:view-sub-category' %}">View Sub Category</a></li>
+              </ul>
+            </li>
           </ul>
         </div>
         <!-- sidebar menu end-->

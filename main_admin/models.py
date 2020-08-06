@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
-from base import const
+from base import const, managers
 from base.utils import MyValidation
 import os
 import uuid
@@ -98,6 +98,9 @@ class Offer(models.Model):
     offer_type = models.PositiveSmallIntegerField(choices=const.OFFER_TYPE_CHOICES, default=const.FLAT)
     status = models.PositiveSmallIntegerField(choices=const.STATUS_CHOICES, default=const.ACTIVE)
     timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
+
+    objects = managers.StatusManager()
+    all_objects = managers.StatusManager(active_only=False)
 
     def __str__(self):
         return '{} {}'.format(self.code, self.title)

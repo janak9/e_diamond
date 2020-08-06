@@ -13,6 +13,7 @@ urlpatterns = [
         path('delete/<int:pk>', views.del_main_category, name="del-main-category"),
     ])),
     
+    path("get_category/", views.get_category, name="get-category"),
     path('category/', include([
         path('', views.add_category, name="add-category"),
         path('<int:pk>', views.add_category, name="edit-category"),
