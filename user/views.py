@@ -129,6 +129,12 @@ def product_details(request, pk):
     context['reviews'] = Review.objects.filter(product_id=pk).order_by('-timestamp')
     return render(request, 'user/product_details.html', context)
 
+def description(request, pk):
+    product = Product.objects.get(pk=pk)
+    res = render(request, 'user/description.html', { 'product': product })
+    res['X-Frame-Options'] = 'SAMEORIGIN'
+    return res
+
 @csrf_exempt
 @checkLogin('both')
 def add_review(request):

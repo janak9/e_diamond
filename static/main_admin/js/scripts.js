@@ -260,7 +260,7 @@
 
 
         $('.panel .tools .fa').click(function () {
-            var el = $(this).parents(".panel").children(".panel-body");
+            var el = $(this).closest(".panel").children(".panel-body");
             if ($(this).hasClass("fa-chevron-down")) {
                 $(this).removeClass("fa-chevron-down").addClass("fa-chevron-up");
                 el.slideUp(200);

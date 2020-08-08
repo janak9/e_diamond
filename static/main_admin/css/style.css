@@ -2460,20 +2460,7 @@ h4 input[type="checkbox"] {
 	font-weight:400;
 	font-size:14px;
 }
- /*--placeholder-color--*/
-::-webkit-input-placeholder {
-	color:#fff !important;
-}
-:-moz-placeholder { /* Firefox 18- */
-	color:#fff !important; 
-}
-::-moz-placeholder {  /* Firefox 19+ */
-	color:#fff !important;
-}
-:-ms-input-placeholder {  
-	color:#fff !important;
-}
-/*--//placeholder-color--*/
+
 .alert {
     margin-bottom: 23px !important;
 }

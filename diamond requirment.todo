@@ -21,21 +21,21 @@ User:
 
 - admin: @started(20-08-04 00:18)
     manage Users
-    add/remove main category
-    add/remove category
-    add/remove sub category
+    ✔ add/remove main category @done(20-08-07 00:38)
+    ✔ add/remove category @done(20-08-07 00:38)
+    ✔ add/remove sub category @done(20-08-07 00:38)
     add/remove product
     add/remove social media
-    add/remove Event
-    add/remove Blogs
-    check Appointments
+    check and replay to post requirments
     view orders
     check reviews
     check payments
-    check and replay to post requirments
     manage about us
-    Manage Offer
     manage other details
+    Manage Offer
+    add/remove Event
+    add/remove Blogs
+    check Appointments
 
 
 

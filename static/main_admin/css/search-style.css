@@ -1,0 +1,71 @@
+ul.icons
+{
+	list-style: none;
+}
+ul.icons li
+{
+	cursor: pointer;
+	padding: 8px;
+	border: 1px solid #eee;
+	width: 300px;
+	float: left;
+	margin: 4px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	color: #333;
+	background: #eee;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+ul.icons li.active:hover,
+ul.icons li.active
+{
+	border: 1px solid #1fa67a;
+	color: #FFF;
+	background: #1fa67a;
+}
+ul.icons li:hover
+{
+	border: 1px solid #1fa67a;
+	color: #FFF;
+	background: #1fa67a;
+}
+ul.icons li span
+{
+	text-indent: 12px;
+	display: block;
+	line-height: 32px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+ul.icons li i
+{
+	width: 24px;
+	height: 24px;
+	font-size: 24px;
+	text-align: center;
+	display: block;
+	float: left;
+    line-height: 34px;
+    margin-left: 8px;
+}
+.ui-autocomplete {
+	max-height: 300px;
+	overflow-y: auto;
+	/* prevent horizontal scrollbar */
+	overflow-x: hidden;
+	font-family: 'Ubuntu', sans-serif;
+	font-size: 14px;
+	background-color: #f5f5f5;
+	background-color: rgba(255, 255, 255, 0.95);
+	border: none;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+    border: 1px solid #CCC;
+}
+
+#search:focus {
+	border: 1px solid #999;
+}

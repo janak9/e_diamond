@@ -51,15 +51,10 @@
                 </div>
             </div>
             <div class="col-xl-7 col-lg-7 col-md-6">
-                <div class="single-product-details">
+                <div class="single-product">
                     <h2>{{ product.title }}</h2>
                     <h5><i class="fas fa-rupee-sign"></i> {{ product.price }}</h5>
-                    <p class="available-stock"><span> More than {{ product.available_qty }} available / <a href="#">{{ product.qty|sub:product.available_qty }} sold </a></span>
-                    <p>
-                    <h4>Description:</h4>
-                    <p>
-                        {{ product.description }}
-                    </p>
+                    <p class="available-stock"><span> More than {{ product.available_qty }} available / <a href="#">{{ product.qty|sub:product.available_qty }} sold </a></span></p>
                     <label style="float:left; margin-right:15px;">Quantity : </label> <input id="qty" name="qty" class="form-control" value="1" min="1" max="{{ product.available_qty }}" type="number" style="max-width:150px;"><br>
                     <div class="price-box-bar">
                         <div class="cart-and-bay-btn">
@@ -79,6 +74,8 @@
                             {% endfor %}
                         </div>
                     </div>
+                    <h4>Description:</h4>
+                    <div id="description"></div>
                     <br><br>
                     <h4>Additional Information:</h4>
                     <table class="table table-bordered table-striped table-hover">
@@ -189,4 +186,10 @@
 </div>
 <!-- End Cart -->
 <script type="text/javascript" src="{% static 'user/js/rating.js' %}"></script>
+<script>
+$(document).ready( function() {
+    document.getElementById("description").innerHTML='<object type="text/html" style="width:100%;height:50vh;" data="description/{{ product.pk }}" ></object>';
+    // $("#description").load("description/{{ product.pk }}");
+});
+</script>
 {% endblock content %}

@@ -14,11 +14,14 @@
   <link type="text/css" rel="stylesheet" href="{% static 'main_admin/css/morris.css' %}"/>
   <link type="text/css" rel="stylesheet" href="{% static 'main_admin/css/monthly.css' %}">
   <link type="text/css" rel="stylesheet" href="{% static 'main_admin/css/custom.css' %}">
+  <link type="text/css" rel="stylesheet" href="{% static 'main_admin/css/jquery-ui.css' %}" />
   {% comment %} <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic' /> {% endcomment %}
-  
-  <script type="text/javascript" src="{% static 'main_admin/js/jquery2.0.3.min.js' %}"></script>
+
   <script type="text/javascript" src="{% static 'main_admin/js/raphael-min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'main_admin/js/morris.js' %}"></script>
+  <script type="text/javascript" src="{% static 'main_admin/js/jquery2.0.3.min.js' %}"></script>
+  {% comment %} <script type="text/javascript" src="{% static 'main_admin/js/morris.js' %}"></script> {% endcomment %}
+  <script src="http://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+  <script src="https://cdn.ckeditor.com/4.14.1/full-all/ckeditor.js"></script>
 </head>
 
 <body>
@@ -222,14 +225,14 @@
           <!-- user login dropdown start-->
           <li class="dropdown">
             <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-              <img alt="" src="images/2.png">
-              <span class="username">John Doe</span>
+              <img alt="" src="{{ user.profile_pic.url }}">
+              <span class="username">{{ user.get_short_name }}</span>
               <b class="caret"></b>
             </a>
             <ul class="dropdown-menu extended logout">
-              <li><a href="#"><i class=" fa fa-suitcase"></i>Profile</a></li>
+              <li><a href="{% url 'auth:profile' %}"><i class=" fa fa-suitcase"></i>Profile</a></li>
               <li><a href="#"><i class="fa fa-cog"></i> Settings</a></li>
-              <li><a href="login.html"><i class="fa fa-key"></i> Log Out</a></li>
+              <li><a href="{% url 'auth:logout' %}"><i class="fa fa-key"></i> Log Out</a></li>
             </ul>
           </li>
           <!-- user login dropdown end -->
@@ -289,6 +292,18 @@
                 <li><a href="{% url 'main_admin:view-sub-category' %}">View Sub Category</a></li>
               </ul>
             </li>
+            <li class="sub-menu">
+              <a href="javascript:;" class="{% if active == 'product' %}
+                            active
+                            {% endif %}">
+                <i class="fa fa-book"></i>
+                <span>Product</span>
+              </a>
+              <ul class="sub">
+                <li><a href="{% url 'main_admin:add-product' %}">Add Product</a></li>
+                <li><a href="{% url 'main_admin:view-product' %}">View Product</a></li>
+              </ul>
+            </li>
           </ul>
         </div>
         <!-- sidebar menu end-->
@@ -318,7 +333,7 @@
   <script type="text/javascript" src="{% static 'main_admin/js/jquery.scrollTo.js' %}"></script>
   <script type="text/javascript" src="{% static 'main_admin/js/custom.js' %}"></script>
   <!-- morris JavaScript -->
-  <script>
+  {% comment %} <script>
     $(document).ready(function () {
       //BOX BUTTON SHOW AND CLOSE
       jQuery('.small-graph-box').hover(function () {
@@ -372,7 +387,7 @@
 
 
     });
-  </script>
+  </script> {% endcomment %}
   <!-- calendar -->
   <script type="text/javascript" src="{% static 'main_admin/js/monthly.js' %}"></script>
   <script type="text/javascript">

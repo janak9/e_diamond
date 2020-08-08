@@ -14,6 +14,7 @@ urlpatterns = [
     # product
     path("products/<int:main_category_id>", views.products, name="products"),
     path("product_details/<int:pk>", views.product_details, name="product-details"),
+    path("product_details/description/<int:pk>", views.description, name="description"),
     path("add_review/", views.add_review, name="add-review"),
 
     # wishlist

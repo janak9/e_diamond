@@ -2,3 +2,12 @@
   max-width: 120px;
   max-height: 120px;
 }
+
+.additional_informations .remove, .social_links .remove{
+  text-align: center;
+}
+
+.additional_informations .form-group, .social_links .form-group{
+  margin: 0;
+  margin-bottom: 15px;
+}

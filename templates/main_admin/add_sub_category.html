@@ -35,6 +35,7 @@
                                 <label class="col-sm-3 control-label">Category</label>
                                 <div class="col-sm-6">
                                     <select class="form-control m-bot15" name="category_id" id="category_id" required>
+                                        <option value="" readonly>Select Category</option>
                                         {% for category in categories %}
                                             <option value="{{ category.pk }}" 
                                             {% if sub_category.category_id == category.pk %}

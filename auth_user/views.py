@@ -16,7 +16,7 @@ from auth_user.decorator import checkLogin
 from base import const
 from base.utils import send_email
 from decouple import config
-
+from user.views import get_common_context
 
 def manage_redirect(u_type):
     if(u_type == const.USER):
@@ -111,19 +111,22 @@ def verify_account(request, uid, token):
     return HttpResponse(detail)
 
 
-@checkLogin('user')
+@checkLogin('both')
 def profile(request):
-    msg = ""
-    form = None
+    context = {}
+    context['active'] = 'my_account'
+    get_common_context(context)
+    context['msg'] = ""
+    context['form'] = None
     if(request.method == 'POST'):
-        form = ProfileForm(request.POST, request.FILES, instance=request.user)
-        if form.is_valid():
-            user = form.save()
-            msg = "Profile update successfully"
+        context['form'] = ProfileForm(request.POST, request.FILES, instance=request.user)
+        if context['form'].is_valid():
+            user = context['form'].save()
+            context['msg'] = "Profile update successfully"
         else:
-            msg = "Something Wrong Try Again!"
+            context['msg'] = "Something Wrong Try Again!"
 
-    return render(request, "user/profile.html", {'msg': msg, 'form': form})
+    return render(request, "user/profile.html", context)
 
 
 def forgot_pwd(request):
@@ -171,14 +174,17 @@ def verify_forgot_password(request, uid, token):
     return HttpResponse(msg)
 
 
-@checkLogin('user')
+@checkLogin('both')
 def change_password(request):
-    msg = ''
+    context = {}
+    context['active'] = 'my_account'
+    get_common_context(context)
+    context['msg'] = ""
     user = user_model.objects.get(id=request.user.id)
     if request.method == "POST":
         if check_password(request.POST.get('current_password'), user.password):
             if check_password(request.POST.get('new_password'), user.password):
-                msg = "New Password cannot be same as your current password. Please choose a different password."
+                context['msg'] = "New Password cannot be same as your current password. Please choose a different password."
             else:
                 if request.POST.get('new_password') == request.POST.get('confirm_password'):
                     user.set_password(request.POST.get('new_password'))
@@ -186,7 +192,7 @@ def change_password(request):
                     send_email(user.id, "change_password")
                     return redirect('auth:login')
                 else:
-                    msg = "New password and Confirm Password Must be Same!!!"
+                    context['msg'] = "New password and Confirm Password Must be Same!!!"
         else:
-            msg = "Current password is Wrong!!!"
-    return render(request, "user/change_user_password.html", {"msg": msg})
+            context['msg'] = "Current password is Wrong!!!"
+    return render(request, "user/change_user_password.html", context)

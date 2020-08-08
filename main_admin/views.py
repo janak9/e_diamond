@@ -22,6 +22,7 @@ def dashboard(request):
     get_common_context(request, context)
     return render(request, 'main_admin/index.html', context)
 
+# main category
 @checkLogin('admin')
 def add_main_category(request, pk=None):
     context = {}
@@ -73,6 +74,7 @@ def del_main_category(request, pk):
     return redirect("main_admin:view-main-category")
 
 
+# category
 @csrf_exempt
 @checkLogin('admin')
 def get_category(request):
@@ -80,7 +82,7 @@ def get_category(request):
     try:
         data = json.loads(request.POST.get('data'))
         main_category_id = data['main_category_id']
-        categories = Category.all_objects.filter(main_category_id=main_category_id).values()
+        categories = Category.all_objects.filter(main_category_id=main_category_id).order_by('name').values()
         result['status'] = 'success'
         result['categories'] = list(categories)
     except Exception as err:
@@ -95,7 +97,7 @@ def add_category(request, pk=None):
     context = {}
     context['active'] = 'category'
     get_common_context(request, context)
-    context['main_categories'] = MainCategory.all_objects.all().order_by('-id')
+    context['main_categories'] = MainCategory.all_objects.all().order_by('name')
     if pk is not None:
         context['task'] = "Edit"
         context['category'] = Category.all_objects.get(id=pk)
@@ -160,16 +162,33 @@ def del_category(request, pk):
 
 
 # sub category
+@csrf_exempt
+@checkLogin('admin')
+def get_sub_category(request):
+    result = {}
+    try:
+        data = json.loads(request.POST.get('data'))
+        category_id = data['category_id']
+        sub_categories = SubCategory.all_objects.filter(category_id=category_id).order_by('name').values()
+        result['status'] = 'success'
+        result['sub_categories'] = list(sub_categories)
+    except Exception as err:
+        traceback.print_exc()
+        result['status'] = 'error'
+        result['msg'] = 'something is wrong!'
+
+    return HttpResponse(json.dumps(result))
+
 @checkLogin('admin')
 def add_sub_category(request, pk=None):
     context = {}
     context['active'] = 'sub_category'
     get_common_context(request, context)
-    context['main_categories'] = MainCategory.all_objects.all().order_by('-id')
+    context['main_categories'] = MainCategory.all_objects.all().order_by('name')
     if pk is not None:
         context['task'] = "Edit"
         context['sub_category'] = SubCategory.all_objects.get(id=pk)
-        context['categories'] = Category.all_objects.filter(main_category_id=context['sub_category'].main_category_id)
+        context['categories'] = Category.all_objects.filter(main_category_id=context['sub_category'].main_category_id).order_by('name')
         context['image_form'] = ImageFormset(request.POST or None, request.FILES or None, queryset=Image.objects.none())
     else:
         context['task'] = "Add"
@@ -228,3 +247,125 @@ def del_sub_category(request, pk):
     sub_category = SubCategory.all_objects.get(pk=pk)
     sub_category.delete()
     return redirect("main_admin:view-sub-category")
+
+# product
+@checkLogin('admin')
+def add_product(request, pk=None):
+    context = {}
+    context['active'] = 'product'
+    get_common_context(request, context)
+    context['main_categories'] = MainCategory.all_objects.all().order_by('name')
+    context['cnt'] = 1
+    if pk is not None:
+        context['task'] = "Edit"
+        context['product'] = Product.all_objects.get(id=pk)
+        context['cnt'] = context['product'].additional_information.all().count()
+        context['categories'] = Category.all_objects.filter(main_category_id=context['product'].main_category_id).order_by('name')
+        context['sub_categories'] = SubCategory.all_objects.filter(category_id=context['product'].category_id).order_by('name')
+        context['image_form'] = ImageFormset(request.POST or None, request.FILES or None, queryset=Image.objects.none())
+    else:
+        context['task'] = "Add"
+        context['image_form'] = ImageFormset(request.POST or None, request.FILES or None, queryset=Image.objects.none())
+
+    try:
+        if (request.method == 'POST'):
+            data = request.POST.dict()
+            product_data = {
+                'main_category_id': data['main_category_id'],
+                'category_id': data['category_id'],
+                'sub_category_id': data['sub_category_id'],
+                'title': data['title'],
+                'description': data['description'],
+                'qty': data['qty'],
+                'available_qty': data['available_qty'],
+                'price': data['price'],
+                'status': data['status'],
+            }
+
+            # Additional Informations
+            new_info = { k:v for k,v in data.items() if k.startswith('new_info') }
+            old_info = { k:v for k,v in data.items() if k.startswith('info_') }
+            result_new = {}
+            for key, value in new_info.items():
+                no = key.split('_')[-1]
+                field = key.split('_')[-2]
+                if no not in result_new:
+                    result_new[no] = {}
+                result_new[no][field] = value
+            
+            result_old = {}
+            for key, value in old_info.items():
+                no = key.split('_')[-1]
+                field = key.split('_')[-2]
+                if no not in result_old:
+                    result_old[no] = {}
+                result_old[no][field] = value
+            
+            for key, value in result_new.items():
+                info = AdditionalInformation.objects.create(**value)
+                context['product'].additional_information.add(info)
+
+            for info in context['product'].additional_information.all():
+                key = str(info.pk)
+                if key in [*result_old]:
+                    info.title = result_old[key]['title']
+                    info.description = result_old[key]['description']
+                    info.save()
+                else:
+                    context['product'].additional_information.remove(info)
+            context['product'].save()
+
+            if context['image_form'].is_valid():
+                images = []
+                for form in context['image_form']:
+                    if form.cleaned_data.get('src'):
+                        if pk is not None:
+                            # image = context['product'].images.all()
+                            # image[0].src = form.cleaned_data.get('src')
+                            # image[0].save()
+                            image = form.save()
+                            pass
+                        else:
+                            image = form.save()
+                        images.append(image)
+                    else:
+                        tmp.append('form-0-src')
+
+                if pk is not None:
+                    product = Product.all_objects.filter(pk=pk)
+                    product.update(**data)
+                    product.get().images.set(images)
+                else:
+                    product = Product.all_objects.create(**data)
+                    product.save()
+                    product.images.set(images)
+                return redirect("main_admin:view-product")
+    except Exception as err:
+        traceback.print_exc()
+        context['msg'] = "Oops, Something was wrong! Please try again."
+
+    return render(request, 'main_admin/add_product.html', context)
+
+@checkLogin('admin')
+def view_product(request):
+    context = {}
+    context['active'] = 'product'
+    get_common_context(request, context)
+    
+    product_list = Product.all_objects.all().order_by('-id')
+    page = request.GET.get('page', 1)
+    paginator = Paginator(product_list, 5)
+    try:
+        products = paginator.page(page)
+    except PageNotAnInteger:
+        products = paginator.page(1)
+    except EmptyPage:
+        products = paginator.page(paginator.num_pages)
+    context['products'] = products
+    return render(request, 'main_admin/view_product.html', context)
+
+@checkLogin('admin')
+def del_product(request, pk):
+    product = Product.all_objects.get(pk=pk)
+    product.delete()
+    return redirect("main_admin:view-product")
