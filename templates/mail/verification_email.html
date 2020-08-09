@@ -2,15 +2,134 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
-<h5>Hi <b>{{ user.first_name}} {{ user.last_name }}</b></h5>
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style type="text/css">
+		::-moz-selection {
+			background: #ffdc00;
+		}
+		::selection {
+			background: #ffdc00;
+		}
+		h1, h2, h3, h4, h5, h6, p{
+			margin: 0;
+			padding: 0;
+			line-height: 100%;
+			font-weight: normal;
+		}
+		img {
+			display: inline-block;
+			max-width: 100%;
+		}
+		table td {
+			box-sizing:border-box;
+		}
+		@media only screen and (min-width: 50px) and (max-width: 560px) {
+			.main_area{
+				width:100%;
+				width:100% !important;
+			}
+			.area_content{
+				width:100%;
+				width:100% !important;
+			}
+		}
 
-<p>Someone has requested to create an account using your email address. If this isn't you, then ignore this email.</p>
-<p>Please click <a href="{{ base_url }}{% url 'auth:verify-email' uid=uid token=token %}">here</a>
-    to verify your account
-</p>
-<p>Thanks</p>
+		@media only screen and (min-width: 50px) and (max-width: 490px) {
+			.footer_area{
+				width:100%;
+				width:100% !important;
+			}
+		}
+
+		@media only screen and (min-width: 50px) and (max-width: 430px) {
+			.area_1{
+				width:100%;
+				width:100% !important;
+			}
+		}
+    </style>
+</head>
+<body style="margin:0;padding:0px;background-color: #F2F2F2;">  
+	<table align="center" border="0" cellpadding="0" cellspacing="0" width="555" style="width: 555px; font-family: Helvetica, sans-serif;width: 555px;margin: 0 auto;" class="main_area">
+		<tbody><tr>
+			<td bgcolor="#fff;" style=" background-color:#fff;">
+				<table align="center" border="0" cellpadding="0" cellspacing="0" style="width: 100%; margin: 0 auto;" class="area_content">
+					<tbody><tr>
+						<td>
+							<table align="center" border="0" cellpadding="0" cellspacing="0" width="490" style="width: 420px;margin: 0 auto;" class="area_1">
+								<tbody><tr>
+									<td style="padding: 32px; text-align: center; border-bottom: 1px solid #F5F5F5;">
+										<a target="_blank" href="{{ base_url }}">
+											<img width="65" alt="{{ about_us.title }}" src="{{ about_us.logo.url }}" height="65">
+										</a>
+									</td>
+								</tr>
+								<tr>
+									<td style="padding-top: 40px; padding-bottom: 40px; text-align: center; border-bottom: 1px solid #F5F5F5;">
+										<table align="center" border="0" cellpadding="0" cellspacing="0" style="width: 100%; margin: 0 auto;">
+											<tbody><tr>
+												<td style="text-align: center; font-size: 18px; color: #000000; line-height: 22px;">
+													Hi {{ user.get_full_name|title }}, it’s great to meet you.
+												</td>
+											</tr>
+											<tr>
+												<td style="text-align: center; font-size: 10px; color: #050D13; line-height: 16px; padding-top: 10px;">
+													We’d like to make sure we got your email address right.
+												</td>
+											</tr>
+											<tr>
+												<td style="padding-top: 20px;">
+													<table align="center" border="0" cellpadding="0" cellspacing="0" style="width: 163px; height: 35px; margin: 0 auto;">
+														<tbody><tr>
+															<td bgcolor="#FFDC00" style="width: 163px; height: 35px; background-color: #d33b33; border-radius: 10px; text-align: center; font-size: 10px; color: #000;">
+													            <a href="{{ base_url }}{% url 'auth:verify-email' uid=uid token=token %}" style="font-size: 10px; color: #000; text-decoration: none; display: block; line-height: 35px; font-weight: 600;">
+																	<span style="font-size: 14px; color: #fff; text-decoration: none; display: block; line-height: 35px; font-weight: 600;">
+																		Yes, it’s me - let’s get started
+																	</span>
+																</a>
+															</td>
+														</tr>
+
+													</tbody></table>
+												</td>
+											</tr>
+
+										</tbody></table>
+									</td>
+								</tr>
+
+								<tr>
+									<td style="padding-top: 30px; padding-bottom: 30px; text-align: center;  font-size: 10px; color: #686F7B; line-height: 16px;">
+										<b>Get in touch with us anytime at {{ about_us.email }}</b>
+									</td>
+								</tr>
+                                <tr>
+									<td style="font-size: 15px; color: #333; padding-bottom: 20px;">
+										<p>Thanks,</p>
+										<p>{{ about_us.title }}</p>
+									</td>
+								</tr>
+							</tbody></table>
+						</td>
+					</tr>
+
+				</tbody></table>
+			</td>
+		</tr>
+		<tr>
+			<td style="padding-left: 15px; padding-right: 15px;">
+				<table align="center" border="0" cellpadding="0" cellspacing="0" width="555" style="width: 555px; margin: 0 auto;" class="area_content">
+					<tbody>
+                    <tr>
+                        <td style="padding: 15px 0px; text-align: center; font-size: 12px; color: #686F7B; line-height: 14px;">
+                            ©Copyright {% now 'Y' %} {{ about_us.title }}
+                        </td>
+					</tr>
+				</tbody></table>
+			</td>
+		</tr>
+	</tbody>
+    </table>
 </body>
 </html>

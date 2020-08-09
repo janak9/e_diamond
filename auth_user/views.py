@@ -14,7 +14,7 @@ from auth_user.forms import SignUpForm, ProfileForm
 from auth_user.models import User as user_model
 from auth_user.decorator import checkLogin
 from base import const
-from base.utils import send_email
+from base.mail import send_email
 from decouple import config
 from user.views import get_common_context
 
@@ -162,7 +162,7 @@ def verify_forgot_password(request, uid, token):
             user.save()
             return redirect('auth:login')
         else:
-            msg = 'Please Enter New Password and Confirm Password Must be Same!!! '
+            msg = 'New Password and Confirm Password Must be Same!!! '
 
     check_token = token_generator.check_token(user, token)
     if check_token:
