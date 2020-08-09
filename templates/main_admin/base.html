@@ -264,8 +264,8 @@
                 <span>Main Category</span>
               </a>
               <ul class="sub">
-                <li><a href="{% url 'main_admin:add-main-category' %}">Add Main Category</a></li>
-                <li><a href="{% url 'main_admin:view-main-category' %}">View Main Category</a></li>
+                <li><a href="{% url 'main_admin:add-main-category' %}"><i class="fas fa-plus"></i> Add Main Category</a></li>
+                <li><a href="{% url 'main_admin:view-main-category' %}"><i class="far fa-eye"></i> View Main Category</a></li>
               </ul>
             </li>
             <li class="sub-menu">
@@ -276,8 +276,8 @@
                 <span>Category</span>
               </a>
               <ul class="sub">
-                <li><a href="{% url 'main_admin:add-category' %}">Add Category</a></li>
-                <li><a href="{% url 'main_admin:view-category' %}">View Category</a></li>
+                <li><a href="{% url 'main_admin:add-category' %}"><i class="fas fa-plus"></i> Add Category</a></li>
+                <li><a href="{% url 'main_admin:view-category' %}"><i class="far fa-eye"></i> View Category</a></li>
               </ul>
             </li>
             <li class="sub-menu">
@@ -288,21 +288,85 @@
                 <span>Sub Category</span>
               </a>
               <ul class="sub">
-                <li><a href="{% url 'main_admin:add-sub-category' %}">Add Sub Category</a></li>
-                <li><a href="{% url 'main_admin:view-sub-category' %}">View Sub Category</a></li>
+                <li><a href="{% url 'main_admin:add-sub-category' %}"><i class="fas fa-plus"></i> Add Sub Category</a></li>
+                <li><a href="{% url 'main_admin:view-sub-category' %}"><i class="far fa-eye"></i> View Sub Category</a></li>
               </ul>
             </li>
             <li class="sub-menu">
               <a href="javascript:;" class="{% if active == 'product' %}
                             active
                             {% endif %}">
-                <i class="fa fa-book"></i>
+                <i class="far fa-gem"></i>
                 <span>Product</span>
               </a>
               <ul class="sub">
-                <li><a href="{% url 'main_admin:add-product' %}">Add Product</a></li>
-                <li><a href="{% url 'main_admin:view-product' %}">View Product</a></li>
+                <li><a href="{% url 'main_admin:add-product' %}"><i class="fas fa-plus"></i> Add Product</a></li>
+                <li><a href="{% url 'main_admin:view-product' %}"><i class="far fa-eye"></i> View Product</a></li>
               </ul>
+            </li>
+            <li>
+              <a href="{% url 'main_admin:view-post-requirements' %}" class="{% if active == 'post_requirements' %}
+                            active
+                            {% endif %}">
+                <i class="fas fa-mail-bulk"></i>
+                <span>Post Requirements</span>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'main_admin:view-contact-us' %}" class="{% if active == 'contact_us' %}
+                            active
+                            {% endif %}">
+                <i class="fas fa-id-card"></i>
+                <span>Contact Us</span>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'main_admin:view-orders' %}" class="{% if active == 'orders' %}
+                            active
+                            {% endif %}">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Orders</span>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'main_admin:view-payments' %}" class="{% if active == 'payments' %}
+                            active
+                            {% endif %}">
+                <i class="far fa-money-bill-alt"></i>
+                <span>Payments</span>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'main_admin:view-reviews' %}" class="{% if active == 'reviews' %}
+                            active
+                            {% endif %}">
+                <i class="far fa-comment-dots"></i>
+                <span>Reviews</span>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'main_admin:edit-about-us' %}" class="{% if active == 'about_us' %}
+                            active
+                            {% endif %}">
+                <i class="far fa-address-card"></i>
+                <span>Manage About Us</span>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'main_admin:edit-details' detail_type=CONST.FAQ %}" class="{% if active == 'faq' %}
+                            active
+                            {% endif %}">
+                <i class="far fa-question-circle"></i>
+                <span>Manage Faq</span>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'main_admin:edit-details' detail_type=CONST.RETURN_POLICY %}" class="{% if active == 'return_policy' %}
+                            active
+                            {% endif %}">
+                <i class="fas fa-vote-yea"></i>
+                <span>Manage Return Policy</span>
+              </a>
             </li>
           </ul>
         </div>

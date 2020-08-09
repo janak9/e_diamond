@@ -1,5 +1,6 @@
 from django.urls import path, re_path, include
 from main_admin import views
+from base import const
 
 app_name = "main_admin"
 
@@ -35,4 +36,13 @@ urlpatterns = [
         path('view', views.view_product, name="view-product"),
         path('delete/<int:pk>', views.del_product, name="del-product"),
     ])),
+
+    path("post_requirements/", views.view_post_requirements, name="view-post-requirements"),
+    path("contact_us/", views.view_contact_us, name="view-contact-us"),
+    path("contact/<int:pk>/<int:contact_type>", views.del_contact, name="del-contact"),
+    path("orders/", views.view_orders, name="view-orders"),
+    path("payments/", views.view_payments, name="view-payments"),
+    path("reviews/", views.view_reviews, name="view-reviews"),
+    path("about_us/", views.edit_about_us, name="edit-about-us"),
+    path("details/<int:detail_type>", views.edit_details, name="edit-details"),
 ]

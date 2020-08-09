@@ -5,36 +5,31 @@
     <div class="table-agile-info">
         <div class="panel panel-default">
             <div class="panel-heading">
-                View Sub Category
+                View Post Requirements
             </div>
             <div class="table-responsive">
                 <table class="table table-striped b-t b-light">
                     <thead>
                         <tr>
-                            <th>Main Category</th>
-                            <th>Category</th>
                             <th>Name</th>
-                            <th>Image</th>
-                            <th>Status</th>
-                            <th>Action</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Country</th>
+                            <th>subject</th>
+                            <th>message</th>
+                            <th>status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for sub_category in sub_categories %}
+                        {% for contact in contacts %}
                             <tr>
-                                <td>{{ sub_category.main_category.name }}</td>
-                                <td>{{ sub_category.category.name }}</td>
-                                <td>{{ sub_category.name }}</td>
-                                <td><img src="{% if sub_category.image.src %}{{ sub_category.image.src.url }}{% endif %}" class="img-fluid table_img" /></td>
-                                <td>{{ sub_category.get_status_display }}</td>
-                                <td>
-                                    <a href="{% url 'main_admin:edit-sub-category' pk=sub_category.pk %}" style="margin-right:10px;">
-                                        <i class="fa fa-edit text-success ml-2"></i>
-                                    </a>
-                                    <a href="{% url 'main_admin:del-sub-category' pk=sub_category.pk %}">
-                                        <i class="fa fa-times text-danger"></i>
-                                    </a>
-                                </td>
+                                <td>{{ contact.name }}</td>
+                                <td>{{ contact.email }}</td>
+                                <td>{{ contact.phone }}</td>
+                                <td>{{ contact.country }}</td>
+                                <td>{{ contact.subject }}</td>
+                                <td>{{ contact.message }}</td>
+                                <td>{{ contact.get_status_display }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -46,22 +41,22 @@
                         {% comment %} <small class="text-muted inline m-t-sm m-b-sm">showing 20-30 of 50 items</small> {% endcomment %}
                     </div>
                     <div class="col-sm-7 text-right text-center-xs">
-                        {% if sub_categories.has_other_pages %}
+                        {% if contacts.has_other_pages %}
                             <ul class="pagination pagination-sm m-t-none m-b-none">
-                            {% if sub_categories.has_previous %}
-                                <li><a href="?page={{ sub_categories.previous_page_number }}"><i class="fa fa-chevron-left"></i></a></li>
+                            {% if contacts.has_previous %}
+                                <li><a href="?page={{ contacts.previous_page_number }}"><i class="fa fa-chevron-left"></i></a></li>
                             {% else %}
                                 <li class="disabled"><a href="#"><i class="fa fa-chevron-left"></i></a></li>
                             {% endif %}
-                            {% for i in sub_categories.paginator.page_range %}
-                                {% if sub_categories.number == i %}
+                            {% for i in contacts.paginator.page_range %}
+                                {% if contacts.number == i %}
                                     <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
                                 {% else %}
                                     <li><a href="?page={{ i }}">{{ i }}</a></li>
                                 {% endif %}
                             {% endfor %}
-                            {% if sub_categories.has_next %}
-                                <li><a href="?page={{ sub_categories.next_page_number }}"><i class="fa fa-chevron-right"></i></a></li>
+                            {% if contacts.has_next %}
+                                <li><a href="?page={{ contacts.next_page_number }}"><i class="fa fa-chevron-right"></i></a></li>
                             {% else %}
                                 <li class="disabled"><a href="#"><i class="fa fa-chevron-right"></i></a></li>
                             {% endif %}

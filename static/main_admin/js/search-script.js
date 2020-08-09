@@ -58,51 +58,6 @@ function find_icons(evt)
   return false;
 }
 
-// Render Details when Icon is selected
-function render_details(data)
-{
-  if(typeof window._gaq !== 'undefined')
-  {
-    _gaq.push(['_trackEvent', 'Icons', 'Clicked', data.id]);
-  }
-
-  // Did the user click the icon that was already active
-  if($("ul.icons li[data-id='"+data.id+"']").hasClass('active'))
-  {
-    $('.details').slideUp('fast');
-    $('.list').removeClass('detailed');
-    $('ul.icons li').removeClass('active');
-  }
-  // Activate the selected icon
-  else
-  {
-    $('ul.icons li').removeClass('active');
-
-    $("ul.icons li[data-id='"+data.id+"']").addClass('active');
-
-    $('.details .name').html('<h1 id="iconid" onclick="selectText(\'iconid\');">fa-'+data.id+'<\/h1>');
-    $('.details .info').html('<b>Unicode:</b> <pre><code class="xml" id="unicode" onclick="selectText(\'unicode\');">&amp;#x'+data.unicode+';<\/code><\/pre>&nbsp;&middot;&nbsp; <b>Created:</b> v'+data.release+' &nbsp;&middot;&nbsp; <b>Category:</b> '+data.categories+'');
-    $('.details .copy').html('<pre><code class="xml" id="iconhtml" onclick="selectText(\'iconhtml\');">&lt;i class="fab fa-'+data.id+'">&lt;\/i><\/code><\/pre>');
-
-    $('.details .demo i').remove();
-    $('.details .demo').append('<i class="sample fab fa-'+data.id+' size-4"><\/i>');
-    $('.details .demo').append('<i class="sample fab fa-'+data.id+' size-3"><\/i>');
-    $('.details .demo').append('<i class="sample fab fa-'+data.id+' size-2"><\/i>');
-    $('.details .demo').append('<i class="sample fab fa-'+data.id+' size-1"><\/i>');
-
-    $('.details').slideDown('fast');
-
-    $('.size-4').fadeIn('fast');
-    setTimeout(function(){ $('.size-3').fadeIn('fast'); }, 100);
-    setTimeout(function(){ $('.size-2').fadeIn('fast'); }, 200);
-    setTimeout(function(){ $('.size-1').fadeIn('fast'); }, 300);
-
-    $('.list').addClass('detailed');
-
-    $('pre code').each(function(i, e) { hljs.highlightBlock(e); });
-  }
-}
-
 // Listen for Key Presses on Body
 function navigate(evt)
 {
@@ -286,8 +241,8 @@ $(function() {
 			}
 		}
 
-		var html = '<li data-order="'+index+'" data-id="'+value.id+'" data-aliases="'+aliases+'" data-other="'+other_aliases+'" data-unicode="'+value.unicode+'" data-categories="'+icon_categories+'" data-release="'+value.created+'">' +
-			'<i class="fab fa-'+value.id+'"></i>' +
+		var html = '<li data-order="'+index+'" data-member="'+value.member+'" data-id="'+value.id+'" data-aliases="'+aliases+'" data-other="'+other_aliases+'" data-unicode="'+value.unicode+'" data-categories="'+icon_categories+'" data-release="'+value.created+'">' +
+			'<i class="'+value.member+' fa-'+value.id+'"></i>' +
 			'<span>'+value.name+'<\/span>' +
 			'<\/li>';
 		$('.icons').append(html);
@@ -325,7 +280,8 @@ $(function() {
 			{
 				return {
 					label: icon.name,
-					value: icon.id
+					value: icon.id,
+					member: icon.member
 				};
 			});
 
@@ -345,11 +301,22 @@ $(function() {
 		}
 	}).autocomplete( 'instance' )._renderItem = function( ul, item ) {
 		return $( '<li>' )
-			.append( "<a><i class='fab fa-fw fa-" + item.value + "'></i>&nbsp; " + item.label + "</a>" )
+			.append( "<a><i class='"+item.member+" fa-fw fa-" + item.value + "'></i>&nbsp; " + item.label + "</a>" )
 			.appendTo( ul );
 	};
 
 	$('ul.icons li').click(function(){
-		render_details($(this).data());
+    const row_id = $("#social_link_id").val();
+    if (row_id) {
+      const data = $(this).data();
+      const icon = `${data.member} fa-${data.id}`;
+      console.log('icon: ', icon);
+      console.log($('#'+row_id).find('i'));
+      console.log($('#'+row_id).find('input[type=hidden]'));
+      $('#'+row_id).find('i')[0].className = icon;
+      $('#'+row_id).find('input[type=hidden]')[0].value = icon;
+    } else {
+      alert('please select link no');
+    }
 	});
 });

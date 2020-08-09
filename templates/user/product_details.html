@@ -55,7 +55,7 @@
                     <h2>{{ product.title }}</h2>
                     <h5><i class="fas fa-rupee-sign"></i> {{ product.price }}</h5>
                     <p class="available-stock"><span> More than {{ product.available_qty }} available / <a href="#">{{ product.qty|sub:product.available_qty }} sold </a></span></p>
-                    <label style="float:left; margin-right:15px;">Quantity : </label> <input id="qty" name="qty" class="form-control" value="1" min="1" max="{{ product.available_qty }}" type="number" style="max-width:150px;"><br>
+                    <label style="float:left; margin-right:15px;"><strong>Quantity :</strong> </label> <input id="qty" name="qty" class="form-control" value="1" min="1" max="{{ product.available_qty }}" type="number" style="max-width:150px;"><br>
                     <div class="price-box-bar">
                         <div class="cart-and-bay-btn">
                             <a class="btn hvr-hover" data-fancybox-close="" href="{% url 'user:checkout' %}" onclick="add_cart('{{ product.pk }}', qty.value, event)">Buy Now</a>
@@ -74,7 +74,8 @@
                             {% endfor %}
                         </div>
                     </div>
-                    <h4>Description:</h4>
+                    <br><br><br>
+                    <h4><strong>Description:</strong></h4>
                     <div id="description"></div>
                     <br><br>
                     <h4>Additional Information:</h4>

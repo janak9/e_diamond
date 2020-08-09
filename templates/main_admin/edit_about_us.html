@@ -1,0 +1,168 @@
+{% extends 'main_admin/base.html' %}
+{% block content %}
+{% load static %}
+{% comment %} <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css"> {% endcomment %}
+<link type="text/css" rel="stylesheet" href="{% static 'main_admin/css/search-style.css' %}"/>
+<section class="wrapper">
+	<div class="form-w3layouts">
+        <div class="row">
+            <div class="col-lg-12">
+                <section class="panel">
+                    <header class="panel-heading">
+                        About Us
+                    </header>
+                    <div class="panel-body">
+                        {% if msg %}
+                            <div class="alert alert-warning radius-both">
+                                <p style="color:red;">{{ msg }}</p>
+                            </div>
+                        {% endif %}
+                        <form class="form-horizontal bucket-form" method="post" action="" enctype="multipart/form-data">
+                        {% csrf_token %}
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Title</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" name="title" id="title" value="{{ about_us.title }}" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Main Intro</label>
+                                <div class="col-sm-6">
+                                      <textarea class="form-control" name="main_intro" id="main_intro" rows=5>{{ about_us.main_intro }}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Description</label>
+                                <div class="col-sm-12">
+                                    <textarea class="form-control" name="description" id="description">{{ about_us.description }}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">address</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" name="address" id="address" value="{{ about_us.address }}" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">phone</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" name="phone" id="phone" value="{{ about_us.phone }}" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">email</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" name="email" id="email" value="{{ about_us.email }}" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Logo</label>
+                                <div class="col-sm-6">
+                                    {{ about_form.logo }}
+                                    <img id="logo_preview" src="{% if about_us.logo %}{{ about_us.logo.url }}{% endif %}" height="150" width="150"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <section class="panel">
+                                        <header class="panel-heading">
+                                            Social Links
+                                            <span class="tools pull-right">
+                                                <a class="fa fa-chevron-down" href="javascript:;"></a>
+                                            </span>
+                                        </header>
+                                        <div class="panel-body social_links">
+                                            <div id="social_list">
+                                            {% if about_us.social_links.all|length > 0 %}
+                                                {% for social_link in about_us.social_links.all %}
+                                                <div class="row" id="social_{{ forloop.counter0 }}">
+                                                    <div class="col-md-6 form-group">
+                                                        <div class="input-group">
+                                                            <label class="col-sm-1 control-label">{{ forloop.counter }}</label>
+                                                            <span class="input-group-addon btn-white"><i class="{{ social_link.social_icon }}"></i></span>
+                                                            <input type="hidden" name="social_icon_{{ social_link.pk }}" value="{{ social_link.social_icon }}">
+                                                            <input type="text" class="form-control" name="social_link_{{ social_link.pk }}" placeholder="Enter Link" value='{{ social_link.link }}' required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-2 form-group remove">
+                                                        <div class="btn btn-danger" onclick="remove_more_social('social_{{ forloop.counter0 }}', 'social_opt_{{ forloop.counter0 }}')"><i class='fa fa-times'></i></div>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                            {% else %}
+                                                <div class="row" id="social_0">
+                                                    <div class="col-md-6 form-group">
+                                                        <div class="input-group">
+                                                            <label class="col-sm-1 control-label">1</label>
+                                                            <span class="input-group-addon btn-white"><i class="fas fa-external-link-alt"></i></span>
+                                                            <input type="hidden" name="new_social_icon_0" value="fas fa-external-link-alt">
+                                                            <input type="text" class="form-control" name="new_social_link_0" placeholder="Enter Link" value='' required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-2 form-group remove">
+                                                        <div class="btn btn-danger" onclick="remove_more_social('social_0', 'social_opt_0')"><i class='fa fa-times'></i></div>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                            </div>
+                                            <div class="btn btn-info" id="more_social" onclick="get_more_social(event)" data-cnt="{{ about_us.social_links.all|length|default:'1' }}">Add More</i></div>
+                                            <div class="row">
+                                                <div class="col-md-2 form-group" style="margin-top:10px;" >
+                                                    <select class="form-control" name="social_link_id" id="social_link_id">
+                                                        <option value="" readonly>Select Link No.</option>
+                                                        {% if about_us.social_links.all|length > 0 %}
+                                                        {% for social_link in about_us.social_links.all %}
+                                                            <option id="social_opt_{{ forloop.counter0 }}" value="social_{{ forloop.counter0 }}" >{{ forloop.counter }}</option>
+                                                        {% endfor %}
+                                                        {% else %}
+                                                            <option id="social_opt_0" value="social_0" >1</option>
+                                                        {% endif %}
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-10 form-group" style="margin-top:10px;" >
+                                                    <input type="text" class="form-control" id="search" name="search" placeholder="Enter icon" value="" autocomplete="off" autofocus>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                            <div class="list" style="max-height: 250px;overflow-y: auto;">
+                                                <ul class="icons"></ul>
+                                                <div class="clearfix"></div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </section>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Status</label>
+                                <div class="col-sm-6">
+                                    <select class="form-control m-bot15" name="status" id="status">
+                                        <option value="{{ CONST.STATUS_CHOICES.0.0 }}" selected>{{ CONST.STATUS_CHOICES.0.1 }}</option>
+                                        <option value="{{ CONST.STATUS_CHOICES.1.0 }}" 
+                                        {% if about_us.status == CONST.STATUS_CHOICES.1.0 %}
+                                            selected
+                                        {% endif %}
+                                            >{{ CONST.STATUS_CHOICES.1.1 }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"></label>
+                                <div class="col-sm-6">
+                                    <button type="submit" class="btn btn-info">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</section>
+<script type="text/javascript" src="{% static 'main_admin/js/icons.js' %}"></script>
+<script type="text/javascript" src="{% static 'main_admin/js/aliases.js' %}"></script>
+<script type="text/javascript" src="{% static 'main_admin/js/search-script.js' %}"></script>
+<script>
+    CKEDITOR.replace('description');
+</script>
+{% endblock content %}

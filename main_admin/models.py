@@ -29,12 +29,21 @@ class Image(models.Model):
             pass
         super(Image, self).save(*args, **kwargs)
 
+    def delete(self, *args, **kwargs):
+        try:
+            this = Image.objects.get(id=self.id)
+            if this.src not in ['product/default-product.jpg', 'logo/share-default.png']:
+                this.src.delete(save=False)
+        except:
+            pass
+        super(Image, self).save(*args, **kwargs)
+
 
 class SocialLink(models.Model):
     class Meta:
         db_table = 'soical_link'
 
-    social_icon = models.CharField(_('social icon'), max_length=50, blank=False, null=False, default='fa fa-external-link')
+    social_icon = models.CharField(_('social icon'), max_length=50, blank=False, null=False, default='fas fa-external-link-alt')
     link = models.TextField(_('social link'), blank=False, null=False)
 
     def __str__(self):
@@ -69,7 +78,7 @@ class AboutUs(models.Model):
     address = models.TextField(_('address'), blank=True, null=True)
     phone = models.CharField(_('phone'), max_length=18, blank=True, null=True, validators=[MyValidation.PHONE_NO])
     email = models.CharField(_('email'), max_length=50, blank=False, null=False)
-    logo = models.ImageField(_('logo'), help_text=_('social media logo'), upload_to=get_logo_path, blank=False, null=False)
+    logo = models.ImageField(_('logo'), upload_to=get_logo_path, blank=False, null=True)
     social_links = models.ManyToManyField(SocialLink, related_name='about_us', blank=True)
 
 
