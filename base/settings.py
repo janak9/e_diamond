@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY', 'crd^f%=!vfz6tr4z2-&qb=e%0etr(nn$pi-fcs$m_8shh
 DEBUG = config('DEBUG')
 
 SITE_URL = config('SITE_URL')
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition

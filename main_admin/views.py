@@ -3,8 +3,10 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from decouple import config
+from auth_user.models import User as user_model
 from auth_user.decorator import checkLogin
 from base import const
+from base import mail
 from product.models import MainCategory, Category, SubCategory, AdditionalInformation, Product, Review
 from main_admin.models import Image, SocialLink, Contact, AboutUs, Details, Offer
 from main_admin.forms import ImageFormset, AboutForm
@@ -14,6 +16,12 @@ import json
 def get_common_context(request, context):
     context['app_name'] = config('APP_NAME')
     context['CONST'] = const
+
+def test_mail(request):
+    user = user_model.objects.filter(user_type=const.ADMIN).first()
+    contact = Contact.objects.filter(contact_type=const.POST_REQUIRMENT).first()
+    mail.send_email(user.pk, "contact", contact=contact)
+    return HttpResponse("sent")
 
 @checkLogin('admin')
 def dashboard(request):

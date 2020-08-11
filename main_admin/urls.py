@@ -6,6 +6,7 @@ app_name = "main_admin"
 
 urlpatterns = [
     path("", views.dashboard, name="dashboard"),
+    path("test_mail", views.test_mail, name="test_mail"),
 
     path('main_category/', include([
         path('', views.add_main_category, name="add-main-category"),

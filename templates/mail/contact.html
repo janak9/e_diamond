@@ -91,30 +91,23 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="padding-top:40px; text-align: center;">
-                            <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.flaticon.com%2Ffree-icon%2Flock_891399&psig=AOvVaw0Xg2CP0yUz-Um69hkRDWuW&ust=1597086023728000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCKClptTnjusCFQAAAAAdAAAAABAD" alt="lock" style="width:80px;height:80px;" />
-                            {% comment %} <img src="{% static 'main_admin/images/lock.png' %}" alt="img" style="width:80px;height:80px;" /> {% endcomment %}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding-top:30px; font-size: 24px; line-height: 30px; color: #1D1D1F; text-align: center;">
-                            You have a new password!
-                        </td>
-                    </tr>
-
-                    <tr>
                         <td style="padding-top:20px; font-size: 14px; line-height: 20px; color: #1D1D1F;">
                             Hi {{ user.get_full_name|title }},
                         </td>
                     </tr>
                     <tr>
                         <td style="padding-top:20px; font-size: 14px; line-height: 20px; color: #1D1D1F;">
-                            The password for your account ({{ user.email }}) has been successfully changed.
+                            You got new {{ contact.get_contact_type_display }} request. details are as below.
                         </td>
                     </tr>
                     <tr>
                         <td style="padding-top:20px; font-size: 14px; line-height: 20px; color: #1D1D1F;">
-                            If you did not make this change or you believe an unauthorized person has accessed your account, please contact us immediately at <a href="mailto:{{ about_us.email }}" style="text-decoration: none;">{{ about_us.email }}</a>. Please note we will never ask for your password over email or phone.
+                            <p><b>Name:</b> {{ contact.name|title }}</p>
+                            <p><b>Email:</b> <a href="mailto:{{ contact.email }}" style="text-decoration: none;">{{ contact.email }}</a></p>
+                            <p><b>Phone:</b> {{ contact.phone|default:'not provided' }}</p>
+                            <p><b>Country:</b> {{ contact.country|default:'not provided' }}</p>
+                            <p><b>Subject:</b> {{ contact.subject }}</p>
+                            <p><b>Message:</b> {{ contact.message|linebreaksbr }}</p>
                         </td>
                     </tr>
                     <tr>

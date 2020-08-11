@@ -73,9 +73,7 @@
             }
         }
     </style>
-
 </head>
-
 <body style="margin: 0;padding: 0px;background-color: #F2F2F2;">
     <table class="main_area" border="0" cellspacing="0" cellpadding="0" align="center" width="600" style="width: 600px; font-family: Helvetica, sans-serif;margin: 0 auto;">
 
@@ -85,50 +83,40 @@
                     <tr>
                         <td style="padding-top:40px; padding-bottom: 40px; text-align: center; border-bottom: 1px dashed #B5B5B5;">
                             <a href="{{ base_url }}">
-                                <img src="{{ about_us.logo.url }}" alt="{{ about_us.title }}" style="width: 101px;height: 30px;" />
+                                <img src="https://html.design/demo/thewayshop/images/logo.png" alt="{{ about_us.title }}" style="width:150px; height: 60px;" />
+                                {% comment %} <img src="{{ about_us.logo.url }}" alt="{{ about_us.title }}" style="width:150px; height: 60px;" /> {% endcomment %}
                             </a>
                         </td>
                     </tr>
                     <tr>
-                        <td style="padding-top:40px; text-align: center;">
-                            <img src="https://image.flaticon.com/icons/png/512/891/891399.png" alt="lock" style="width:80px;height:80px;" />
-                            {% comment %} <img src="{% static 'main_admin/images/lock.png' %}" alt="img" style="width:80px;height:80px;" /> {% endcomment %}
+                        <td style="padding-top:20px; font-size: 14px; line-height: 20px; color: #1D1D1F;">
+                            Hi {{ user.get_full_name|title }}, it’s great to meet you.
                         </td>
                     </tr>
                     <tr>
                         <td style="padding-top:20px; font-size: 14px; line-height: 20px; color: #1D1D1F;">
-                            Hi {{ user.get_full_name|title }},
+													We’d like to make sure we got your email address ({{ user.email }}) right.
                         </td>
                     </tr>
                     <tr>
-                        <td style="padding-top:20px; font-size: 14px; line-height: 20px; color: #1D1D1F;">
-                            We received a request to reset your password. Alternatively, you can directly change your password.
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding-top: 20px;">
-                            <table align="center" border="0" cellpadding="0" cellspacing="0" style="width: 163px; height: 35px; margin: 0 auto;">
-                                <tbody><tr>
-                                    <td bgcolor="#FFDC00" style="width: 163px; height: 35px; background-color: #d33b33; border-radius: 10px; text-align: center; font-size: 10px; color: #000;">
-                                        <a href="{{ base_url }}{% url 'auth:verify-forgot-password' uid=uid token=token %}" style="font-size: 10px; color: #000; text-decoration: none; display: block; line-height: 35px; font-weight: 600;">
-                                            <span style="font-size: 14px; color: #fff; text-decoration: none; display: block; line-height: 35px; font-weight: 600;">
-                                                Reset Password
-                                            </span>
-                                        </a>
-                                    </td>
-                                </tr>
+                        <td style="padding-top:20px;">
+                            <table align="center" border="0" cellpadding="0" cellspacing="0" style="width: 190px; height: 35px; margin: 0 auto;">
+														<tbody><tr>
+															<td bgcolor="#FFDC00" style="width: 163px; height: 35px; background-color: #d33b33; border-radius: 10px; text-align: center; font-size: 10px; color: #000;">
+													            <a href="{{ base_url }}{% url 'auth:verify-email' uid=uid token=token %}" style="font-size: 10px; color: #000; text-decoration: none; display: block; line-height: 35px; font-weight: 600;">
+																	<span style="font-size: 12px; color: #fff; text-decoration: none; display: block; line-height: 35px; font-weight: 600;">
+																		Yes, it’s me - let’s get started
+																	</span>
+																</a>
+															</td>
+														</tr>
 
-                            </tbody></table>
+													</tbody></table>
                         </td>
                     </tr>
                     <tr>
                         <td style="padding-top:20px; font-size: 14px; line-height: 20px; color: #1D1D1F;">
-                            If you did not make this change or you believe an unauthorized person has accessed your account, please contact us immediately at <a href="mailto:{{ about_us.email }}" style="text-decoration: none;">{{ about_us.email }}</a>. Please note we will never ask for your password over email or phone.
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding-top:20px; font-size: 14px; line-height: 20px; color: #1D1D1F;">
-                            For any questions visit our <a href="{{ base_url }}{% url 'user:contact-us' %}" style="text-decoration: none;">Help Center</a>.
+														For any questions visit our <a href="{{ base_url }}{% url 'user:contact-us' %}" style="text-decoration: none;">Help Center</a>.
                         </td>
                     </tr>
                     <tr>
@@ -149,7 +137,6 @@
                 </table>
             </td>
         </tr>
-
         <tr>
 			<td style="padding-left: 15px; padding-right: 15px;">
 				<table align="center" border="0" cellpadding="0" cellspacing="0" width="555" style="width: 600px;margin: 0 auto;" class="area_content">
@@ -163,6 +150,5 @@
 			</td>
 		</tr>
     </table>
-    <!-- End -->
 </body>
 </html>

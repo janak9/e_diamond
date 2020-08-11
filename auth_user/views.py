@@ -136,7 +136,7 @@ def forgot_pwd(request):
     if request.method == 'POST':
         if user is not None:
             send_email(user.id, "forgot_password")
-            msg = "Activation mail is send to your mail please confirm your email."
+            msg = "Forgot Password Link is send to your email, please check you email."
 
         else:
             msg = "This Email Does Not exist"
@@ -152,7 +152,7 @@ def verify_forgot_password(request, uid, token):
     except get_user_model().DoesNotExist:
         msg = 'User does not exist'
     except DjangoUnicodeDecodeError:
-        msg = 'Link was expired. Please try again to resend Password Reset link.'
+        msg = 'Link was expired. Please try again by generating new link.'
 
     if(request.method == 'POST'):
         confirm_pwd = request.POST.get('confirm_password')
@@ -192,7 +192,7 @@ def change_password(request):
                     send_email(user.id, "change_password")
                     return redirect('auth:login')
                 else:
-                    context['msg'] = "New password and Confirm Password Must be Same!!!"
+                    context['msg'] = "New Password and Confirm Password Must be Same!!!"
         else:
             context['msg'] = "Current password is Wrong!!!"
     return render(request, "user/change_user_password.html", context)
