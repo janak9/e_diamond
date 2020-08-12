@@ -1,5 +1,7 @@
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render
+from django.http import HttpResponse
+from django.urls import reverse
 from base import const
 
 
@@ -7,7 +9,10 @@ def checkLogin(type):
     def func(function):
         def wrap(request, *args, **kwargs):
             if(not request.user.is_authenticated):
-                return redirect('auth:login')
+                response = HttpResponse(status=302)
+                response['Location'] = reverse('auth:login')
+                return response
+                # return redirect('auth:login')
 
             if((type == 'user') and (request.user.user_type != const.USER)):
                 # raise PermissionDenied

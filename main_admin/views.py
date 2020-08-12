@@ -20,7 +20,7 @@ def get_common_context(request, context):
 def test_mail(request):
     user = user_model.objects.filter(user_type=const.ADMIN).first()
     contact = Contact.objects.filter(contact_type=const.POST_REQUIRMENT).first()
-    mail.send_email(user.pk, "contact", contact=contact)
+    mail.send_email(user, "contact", contact=contact)
     return HttpResponse("sent")
 
 @checkLogin('admin')

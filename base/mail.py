@@ -12,9 +12,9 @@ import logging
 
 admins_logger = logging.getLogger('admins')
 
-def send_email(user_pk, email_type='activation', *args, **kwargs):
+def send_email(user, email_type='activation', *args, **kwargs):
     # this start thread there for user don't need to wait until mail send
-    t = Thread(target=email_thread, args=(user_pk, email_type, *args), kwargs=kwargs)
+    t = Thread(target=email_thread, args=(user, email_type, *args), kwargs=kwargs)
     t.start()
 
 def send_email_with_attachment(file: list):
@@ -28,11 +28,10 @@ def send_email_with_attachment(file: list):
               "text": "Requested Sales Report",
               "html": "<html>Requested Sales Report</html>"})
 
-def email_thread(user_pk, email_type, *args, **kwargs):
+def email_thread(user, email_type, *args, **kwargs):
     try:
         about_us = AboutUs.objects.first()
-        user = get_user_model().objects.get(pk=user_pk)
-
+        emails = []
         data = {
             'user': user,
             'base_url': settings.SITE_URL,
@@ -44,18 +43,22 @@ def email_thread(user_pk, email_type, *args, **kwargs):
             subject = 'Forgot Password'
             data['token'] = token_generator.make_token(user)
             data['uid'] = force_text(urlsafe_base64_encode(force_bytes(user.pk)))
+            emails.append(user.email)
         elif email_type == 'contact':
             email_template = get_template('mail/contact.html')
             subject = 'Request for ' + kwargs['contact'].get_contact_type_display()
             data['contact'] = kwargs['contact']
+            for u in user: emails.append(u.email)
         elif email_type == 'change_password':
             email_template = get_template('mail/change_password.html')
             subject = 'Change Password'
+            emails.append(user.email)
         else:
             email_template = get_template('mail/verification.html')
             subject = 'Activate Your Account'
             data['token'] = token_generator.make_token(user)
             data['uid'] = force_text(urlsafe_base64_encode(force_bytes(user.pk)))
+            emails.append(user.email)
 
         # if email_type == 'inform':
         #     email_template = get_template('mail/inform.html')
@@ -72,7 +75,7 @@ def email_thread(user_pk, email_type, *args, **kwargs):
         #     data['from_user'] = from_user
 
         msg = EmailMultiAlternatives(
-            subject, '', settings.EMAIL_FROM, [user.email])
+            subject, '', settings.EMAIL_FROM, emails)
         msg.attach_alternative(email_template.render(data), "text/html")
         msg.send()
     except Exception as e:

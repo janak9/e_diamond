@@ -9,6 +9,15 @@ $(document).ready(function () {
   host = window.location.origin;
 });
 
+function responseWrapper(response){
+  try {
+    response = JSON.parse(response);
+    return response;
+  } catch (e) {
+    top.location.href="/auth/login/";
+  }
+}
+
 function add_wishlist(product_id, event = undefined) {
   event && event.preventDefault();
   if (product_id > 0) {
@@ -21,7 +30,7 @@ function add_wishlist(product_id, event = undefined) {
         })
       },
       success: function (response) {
-        response = JSON.parse(response);
+        response = responseWrapper(response)
         console.log(response);
         alert(response.msg);
       },
@@ -67,7 +76,7 @@ function add_cart(product_id, qty = 1, event = undefined) {
         })
       },
       success: function (response) {
-        response = JSON.parse(response);
+        response = responseWrapper(response)
         console.log(response);
         if (response.status == "error")
           alert(response.msg);
@@ -93,7 +102,7 @@ function update_cart(product_id, qty = 1, event = undefined) {
         })
       },
       success: function (response) {
-        response = JSON.parse(response);
+        response = responseWrapper(response)
         console.log(response);
         console.log(response.cart_bill);
         if (response.status == "success"){
@@ -125,7 +134,7 @@ function remove_cart(product_id, event = undefined) {
         })
       },
       success: function (response) {
-        response = JSON.parse(response);
+        response = responseWrapper(response)
         console.log(response);
         alert(response.msg);
       },
@@ -154,7 +163,7 @@ function add_review(product_id, event = undefined) {
           })
         },
         success: function (response) {
-          response = JSON.parse(response);
+          response = responseWrapper(response)
           console.log(response);
           if (response.status != 'success') {
             alert(response.msg);
@@ -182,7 +191,7 @@ function add_compare(product_id, event = undefined) {
         })
       },
       success: function (response) {
-        response = JSON.parse(response);
+        response = responseWrapper(response)
         console.log(response);
         alert(response.msg);
       },

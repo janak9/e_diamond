@@ -3,9 +3,10 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
-from base import const
-from base.utils import Render
+from auth_user.models import User as user_model
 from auth_user.decorator import checkLogin
+from base import const, mail
+from base.utils import Render
 from product.models import MainCategory, Category, SubCategory, Product, Review
 from main_admin.models import Image, AboutUs, Offer, Contact, Details
 from user.models import Wishlist, Cart, Compare, Address, Order
@@ -57,8 +58,10 @@ def contact_us(request):
             data = request.POST.dict()
             tmp = ['csrfmiddlewaretoken']
             list(map(data.pop, tmp)) # remove extra fields
-            Contact.objects.create(**data)
-            context['msg'] = "Thank You! For reaching us, will you contact soon."
+            contact = Contact.objects.create(**data)
+            user = user_model.objects.filter(user_type=const.ADMIN)
+            mail.send_email(user, "contact", contact=contact)
+            context['msg'] = "Thank You! For reaching us, we will you contact soon."
     except Exception as err:
         traceback.print_exc()
         context['msg'] = "Oops, Something was wrong! Please try again."
@@ -76,8 +79,10 @@ def post_requirment(request):
             tmp = ['csrfmiddlewaretoken']
             list(map(data.pop, tmp)) # remove extra fields
             data['contact_type'] = const.POST_REQUIRMENT
-            Contact.objects.create(**data)
-            context['msg'] = "Thank You! For reaching us, will you contact soon."
+            contact = Contact.objects.create(**data)
+            user = user_model.objects.filter(user_type=const.ADMIN)
+            mail.send_email(user, "contact", contact=contact)
+            context['msg'] = "Thank You! For reaching us, we will you contact soon."
     except Exception as err:
         traceback.print_exc()
         context['msg'] = "Oops, Something was wrong! Please try again."

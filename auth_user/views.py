@@ -28,9 +28,9 @@ def manage_redirect(u_type):
 def resend_verification_token(request):
     detail = ''
     if(request.method == 'POST'):
-        user = user_model.objects.filter(email=request.POST.get('email'))
+        user = user_model.objects.filter(email=request.POST.get('email')).first()
         if(user.exists()):
-            send_email(user[0].pk)
+            send_email(user, 'activation')
             detail = "Link send to your mail check your mail"
         else:
             detail = 'User does not exist'
@@ -44,7 +44,7 @@ def signup(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            send_email(user.pk)
+            send_email(user, 'activation')
             msg = "Activation mail is send to your mail please confirm your email."
     else:
         form = SignUpForm()
@@ -105,7 +105,7 @@ def verify_account(request, uid, token):
         detail = "your account is activated successfully<br><a href='" + \
             config('SITE_URL') + reverse('auth:login') + "'>Click Here for Login</a>"
     else:
-        send_email(user.pk)
+        send_email(user, 'activation')
         detail = 'Link was expired. Please check your inbox again.'
 
     return HttpResponse(detail)
@@ -135,7 +135,7 @@ def forgot_pwd(request):
     user = user_model.objects.filter(email=email).first()
     if request.method == 'POST':
         if user is not None:
-            send_email(user.id, "forgot_password")
+            send_email(user, "forgot_password")
             msg = "Forgot Password Link is send to your email, please check you email."
 
         else:
@@ -168,7 +168,7 @@ def verify_forgot_password(request, uid, token):
     if check_token:
         return render(request, "user/reset_password.html", {'msg': msg})
     else:
-        send_email(user.pk, "forgot_password")
+        send_email(user, "forgot_password")
         msg = 'Link was expired. Please check your inbox again.'
 
     return HttpResponse(msg)
@@ -189,7 +189,7 @@ def change_password(request):
                 if request.POST.get('new_password') == request.POST.get('confirm_password'):
                     user.set_password(request.POST.get('new_password'))
                     user.save()
-                    send_email(user.id, "change_password")
+                    send_email(user, "change_password")
                     return redirect('auth:login')
                 else:
                     context['msg'] = "New Password and Confirm Password Must be Same!!!"
