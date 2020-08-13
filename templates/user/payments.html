@@ -32,6 +32,7 @@
                                     <th>Products</th>
                                     <th>Price</th>
                                     <th>Receipt id</th>
+                                    <th>Date/Time</th>
                                     <th>Payment Status</th>
                                     <th>Invoice</th>
                                 </tr>
@@ -57,6 +58,9 @@
                                     </td>
                                     <td class="price-pr">
                                         <p>{{ row.receipt }}</p>
+                                    </td>
+                                    <td class="price-pr">
+                                        <p>{{ row.timestamp }}</p>
                                     </td>
                                     <td class="price-pr">
                                         {% if row.get_status_display == 'Paid' %}

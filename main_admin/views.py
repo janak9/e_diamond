@@ -5,8 +5,8 @@ from django.http import HttpResponse
 from decouple import config
 from auth_user.models import User as user_model
 from auth_user.decorator import checkLogin
-from base import const
-from base import mail
+from base import const, mail
+from user.models import Order, Feedback
 from product.models import MainCategory, Category, SubCategory, AdditionalInformation, Product, Review
 from main_admin.models import Image, SocialLink, Contact, AboutUs, Details, Offer
 from main_admin.forms import ImageFormset, AboutForm
@@ -454,6 +454,26 @@ def view_contact_us(request):
     return render(request, 'main_admin/view_contacts.html', context)
 
 @checkLogin('admin')
+def edit_contact(request, pk, contact_type=const.CONTACT_US):
+    context = {}
+    context['active'] = 'contact_us'
+    get_common_context(request, context)
+    context['contact'] = Contact.objects.get(pk=pk)
+    if (request.method == 'POST'):
+        if 'status' in request.POST:
+            context['contact'].status = request.POST['status']
+            context['contact'].save()
+            if contact_type is const.CONTACT_US:
+                return redirect("main_admin:view-contact-us")
+            else:
+                return redirect("main_admin:view-post-requirements")
+        if 'reply' in request.POST:
+            mail.send_email(None, 'contact_reply', contact=context['contact'], reply=request.POST['reply'])
+            context['msg'] = 'mail sent to user\'s email ' + context['contact'].email
+    print(context['contact'].status)
+    return render(request, 'main_admin/edit_contact.html', context)
+
+@checkLogin('admin')
 def del_contact(request, pk, contact_type=const.CONTACT_US):
     contact = Contact.objects.get(pk=pk)
     contact.delete()
@@ -468,16 +488,17 @@ def view_orders(request):
     context['active'] = 'orders'
     get_common_context(request, context)
     
-    contact_list = Contact.objects.filter(contact_type=const.CONTACT_US).order_by('-timestamp')
+    order_list = Order.all_objects.all().order_by('-timestamp')
     page = request.GET.get('page', 1)
-    paginator = Paginator(contact_list, 5)
+    paginator = Paginator(order_list, 5)
     try:
-        contacts = paginator.page(page)
+        orders = paginator.page(page)
     except PageNotAnInteger:
-        contacts = paginator.page(1)
+        orders = paginator.page(1)
     except EmptyPage:
-        contacts = paginator.page(paginator.num_pages)
-    context['contacts'] = contacts
+        orders = paginator.page(paginator.num_pages)
+    context['orders'] = orders
+    print(orders.paginator.__dict__)
     return render(request, 'main_admin/view_orders.html', context)
 
 @checkLogin('admin')

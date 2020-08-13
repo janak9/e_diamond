@@ -49,6 +49,12 @@ def email_thread(user, email_type, *args, **kwargs):
             subject = 'Request for ' + kwargs['contact'].get_contact_type_display()
             data['contact'] = kwargs['contact']
             for u in user: emails.append(u.email)
+        elif email_type == 'contact_reply':
+            email_template = get_template('mail/contact_reply.html')
+            subject = 'Reply of ' + kwargs['contact'].get_contact_type_display()
+            data['contact'] = kwargs['contact']
+            data['reply'] = kwargs['reply']
+            emails.append(kwargs['contact'].email)
         elif email_type == 'change_password':
             email_template = get_template('mail/change_password.html')
             subject = 'Change Password'

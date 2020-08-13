@@ -1,35 +1,36 @@
 {% extends 'main_admin/base.html' %}
 {% block content %}
 {% load static %}
+{% load custom_tag %}
 <section class="wrapper">
     <div class="table-agile-info">
         <div class="panel panel-default">
             <div class="panel-heading">
-                View Post Requirements
+                View Orders
             </div>
             <div class="table-responsive">
                 <table class="table table-striped b-t b-light">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Country</th>
-                            <th>subject</th>
-                            <th>message</th>
-                            <th>status</th>
+                            <th>#</th>
+                            <th>Product</th>
+                            <th>User</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Time</th>
+                            <th>Payment Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for contact in contacts %}
+                        {% for order in orders %}
                             <tr>
-                                <td>{{ contact.name }}</td>
-                                <td>{{ contact.email }}</td>
-                                <td>{{ contact.phone }}</td>
-                                <td>{{ contact.country }}</td>
-                                <td>{{ contact.subject }}</td>
-                                <td>{{ contact.message }}</td>
-                                <td>{{ contact.get_status_display }}</td>
+                                <td>{% get_id orders.paginator.per_page orders.number forloop.counter %}</td>
+                                <td>{{ order.product.title }}</td>
+                                <td>{{ order.user.get_full_name }}</td>
+                                <td>{{ order.qty }}</td>
+                                <td>{{ order.price }}</td>
+                                <td>{{ order.timestamp }}</td>
+                                <td>{{ order.payment_order.first.get_status_display }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -41,22 +42,22 @@
                         {% comment %} <small class="text-muted inline m-t-sm m-b-sm">showing 20-30 of 50 items</small> {% endcomment %}
                     </div>
                     <div class="col-sm-7 text-right text-center-xs">
-                        {% if contacts.has_other_pages %}
+                        {% if orders.has_other_pages %}
                             <ul class="pagination pagination-sm m-t-none m-b-none">
-                            {% if contacts.has_previous %}
-                                <li><a href="?page={{ contacts.previous_page_number }}"><i class="fa fa-chevron-left"></i></a></li>
+                            {% if orders.has_previous %}
+                                <li><a href="?page={{ orders.previous_page_number }}"><i class="fa fa-chevron-left"></i></a></li>
                             {% else %}
                                 <li class="disabled"><a href="#"><i class="fa fa-chevron-left"></i></a></li>
                             {% endif %}
-                            {% for i in contacts.paginator.page_range %}
-                                {% if contacts.number == i %}
+                            {% for i in orders.paginator.page_range %}
+                                {% if orders.number == i %}
                                     <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
                                 {% else %}
                                     <li><a href="?page={{ i }}">{{ i }}</a></li>
                                 {% endif %}
                             {% endfor %}
-                            {% if contacts.has_next %}
-                                <li><a href="?page={{ contacts.next_page_number }}"><i class="fa fa-chevron-right"></i></a></li>
+                            {% if orders.has_next %}
+                                <li><a href="?page={{ orders.next_page_number }}"><i class="fa fa-chevron-right"></i></a></li>
                             {% else %}
                                 <li class="disabled"><a href="#"><i class="fa fa-chevron-right"></i></a></li>
                             {% endif %}

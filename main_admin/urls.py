@@ -40,6 +40,7 @@ urlpatterns = [
 
     path("post_requirements/", views.view_post_requirements, name="view-post-requirements"),
     path("contact_us/", views.view_contact_us, name="view-contact-us"),
+    path("edit_contact/<int:pk>/<int:contact_type>", views.edit_contact, name="edit-contact"),
     path("contact/<int:pk>/<int:contact_type>", views.del_contact, name="del-contact"),
     path("orders/", views.view_orders, name="view-orders"),
     path("payments/", views.view_payments, name="view-payments"),

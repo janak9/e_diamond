@@ -73,7 +73,7 @@ class Order(models.Model):
     user = models.ForeignKey(get_user_model(), related_name="order", on_delete=models.CASCADE, blank=False, null=False)
     product = models.ForeignKey(Product, related_name="order", on_delete=models.DO_NOTHING, blank=False, null=False)
     qty = models.FloatField(_('quantity'), blank=False, null=False)
-    price = models.FloatField(_('price'), blank=False, null=False)
+    price = models.FloatField(_('price'), help_text='price per quantity', blank=False, null=False)
     timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
     status = models.PositiveSmallIntegerField(choices=const.STATUS_CHOICES, default=const.ACTIVE)
 

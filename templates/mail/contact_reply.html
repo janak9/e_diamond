@@ -1,0 +1,152 @@
+{% load static %}
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <style type="text/css">
+        ::-moz-selection {
+            background: #ffdc00;
+        }
+
+        ::selection {
+            background: #ffdc00;
+        }
+
+        body {
+            margin: 0;
+            padding: 0px;
+            background-color: #F2F2F2;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p {
+            margin: 0;
+            padding: 0;
+            line-height: 100%;
+            font-weight: normal;
+        }
+
+        img {
+            display: inline-block;
+            max-width: 100%;
+        }
+
+        table td {
+            box-sizing: border-box;
+        }
+        @media only screen and (min-width: 50px) and (max-width: 560px) {
+            .main_area {
+                width: 100%;
+                width: 100% !important;
+            }
+
+            .area_content {
+                width: 100%;
+                width: 100% !important;
+            }
+        }
+
+        @media only screen and (min-width: 50px) and (max-width: 520px) {
+            .main_body {
+                width: 100%;
+                width: 100% !important;
+            }
+        }
+
+        @media only screen and (min-width: 50px) and (max-width: 490px) {
+            .area_2 {
+                width: 100%;
+                width: 100% !important;
+            }
+        }
+
+        @media only screen and (min-width: 50px) and (max-width: 430px) {
+            .area_1 {
+                width: 100%;
+                width: 100% !important;
+            }
+        }
+    </style>
+
+</head>
+
+<body style="margin: 0;padding: 0px;background-color: #F2F2F2;">
+    <table class="main_area" border="0" cellspacing="0" cellpadding="0" align="center" width="600" style="width: 600px; font-family: Helvetica, sans-serif;margin: 0 auto;">
+
+        <tr>
+            <td bgcolor="#fff" style="background-color:#fff; padding-left:15px; padding-right:15px; padding-bottom:40px;">
+                <table class="main_body" border="0" cellspacing="0" cellpadding="0" align="center" width="510" style="width: 510px; margin: 0 auto;">
+                    <tr>
+                        <td style="padding-top:40px; padding-bottom: 40px; text-align: center; border-bottom: 1px dashed #B5B5B5;">
+                            <a href="{{ base_url }}">
+                                <img src="https://html.design/demo/thewayshop/images/logo.png" alt="{{ about_us.title }}" style="width:150px; height: 60px;" />
+                                {% comment %} <img src="{{ about_us.logo.url }}" alt="{{ about_us.title }}" style="width:150px; height: 60px;" /> {% endcomment %}
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-top:20px; font-size: 14px; line-height: 20px; color: #1D1D1F;">
+                            Hi {{ contact.name|title }},
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-top:20px; font-size: 14px; line-height: 20px; color: #1D1D1F;">
+                            {{ reply|safe }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-top:20px; font-size: 14px; line-height: 20px; color: #1D1D1F;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="background: #ccc;border-left: 2px solid #333;padding-left: 15px;margin-top:20px; font-size: 14px; line-height: 20px; color: #1D1D1F;">
+                            <b>Your message:</b><br>
+                            {{ contact.message }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-top:20px; font-size: 14px; line-height: 20px; color: #1D1D1F;">
+                            For any questions visit our <a href="{{ base_url }}{% url 'user:contact-us' %}" style="text-decoration: none;">Help Center</a>.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-top:20px; font-size: 14px; line-height: 20px; color: #1D1D1F;">
+                            Thanks,
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-size: 14px; line-height: 20px; color: #1D1D1F;">
+                            {{ about_us.title }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-size: 14px; line-height: 20px; color: #1D1D1F;">
+                            <a href="{{ base_url }}" style="text-decoration: none;">{{ base_url }}</a>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <tr>
+			<td style="padding-left: 15px; padding-right: 15px;">
+				<table align="center" border="0" cellpadding="0" cellspacing="0" width="555" style="width: 600px;margin: 0 auto;" class="area_content">
+					<tbody>
+                    <tr>
+                        <td style="padding: 15px 0px; text-align: center; font-size: 12px; color: #686F7B; line-height: 14px;">
+                            ©Copyright {% now 'Y' %} {{ about_us.title }}
+                        </td>
+					</tr>
+				</tbody></table>
+			</td>
+		</tr>
+    </table>
+    <!-- End -->
+</body>
+</html>

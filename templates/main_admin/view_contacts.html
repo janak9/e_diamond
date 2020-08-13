@@ -32,7 +32,7 @@
                                 <td>{{ contact.message }}</td>
                                 <td>{{ contact.get_status_display }}</td>
                                 <td>
-                                    <a href="#" style="margin-right:10px;">
+                                    <a href="{% url 'main_admin:edit-contact' pk=contact.pk contact_type=contact_type %}" style="margin-right:10px;">
                                         <i class="fa fa-edit text-success ml-2"></i>
                                     </a>
                                     <a href="{% url 'main_admin:del-contact' pk=contact.pk contact_type=contact_type %}">

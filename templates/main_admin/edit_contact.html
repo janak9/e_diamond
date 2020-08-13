@@ -1,0 +1,108 @@
+{% extends 'main_admin/base.html' %}
+{% block content %}
+{% load static %}
+{% comment %} <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css"> {% endcomment %}
+<link type="text/css" rel="stylesheet" href="{% static 'main_admin/css/search-style.css' %}"/>
+<section class="wrapper">
+	<div class="form-w3layouts">
+        <div class="row">
+            <div class="col-lg-12">
+                <section class="panel">
+                    <header class="panel-heading">
+                        {% ifequal contact_type 0 %}Contact Us {% else %}Post Requirements{% endifequal %}
+                    </header>
+                    <div class="panel-body">
+                        {% if msg %}
+                            <div class="alert alert-success radius-both">
+                                <p style="color:red;">{{ msg }}</p>
+                            </div>
+                        {% endif %}
+                        <form class="form-horizontal bucket-form" method="post" action="" enctype="multipart/form-data">
+                        {% csrf_token %}
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Name</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" value="{{ contact.name }}" disabled />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">email</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" value="{{ contact.email }}" disabled />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">phone</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" value="{{ contact.phone }}" disabled />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">country</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" value="{{ contact.country }}" disabled />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">subject</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" value="{{ contact.subject }}" disabled />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Message</label>
+                                <div class="col-sm-6">
+                                      <textarea class="form-control" rows=5 disabled>{{ contact.message }}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Status</label>
+                                <div class="col-sm-6">
+                                    <select class="form-control m-bot15" name="status" id="status">
+                                        <option value="{{ CONST.READ_STATUS_CHOICES.0.0 }}" 
+                                        {% ifequal contact.status CONST.READ_STATUS_CHOICES.0.0 %}
+                                            selected
+                                        {% endifequal %}>{{ CONST.READ_STATUS_CHOICES.0.1 }}</option>
+                                        <option value="{{ CONST.READ_STATUS_CHOICES.1.0 }}" 
+                                        {% ifequal contact.status CONST.READ_STATUS_CHOICES.1.0 %}
+                                            selected
+                                        {% endifequal %}>{{ CONST.READ_STATUS_CHOICES.1.1 }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"></label>
+                                <div class="col-sm-6">
+                                    <button type="submit" class="btn btn-info">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+                <form action="" method="post">
+                {% csrf_token %}
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Reply</label>
+                        <div class="col-sm-12">
+                            <textarea class="form-control" name="reply" id="reply">{{ about_us.reply }}</textarea>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label class="control-label"></label>
+                        <div class="col-sm-6">
+                            <button type="submit" class="btn btn-info">Send Mail</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<script type="text/javascript" src="{% static 'main_admin/js/icons.js' %}"></script>
+<script type="text/javascript" src="{% static 'main_admin/js/aliases.js' %}"></script>
+<script type="text/javascript" src="{% static 'main_admin/js/search-script.js' %}"></script>
+<script>
+    CKEDITOR.replace('reply');
+</script>
+{% endblock content %}
