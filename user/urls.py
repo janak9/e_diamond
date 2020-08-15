@@ -10,6 +10,7 @@ urlpatterns = [
     path("return_policy", views.return_policy, name="return-policy"),
     path("contact_us", views.contact_us, name="contact-us"),
     path("post_requirment", views.post_requirment, name="post-requirment"),
+    path("feedback", views.feedback, name="feedback"),
 
     # product
     path("products/<int:main_category_id>", views.products, name="products"),

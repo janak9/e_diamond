@@ -8,6 +8,7 @@ from auth_user.decorator import checkLogin
 from base import const, mail
 from user.models import Order, Feedback
 from product.models import MainCategory, Category, SubCategory, AdditionalInformation, Product, Review
+from payment.models import PaymentOrder, Payment
 from main_admin.models import Image, SocialLink, Contact, AboutUs, Details, Offer
 from main_admin.forms import ImageFormset, AboutForm
 import traceback
@@ -254,6 +255,7 @@ def del_sub_category(request, pk):
     sub_category.delete()
     return redirect("main_admin:view-sub-category")
 
+
 # product
 @checkLogin('admin')
 def add_product(request, pk=None):
@@ -417,13 +419,53 @@ def del_product(request, pk):
     product.delete()
     return redirect("main_admin:view-product")
 
+
+# user
 @checkLogin('admin')
-def view_post_requirements(request):
+def view_user(request):
     context = {}
-    context['active'] = 'post_requirements'
+    context['active'] = 'user'
     get_common_context(request, context)
-    context['contact_type'] = const.POST_REQUIRMENT
-    contact_list = Contact.objects.filter(contact_type=const.POST_REQUIRMENT).order_by('-timestamp')
+    user_list = user_model.all_objects.filter(user_type=const.USER).order_by('-date_joined')
+    page = request.GET.get('page', 1)
+    paginator = Paginator(user_list, 5)
+    try:
+        users = paginator.page(page)
+    except PageNotAnInteger:
+        users = paginator.page(1)
+    except EmptyPage:
+        users = paginator.page(paginator.num_pages)
+    context['users'] = users
+    return render(request, 'main_admin/view_users.html', context)
+
+@checkLogin('admin')
+def edit_user(request, pk):
+    context = {}
+    context['active'] = 'user'
+    get_common_context(request, context)
+    context['user'] = user_model.all_objects.get(pk=pk)
+    if (request.method == 'POST'):
+        if 'status' in request.POST:
+            context['user'].status = request.POST['status']
+            context['user'].save()
+            return redirect("main_admin:view-user")
+    return render(request, 'main_admin/edit_user.html', context)
+
+@checkLogin('admin')
+def del_user(request, pk):
+    user = user_model.all_objects.get(pk=pk)
+    user.delete()
+    return redirect("main_admin:view-user")
+
+
+# contact
+@checkLogin('admin')
+def view_contact(request, contact_type=const.CONTACT_US):
+    context = {}
+    context['active'] = 'contact_us' if contact_type is const.CONTACT_US else 'post_requirements'
+    get_common_context(request, context)
+    context['contact_type'] = contact_type
+    contact_list = Contact.objects.filter(contact_type=contact_type).order_by('-timestamp')
     page = request.GET.get('page', 1)
     paginator = Paginator(contact_list, 5)
     try:
@@ -436,25 +478,7 @@ def view_post_requirements(request):
     return render(request, 'main_admin/view_contacts.html', context)
 
 @checkLogin('admin')
-def view_contact_us(request):
-    context = {}
-    context['active'] = 'contact_us'
-    get_common_context(request, context)
-    context['contact_type'] = const.CONTACT_US
-    contact_list = Contact.objects.filter(contact_type=const.CONTACT_US).order_by('-timestamp')
-    page = request.GET.get('page', 1)
-    paginator = Paginator(contact_list, 5)
-    try:
-        contacts = paginator.page(page)
-    except PageNotAnInteger:
-        contacts = paginator.page(1)
-    except EmptyPage:
-        contacts = paginator.page(paginator.num_pages)
-    context['contacts'] = contacts
-    return render(request, 'main_admin/view_contacts.html', context)
-
-@checkLogin('admin')
-def edit_contact(request, pk, contact_type=const.CONTACT_US):
+def edit_contact(request, contact_type, pk):
     context = {}
     context['active'] = 'contact_us'
     get_common_context(request, context)
@@ -463,24 +487,96 @@ def edit_contact(request, pk, contact_type=const.CONTACT_US):
         if 'status' in request.POST:
             context['contact'].status = request.POST['status']
             context['contact'].save()
-            if contact_type is const.CONTACT_US:
-                return redirect("main_admin:view-contact-us")
-            else:
-                return redirect("main_admin:view-post-requirements")
+            return redirect("main_admin:view-contact", contact_type=contact_type)
         if 'reply' in request.POST:
             mail.send_email(None, 'contact_reply', contact=context['contact'], reply=request.POST['reply'])
             context['msg'] = 'mail sent to user\'s email ' + context['contact'].email
-    print(context['contact'].status)
     return render(request, 'main_admin/edit_contact.html', context)
 
 @checkLogin('admin')
-def del_contact(request, pk, contact_type=const.CONTACT_US):
+def del_contact(request, contact_type, pk):
     contact = Contact.objects.get(pk=pk)
     contact.delete()
-    if contact_type is const.CONTACT_US:
-        return redirect("main_admin:view-contact-us")
-    else:
-        return redirect("main_admin:view-post-requirements")
+    return redirect("main_admin:view-contact", contact_type=contact_type)
+
+
+# review
+@checkLogin('admin')
+def view_reviews(request):
+    context = {}
+    context['active'] = 'reviews'
+    get_common_context(request, context)
+    
+    review_list = Review.all_objects.all().order_by('-timestamp')
+    page = request.GET.get('page', 1)
+    paginator = Paginator(review_list, 5)
+    try:
+        reviews = paginator.page(page)
+    except PageNotAnInteger:
+        reviews = paginator.page(1)
+    except EmptyPage:
+        reviews = paginator.page(paginator.num_pages)
+    context['reviews'] = reviews
+    return render(request, 'main_admin/view_reviews.html', context)
+
+@checkLogin('admin')
+def edit_review(request, pk):
+    context = {}
+    context['active'] = 'reviews'
+    get_common_context(request, context)
+    context['review'] = Review.all_objects.get(pk=pk)
+    if (request.method == 'POST'):
+        if 'status' in request.POST:
+            context['review'].status = request.POST['status']
+            context['review'].save()
+            return redirect("main_admin:view-reviews")
+    return render(request, 'main_admin/edit_review.html', context)
+
+@checkLogin('admin')
+def del_review(request, pk):
+    review = Review.all_objects.get(pk=pk)
+    review.delete()
+    return redirect("main_admin:view-reviews")
+
+
+# feedback
+@checkLogin('admin')
+def view_feedbacks(request):
+    context = {}
+    context['active'] = 'feedbacks'
+    get_common_context(request, context)
+    
+    feedback_list = Feedback.all_objects.all().order_by('-timestamp')
+    page = request.GET.get('page', 1)
+    paginator = Paginator(feedback_list, 5)
+    try:
+        feedbacks = paginator.page(page)
+    except PageNotAnInteger:
+        feedbacks = paginator.page(1)
+    except EmptyPage:
+        feedbacks = paginator.page(paginator.num_pages)
+    context['feedbacks'] = feedbacks
+    return render(request, 'main_admin/view_feedbacks.html', context)
+
+@checkLogin('admin')
+def edit_feedback(request, pk):
+    context = {}
+    context['active'] = 'feedbacks'
+    get_common_context(request, context)
+    context['feedback'] = Feedback.all_objects.get(pk=pk)
+    if (request.method == 'POST'):
+        if 'status' in request.POST:
+            context['feedback'].status = request.POST['status']
+            context['feedback'].read_status = request.POST['read_status']
+            context['feedback'].save()
+            return redirect("main_admin:view-feedbacks")
+    return render(request, 'main_admin/edit_feedback.html', context)
+
+@checkLogin('admin')
+def del_feedback(request, pk):
+    feedback = Feedback.all_objects.get(pk=pk)
+    feedback.delete()
+    return redirect("main_admin:view-feedbacks")
 
 @checkLogin('admin')
 def view_orders(request):
@@ -498,7 +594,6 @@ def view_orders(request):
     except EmptyPage:
         orders = paginator.page(paginator.num_pages)
     context['orders'] = orders
-    print(orders.paginator.__dict__)
     return render(request, 'main_admin/view_orders.html', context)
 
 @checkLogin('admin')
@@ -507,35 +602,17 @@ def view_payments(request):
     context['active'] = 'payments'
     get_common_context(request, context)
     
-    contact_list = Contact.objects.filter(contact_type=const.CONTACT_US).order_by('-timestamp')
+    payment_list = Payment.objects.all().order_by('-timestamp')
     page = request.GET.get('page', 1)
-    paginator = Paginator(contact_list, 5)
+    paginator = Paginator(payment_list, 5)
     try:
-        contacts = paginator.page(page)
+        payments = paginator.page(page)
     except PageNotAnInteger:
-        contacts = paginator.page(1)
+        payments = paginator.page(1)
     except EmptyPage:
-        contacts = paginator.page(paginator.num_pages)
-    context['contacts'] = contacts
+        payments = paginator.page(paginator.num_pages)
+    context['payments'] = payments
     return render(request, 'main_admin/view_payments.html', context)
-
-@checkLogin('admin')
-def view_reviews(request):
-    context = {}
-    context['active'] = 'reviews'
-    get_common_context(request, context)
-    
-    contact_list = Contact.objects.filter(contact_type=const.CONTACT_US).order_by('-timestamp')
-    page = request.GET.get('page', 1)
-    paginator = Paginator(contact_list, 5)
-    try:
-        contacts = paginator.page(page)
-    except PageNotAnInteger:
-        contacts = paginator.page(1)
-    except EmptyPage:
-        contacts = paginator.page(paginator.num_pages)
-    context['contacts'] = contacts
-    return render(request, 'main_admin/view_reviews.html', context)
 
 @checkLogin('admin')
 def edit_about_us(request):

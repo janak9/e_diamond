@@ -1,8 +1,6 @@
 {% extends 'main_admin/base.html' %}
 {% block content %}
 {% load static %}
-{% comment %} <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css"> {% endcomment %}
-<link type="text/css" rel="stylesheet" href="{% static 'main_admin/css/search-style.css' %}"/>
 <section class="wrapper">
 	<div class="form-w3layouts">
         <div class="row">
@@ -99,9 +97,6 @@
         </div>
     </div>
 </section>
-<script type="text/javascript" src="{% static 'main_admin/js/icons.js' %}"></script>
-<script type="text/javascript" src="{% static 'main_admin/js/aliases.js' %}"></script>
-<script type="text/javascript" src="{% static 'main_admin/js/search-script.js' %}"></script>
 <script>
     CKEDITOR.replace('reply');
 </script>

@@ -9,7 +9,7 @@ from base import const, mail
 from base.utils import Render
 from product.models import MainCategory, Category, SubCategory, Product, Review
 from main_admin.models import Image, AboutUs, Offer, Contact, Details
-from user.models import Wishlist, Cart, Compare, Address, Order
+from user.models import Wishlist, Cart, Compare, Address, Order, Feedback
 from payment.models import PaymentOrder, Payment
 from decouple import config
 import sys
@@ -89,6 +89,25 @@ def post_requirment(request):
 
     return render(request, 'user/post_requirment.html', context)
 
+@checkLogin('both')
+def feedback(request):
+    context = {}
+    context['active'] = 'feedback'
+    get_common_context(context)
+
+    try:
+        if (request.method == 'POST'):
+            data = request.POST.dict()
+            tmp = ['csrfmiddlewaretoken']
+            list(map(data.pop, tmp)) # remove extra fields
+            data['user_id'] = request.user.pk
+            feedback = Feedback.objects.create(**data)
+            context['msg'] = "Thank You! For Giving Feedback to us."
+    except Exception as err:
+        traceback.print_exc()
+        context['msg'] = "Oops, Something was wrong! Please try again."
+
+    return render(request, 'user/feedback.html', context)
 
 # product
 def products(request, main_category_id):
@@ -473,8 +492,8 @@ def invoice(request, pk):
     get_common_context(context)
     context['payment'] = Payment.objects.get(pk=pk)
     context['bill'] = json.loads(context['payment'].payment_order.bill)
-    context['billing_address'] = Address.objects.filter(user_id=request.user.id, address_type=const.BILLING)
-    context['shipping_address'] = Address.objects.filter(user_id=request.user.id, address_type=const.SHIPPING)
+    context['billing_address'] = Address.objects.filter(user_id=context['payment'].user.id, address_type=const.BILLING)
+    context['shipping_address'] = Address.objects.filter(user_id=context['payment'].user.id, address_type=const.SHIPPING)
     # pdf_file = Render.render_to_file('user/invoice.html', context)
     # print(pdf_file)
     return render(request, 'user/invoice.html', context)

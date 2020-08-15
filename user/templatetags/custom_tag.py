@@ -15,5 +15,5 @@ def ifinlist(value, list):
     return True if str(value) in list else False
 
 @register.simple_tag
-def get_id(per_page, page_no, line):
+def get_no(per_page, page_no, line):
     return (per_page * (page_no-1) + line)

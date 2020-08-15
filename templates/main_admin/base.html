@@ -305,7 +305,15 @@
               </ul>
             </li>
             <li>
-              <a href="{% url 'main_admin:view-post-requirements' %}" class="{% if active == 'post_requirements' %}
+              <a href="{% url 'main_admin:view-user' %}" class="{% if active == 'user' %}
+                active
+                {% endif %}">
+                <i class="fas fa-users"></i>
+                <span>Users</span>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'main_admin:view-contact' contact_type=CONST.POST_REQUIRMENT %}" class="{% if active == 'post_requirements' %}
                             active
                             {% endif %}">
                 <i class="fas fa-mail-bulk"></i>
@@ -313,7 +321,7 @@
               </a>
             </li>
             <li>
-              <a href="{% url 'main_admin:view-contact-us' %}" class="{% if active == 'contact_us' %}
+              <a href="{% url 'main_admin:view-contact' contact_type=CONST.CONTACT_US %}" class="{% if active == 'contact_us' %}
                             active
                             {% endif %}">
                 <i class="fas fa-id-card"></i>
@@ -342,6 +350,14 @@
                             {% endif %}">
                 <i class="far fa-comment-dots"></i>
                 <span>Reviews</span>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'main_admin:view-feedbacks' %}" class="{% if active == 'feedbacks' %}
+                            active
+                            {% endif %}">
+                <i class="far fa-comment-alt"></i>
+                <span>Feedbacks</span>
               </a>
             </li>
             <li>
@@ -381,7 +397,7 @@
     <!-- footer -->
     <div class="footer">
       <div class="wthree-copyright">
-        <p>© 2017 Visitors. All rights reserved | Design by <a href="http://w3layouts.com">W3layouts</a></p>
+        <p>© 2020 Spyhunter. Design by <a href="https://spyhunter.in/">Spyhunter (Janak Vaghela)</a></p>
       </div>
     </div>
     <!-- / footer -->

@@ -1,0 +1,81 @@
+{% extends 'main_admin/base.html' %}
+{% block content %}
+{% load static %}
+<section class="wrapper">
+    <div class="table-agile-info">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                View Users
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped b-t b-light">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Gender</th>
+                            <th>Image</th>
+                            <th>Date Joined</th>
+                            <th>Verified</th>
+                            <th>status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.get_full_name }}</td>
+                                <td>{{ user.phone }}</td>
+                                <td>{{ user.get_gender_display }}</td>
+                                <td><img src="{% if user.profile_pic %}{{ user.profile_pic.url }}{% endif %}" class="img-fluid table_img" /></td>
+                                <td>{{ user.date_joined }}</td>
+                                <td>{{ user.is_active }}</td>
+                                <td>{{ user.get_status_display }}</td>
+                                <td>
+                                    <a href="{% url 'main_admin:edit-user' pk=user.pk %}" style="margin-right:10px;">
+                                        <i class="fa fa-edit text-success ml-2"></i>
+                                    </a>
+                                    <a href="{% url 'main_admin:del-user' pk=user.pk %}">
+                                        <i class="fa fa-times text-danger"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <footer class="panel-footer">
+                <div class="row">
+                    <div class="col-sm-5 text-center">
+                    </div>
+                    <div class="col-sm-7 text-right text-center-xs">
+                        {% if users.has_other_pages %}
+                            <ul class="pagination pagination-sm m-t-none m-b-none">
+                            {% if users.has_previous %}
+                                <li><a href="?page={{ users.previous_page_number }}"><i class="fa fa-chevron-left"></i></a></li>
+                            {% else %}
+                                <li class="disabled"><a href="#"><i class="fa fa-chevron-left"></i></a></li>
+                            {% endif %}
+                            {% for i in users.paginator.page_range %}
+                                {% if users.number == i %}
+                                    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                                {% else %}
+                                    <li><a href="?page={{ i }}">{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if users.has_next %}
+                                <li><a href="?page={{ users.next_page_number }}"><i class="fa fa-chevron-right"></i></a></li>
+                            {% else %}
+                                <li class="disabled"><a href="#"><i class="fa fa-chevron-right"></i></a></li>
+                            {% endif %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</section>
+{% endblock content %}

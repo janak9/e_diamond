@@ -1,0 +1,67 @@
+{% extends 'user/base.html' %}
+{% block content %}
+{% load static %}
+    <!-- Start All Title Box -->
+    <div class="all-title-box">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2>Feedback</h2>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'user:home' %}">Home</a></li>
+                        <li class="breadcrumb-item active"> Feedback </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End All Title Box -->
+
+    <!-- Start Feedback  -->
+    <div class="contact-box-main">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-sm-12">
+                    <div class="contact-form-right">
+                        <h2>GET IN TOUCH</h2>
+                        {% if msg %}
+                            <div class="alert alert-success radius-both">
+                                <p>{{ msg }}</p>
+                            </div>
+                        {% endif %}
+                        <form id="contactForm" action="" method="post">
+                        {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="">
+                                            <label class="col-md-3 control-label" for="stars">Your rating</label>
+                                            <div class="col-md-9 stars" id="stars"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label" for="comment">Your message</label>
+                                        <div class="col-md-9">
+                                            <textarea class="form-control" id="comment" name="comment" placeholder="Please enter your feedback here..." rows="5"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="submit-button">
+                                        <button class="btn hvr-hover" id="submit" type="submit">Send Message</button>
+                                        <div id="msgSubmit" class="h3 text-center hidden"></div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Cart -->
+<script type="text/javascript" src="{% static 'user/js/rating.js' %}"></script>
+{% endblock content %}

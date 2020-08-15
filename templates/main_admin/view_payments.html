@@ -1,0 +1,99 @@
+{% extends 'main_admin/base.html' %}
+{% block content %}
+{% load static %}
+{% load custom_tag %}
+<style>
+ a:hover {
+    color: blueviolet;
+ }
+</style>
+<section class="wrapper">
+    <div class="table-agile-info">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                View Payment
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped b-t b-light">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Receipt</th>
+                            <th>User</th>
+                            <th>Products</th>
+                            <th>Price</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                            <th>Bill</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payment in payments %}
+                            <tr>
+                                <td>{% get_no payments.paginator.per_page payments.number forloop.counter %}</td>
+                                <td>{{ payment.payment_order.receipt }}</td>
+                                <td><a href="{% url 'main_admin:edit-user' pk=payment.user.pk %}">{{ payment.user.get_full_name }}</a></td>
+                                <td>
+                                {% for order in payment.payment_order.order.all %}
+                                    <a href="{% url 'main_admin:edit-product' pk=order.product.pk %}">{{ order.product.title }}</a>{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                                </td>
+                                <td>{{ payment.payment_order.price }}</td>
+                                <td>{{ payment.timestamp }}</td>
+                                <td>
+                                    {% if payment.get_status_display == 'Paid' %}
+                                        <span class="badge badge-success">{{ payment.get_status_display }}</span>
+                                    {% elif payment.get_status_display == 'Pending' %}
+                                        <span class="badge badge-primary">{{ payment.get_status_display }}</span>
+                                    {% elif payment.get_status_display == 'Processing' %}
+                                        <span class="badge badge-info">{{ payment.get_status_display }}</span>
+                                    {% elif payment.get_status_display == 'Cancelled' %}
+                                        <span class="badge badge-warning">{{ payment.get_status_display }}</span>
+                                    {% elif payment.get_status_display == 'Failed' %}
+                                        <span class="badge badge-danger">{{ payment.get_status_display }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if payment.get_status_display == 'Paid' %}
+                                        <a class="btn hvr-hover" href="{% url 'user:invoice' pk=payment.pk %}" target="_blank">Download</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <footer class="panel-footer">
+                <div class="row">
+                    <div class="col-sm-5 text-center">
+                        {% comment %} <small class="text-muted inline m-t-sm m-b-sm">showing 20-30 of 50 items</small> {% endcomment %}
+                    </div>
+                    <div class="col-sm-7 text-right text-center-xs">
+                        {% if payments.has_other_pages %}
+                            <ul class="pagination pagination-sm m-t-none m-b-none">
+                            {% if payments.has_previous %}
+                                <li><a href="?page={{ payments.previous_page_number }}"><i class="fa fa-chevron-left"></i></a></li>
+                            {% else %}
+                                <li class="disabled"><a href="#"><i class="fa fa-chevron-left"></i></a></li>
+                            {% endif %}
+                            {% for i in payments.paginator.page_range %}
+                                {% if payments.number == i %}
+                                    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                                {% else %}
+                                    <li><a href="?page={{ i }}">{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if payments.has_next %}
+                                <li><a href="?page={{ payments.next_page_number }}"><i class="fa fa-chevron-right"></i></a></li>
+                            {% else %}
+                                <li class="disabled"><a href="#"><i class="fa fa-chevron-right"></i></a></li>
+                            {% endif %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</section>
+{% endblock content %}

@@ -38,13 +38,32 @@ urlpatterns = [
         path('delete/<int:pk>', views.del_product, name="del-product"),
     ])),
 
-    path("post_requirements/", views.view_post_requirements, name="view-post-requirements"),
-    path("contact_us/", views.view_contact_us, name="view-contact-us"),
-    path("edit_contact/<int:pk>/<int:contact_type>", views.edit_contact, name="edit-contact"),
-    path("contact/<int:pk>/<int:contact_type>", views.del_contact, name="del-contact"),
+    path('user/', include([
+        path('<int:pk>', views.edit_user, name="edit-user"),
+        path('view', views.view_user, name="view-user"),
+        path('delete/<int:pk>', views.del_user, name="del-user"),
+    ])),
+
+    path('reviews/', include([
+        path('<int:pk>', views.edit_review, name="edit-review"),
+        path('view', views.view_reviews, name="view-reviews"),
+        path('delete/<int:pk>', views.del_review, name="del-review"),
+    ])),
+
+    path('feedback/', include([
+        path('<int:pk>', views.edit_feedback, name="edit-feedback"),
+        path('view', views.view_feedbacks, name="view-feedbacks"),
+        path('delete/<int:pk>', views.del_feedback, name="del-feedback"),
+    ])),
+
+    path('contact/', include([
+        path('<int:contact_type>/<int:pk>', views.edit_contact, name="edit-contact"),
+        path('view/<int:contact_type>', views.view_contact, name="view-contact"),
+        path('delete/<int:contact_type>/<int:pk>', views.del_contact, name="del-contact"),
+    ])),
+
     path("orders/", views.view_orders, name="view-orders"),
     path("payments/", views.view_payments, name="view-payments"),
-    path("reviews/", views.view_reviews, name="view-reviews"),
     path("about_us/", views.edit_about_us, name="edit-about-us"),
     path("details/<int:detail_type>", views.edit_details, name="edit-details"),
 ]

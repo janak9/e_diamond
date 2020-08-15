@@ -1,0 +1,82 @@
+{% extends 'main_admin/base.html' %}
+{% block content %}
+{% load static %}
+{% load custom_tag %}
+<section class="wrapper">
+    <div class="table-agile-info">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                View Reviews
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped b-t b-light">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>User</th>
+                            <th>Product</th>
+                            <th>Stars</th>
+                            <th>Comment</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for review in reviews %}
+                            <tr>
+                                <td>{% get_no reviews.paginator.per_page reviews.number forloop.counter %}</td>
+                                <td><a href="{% url 'main_admin:edit-user' pk=review.user.pk %}">{{ review.user.get_full_name }}</a></td>
+                                <td><a href="{% url 'main_admin:edit-product' pk=review.product.pk %}">{{ review.product.title }}</a> 
+                                &nbsp;&nbsp;<a href="{% url 'user:product-details' pk=review.product.pk %}" target="_blank"><i class="fas fa-external-link-alt"></i></a></td>
+                                <td>{{ review.star }}</td>
+                                <td>{{ review.comment }}</td>
+                                <td>{{ review.timestamp }}</td>
+                                <td>{{ review.get_status_display }}</td>
+                                <td>
+                                    <a href="{% url 'main_admin:edit-review' pk=review.pk %}" style="margin-right:10px;">
+                                        <i class="fa fa-edit text-success ml-2"></i>
+                                    </a>
+                                    <a href="{% url 'main_admin:del-review' pk=review.pk %}">
+                                        <i class="fa fa-times text-danger"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <footer class="panel-footer">
+                <div class="row">
+                    <div class="col-sm-5 text-center">
+                        {% comment %} <small class="text-muted inline m-t-sm m-b-sm">showing 20-30 of 50 items</small> {% endcomment %}
+                    </div>
+                    <div class="col-sm-7 text-right text-center-xs">
+                        {% if reviews.has_other_pages %}
+                            <ul class="pagination pagination-sm m-t-none m-b-none">
+                            {% if reviews.has_previous %}
+                                <li><a href="?page={{ reviews.previous_page_number }}"><i class="fa fa-chevron-left"></i></a></li>
+                            {% else %}
+                                <li class="disabled"><a href="#"><i class="fa fa-chevron-left"></i></a></li>
+                            {% endif %}
+                            {% for i in reviews.paginator.page_range %}
+                                {% if reviews.number == i %}
+                                    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                                {% else %}
+                                    <li><a href="?page={{ i }}">{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if reviews.has_next %}
+                                <li><a href="?page={{ reviews.next_page_number }}"><i class="fa fa-chevron-right"></i></a></li>
+                            {% else %}
+                                <li class="disabled"><a href="#"><i class="fa fa-chevron-right"></i></a></li>
+                            {% endif %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</section>
+{% endblock content %}
