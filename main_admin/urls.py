@@ -38,6 +38,13 @@ urlpatterns = [
         path('delete/<int:pk>', views.del_product, name="del-product"),
     ])),
 
+    path('offer/', include([
+        path('', views.add_offer, name="add-offer"),
+        path('<int:pk>', views.add_offer, name="edit-offer"),
+        path('view', views.view_offer, name="view-offer"),
+        path('delete/<int:pk>', views.del_offer, name="del-offer"),
+    ])),
+    
     path('user/', include([
         path('<int:pk>', views.edit_user, name="edit-user"),
         path('view', views.view_user, name="view-user"),

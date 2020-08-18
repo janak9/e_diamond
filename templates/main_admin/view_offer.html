@@ -1,0 +1,84 @@
+{% extends 'main_admin/base.html' %}
+{% block content %}
+{% load static %}
+<section class="wrapper">
+    <div class="table-agile-info">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                View Offers
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped b-t b-light">
+                    <thead>
+                        <tr>
+                            <th>code</th>
+                            <th>title</th>
+                            <th>discount</th>
+                            <th>offer type</th>
+                            <th>minimun order price</th>
+                            <th>maximun discount</th>
+                            <th>start time</th>
+                            <th>end time</th>
+                            <th>status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for offer in offers %}
+                            <tr>
+                                <td>{{ offer.code }}</td>
+                                <td>{{ offer.title }}</td>
+                                <td>{{ offer.discount }}</td>
+                                <td>{{ offer.get_offer_type_display }}</td>
+                                <td>{{ offer.minimun_order_price }}</td>
+                                <td>{{ offer.maximun_discount }}</td>
+                                <td>{{ offer.start_time }}</td>
+                                <td>{{ offer.end_time }}</td>
+                                <td>{{ offer.get_status_display }}</td>
+                                <td>
+                                    <a href="{% url 'main_admin:edit-offer' pk=offer.pk %}" style="margin-right:10px;">
+                                        <i class="fa fa-edit text-success ml-2"></i>
+                                    </a>
+                                    {% comment %} <a href="{% url 'main_admin:del-offer' pk=offer.pk %}">
+                                        <i class="fa fa-times text-danger"></i>
+                                    </a> {% endcomment %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <footer class="panel-footer">
+                <div class="row">
+                    <div class="col-sm-5 text-center">
+                        {% comment %} <small class="text-muted inline m-t-sm m-b-sm">showing 20-30 of 50 items</small> {% endcomment %}
+                    </div>
+                    <div class="col-sm-7 text-right text-center-xs">
+                        {% if offers.has_other_pages %}
+                            <ul class="pagination pagination-sm m-t-none m-b-none">
+                            {% if offers.has_previous %}
+                                <li><a href="?page={{ offers.previous_page_number }}"><i class="fa fa-chevron-left"></i></a></li>
+                            {% else %}
+                                <li class="disabled"><a href="#"><i class="fa fa-chevron-left"></i></a></li>
+                            {% endif %}
+                            {% for i in offers.paginator.page_range %}
+                                {% if offers.number == i %}
+                                    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                                {% else %}
+                                    <li><a href="?page={{ i }}">{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if offers.has_next %}
+                                <li><a href="?page={{ offers.next_page_number }}"><i class="fa fa-chevron-right"></i></a></li>
+                            {% else %}
+                                <li class="disabled"><a href="#"><i class="fa fa-chevron-right"></i></a></li>
+                            {% endif %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</section>
+{% endblock content %}

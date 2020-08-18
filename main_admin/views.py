@@ -420,6 +420,60 @@ def del_product(request, pk):
     return redirect("main_admin:view-product")
 
 
+# offer
+@checkLogin('admin')
+def add_offer(request, pk=None):
+    context = {}
+    context['active'] = 'offer'
+    get_common_context(request, context)
+    if pk is not None:
+        context['task'] = "Edit"
+        context['offer'] = Offer.all_objects.get(id=pk)
+    else:
+        context['task'] = "Add"
+
+    try:
+        if (request.method == 'POST'):
+            data = request.POST.dict()
+            tmp = ['csrfmiddlewaretoken']
+            list(map(data.pop, tmp)) # remove extra fields
+            data['code'] = data['code'].upper()
+            if pk is not None:
+                Offer.all_objects.filter(pk=pk).update(**data)
+            else:
+                Offer.all_objects.create(**data)
+            return redirect("main_admin:view-offer")
+    except Exception as err:
+        traceback.print_exc()
+        context['msg'] = "Oops, Something was wrong! Please try again."
+
+    return render(request, 'main_admin/add_offer.html', context)
+
+@checkLogin('admin')
+def view_offer(request):
+    context = {}
+    context['active'] = 'offer'
+    get_common_context(request, context)
+    
+    offer_list = Offer.all_objects.all().order_by('-id')
+    page = request.GET.get('page', 1)
+    paginator = Paginator(offer_list, 5)
+    try:
+        offers = paginator.page(page)
+    except PageNotAnInteger:
+        offers = paginator.page(1)
+    except EmptyPage:
+        offers = paginator.page(paginator.num_pages)
+    context['offers'] = offers
+    return render(request, 'main_admin/view_offer.html', context)
+
+@checkLogin('admin')
+def del_offer(request, pk):
+    offer = Offer.all_objects.get(pk=pk)
+    offer.delete()
+    return redirect("main_admin:view-offer")
+
+
 # user
 @checkLogin('admin')
 def view_user(request):

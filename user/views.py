@@ -3,6 +3,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+from django.utils.timezone import get_current_timezone
 from auth_user.models import User as user_model
 from auth_user.decorator import checkLogin
 from base import const, mail
@@ -15,6 +16,7 @@ from decouple import config
 import sys
 import json
 import traceback
+import datetime
 
 def get_common_context(context):
     context['app_name'] = config('APP_NAME')
@@ -108,6 +110,7 @@ def feedback(request):
         context['msg'] = "Oops, Something was wrong! Please try again."
 
     return render(request, 'user/feedback.html', context)
+
 
 # product
 def products(request, main_category_id):
@@ -434,7 +437,8 @@ def offers(request):
     context = {}
     context['active'] = 'my_account'
     get_common_context(context)
-    context['offers'] = Offer.objects.all()
+    today = datetime.datetime.now(tz=get_current_timezone())
+    context['offers'] = Offer.objects.filter(end_time__gte=today)
     return render(request, 'user/offers.html', context)
 
 @checkLogin('both')

@@ -20,7 +20,7 @@
   <script type="text/javascript" src="{% static 'main_admin/js/raphael-min.js' %}"></script>
   <script type="text/javascript" src="{% static 'main_admin/js/jquery2.0.3.min.js' %}"></script>
   {% comment %} <script type="text/javascript" src="{% static 'main_admin/js/morris.js' %}"></script> {% endcomment %}
-  <script src="http://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+  <script src="{% static 'main_admin/js/jquery-ui.js' %}"></script>
   <script src="https://cdn.ckeditor.com/4.14.1/full-all/ckeditor.js"></script>
 </head>
 
@@ -302,6 +302,18 @@
               <ul class="sub">
                 <li><a href="{% url 'main_admin:add-product' %}"><i class="fas fa-plus"></i> Add Product</a></li>
                 <li><a href="{% url 'main_admin:view-product' %}"><i class="far fa-eye"></i> View Product</a></li>
+              </ul>
+            </li>
+            <li class="sub-menu">
+              <a href="javascript:;" class="{% if active == 'offer' %}
+                            active
+                            {% endif %}">
+                <i class="fas fa-gift"></i>
+                <span>Offer</span>
+              </a>
+              <ul class="sub">
+                <li><a href="{% url 'main_admin:add-offer' %}"><i class="fas fa-plus"></i> Add Offer</a></li>
+                <li><a href="{% url 'main_admin:view-offer' %}"><i class="far fa-eye"></i> View Offer</a></li>
               </ul>
             </li>
             <li>
