@@ -16,7 +16,7 @@ from decouple import config
 import sys
 import json
 import traceback
-import datetime
+from datetime import datetime
 
 def get_common_context(context):
     context['app_name'] = config('APP_NAME')
@@ -232,36 +232,24 @@ def cart(request):
     context = {}
     context['active'] = 'my_account'
     get_common_context(context)
-    context['cart_bill'] = calculate_bill({ 'user_id': request.user.id })
+    today = datetime.now(tz=get_current_timezone())
+    context['offers'] = Offer.objects.filter(end_time__gte=today)
+    context['cart_bill'] = calculate_bill(request)
     context['carts'] = Cart.objects.filter(user_id=request.user.id).order_by('-timestamp')
     return render(request, 'user/cart.html', context)
 
 @csrf_exempt
 @checkLogin('both')
-def add_cart(request):
-    result = {}
+def add_cart(request, product_id):
     try:
-        data = json.loads(request.POST.get('data'))
-        product_id = data['product_id']
-        qty = data['qty']
         user_id = request.user.id
         cart = Cart.objects.filter(user_id=user_id, product_id=product_id)
-        if (cart.count() > 0):
-            if (cart[0].qty != qty):
-                cart[0].qty = qty
-                cart[0].save()
-                result['status'] = 'updated'
-                result['msg'] = 'cart successfully updated'
-        else:
-            Cart.objects.create(user_id=user_id, product_id=product_id, qty=qty)
-        result['status'] = 'success'
-        result['msg'] = 'successfully added to cart'
+        if (cart.count() <= 0):
+            Cart.objects.create(user_id=user_id, product_id=product_id, qty=1)
     except Exception as err:
+        print('update_cart - ', err)
         traceback.print_exc()
-        result['status'] = 'error'
-        result['msg'] = 'something is wrong!'
-
-    return HttpResponse(json.dumps(result))
+    return redirect("user:cart")
 
 @csrf_exempt
 @checkLogin('both')
@@ -271,7 +259,6 @@ def update_cart(request):
         data = json.loads(request.POST.get('data'))
         product_id = data['product_id']
         qty = data['qty']
-        coupon_code = data['coupon_code']
         user_id = request.user.id
         cart = Cart.objects.filter(user_id=user_id, product_id=product_id)
         if (cart.count() <= 0):
@@ -283,11 +270,12 @@ def update_cart(request):
             if (cart.qty != qty):
                 cart.qty = qty
                 cart.save()
-            result['cart_bill'] = calculate_bill({ 'user_id': user_id, 'coupon_code': coupon_code })
+            result['cart_bill'] = calculate_bill(request)
             result['status'] = 'success'
             result['msg'] = 'cart successfully updated'
     except Exception as err:
         print('update_cart - ', err)
+        traceback.print_exc()
         result['status'] = 'error'
         result['msg'] = 'something is wrong!'
 
@@ -299,10 +287,29 @@ def remove_cart(request, pk):
     cart.delete()
     return redirect("user:cart")
 
-def calculate_bill(input):
+@csrf_exempt
+@checkLogin('both')
+def verify_offer(request):
+    result = {}
+    try:
+        data = json.loads(request.POST.get('data'))
+        coupon_code = data['coupon_code']
+        user_id = request.user.id
+        request.session['coupon_code'] = coupon_code
+        result['cart_bill'] = calculate_bill(request)
+        result['status'] = 'success'
+    except Exception as err:
+        traceback.print_exc()
+        result['status'] = 'error'
+        result['msg'] = 'something is wrong!'
+
+    return HttpResponse(json.dumps(result))
+
+def calculate_bill(request):
     try:
         result = {}
-        carts = Cart.objects.filter(user_id=input['user_id']).all()
+        user_id = request.user.id
+        carts = Cart.objects.filter(user_id=user_id).all()
         result['tax'] = 0
         result['shipping_cost'] = 0
         result['sub_total'] = 0
@@ -310,12 +317,57 @@ def calculate_bill(input):
         for cart in carts:
             result['sub_total'] += (cart.qty * cart.product.price)
         
-        # TODO : check coupon
+        offer_response = check_offer(request)
+        if offer_response:
+            result['offer_response'] = offer_response
+            if offer_response['status'] == 'success':
+                offer = offer_response['offer']
+                del offer_response['offer']
+                if result['sub_total'] < offer.minimun_order_price:
+                    offer_response['status'] = 'error'
+                    offer_response['msg'] = 'The order price is below the minimum price for the applied offer!'
+                else:    
+                    if offer.offer_type == const.PERCENTAGE:
+                        result['coupon_discount'] = (result['sub_total'] * offer.discount / 100)
+                        if result['coupon_discount'] > offer.maximun_discount:
+                            result['coupon_discount'] = offer.maximun_discount
+                    elif offer.offer_type == const.FLAT:
+                        result['coupon_discount'] = offer.discount
+
         result['grand_total'] = result['sub_total'] - result['coupon_discount'] + result['tax']
         return result
     except Exception as err:
         print('calculate_bill - ', err)
         raise err
+
+def check_offer(request):
+    result = {}
+    user_id = request.user.id
+    coupon_code = request.session['coupon_code'] if request.session.has_key('coupon_code') else None
+    if not coupon_code:
+        return
+
+    offer = Offer.objects.filter(code=coupon_code).first()
+    if offer is None:
+        result['status'] = 'error'
+        result['msg'] = 'Invalid coupon code!'
+        return result
+
+    today = datetime.now(tz=get_current_timezone())
+    if not (offer.start_time <= today <= offer.end_time):
+        result['status'] = 'error'
+        result['msg'] = 'Offer not started yet or expired!'
+        return result
+
+    is_offer_used = PaymentOrder.objects.filter(user_id=user_id, offer_id=offer.pk).first()
+    if is_offer_used:
+        result['status'] = 'error'
+        result['msg'] = 'You have already used coupon code once!'
+        return result
+    
+    result['status'] = 'success'
+    result['offer'] = offer
+    return result
 
 
 # compare
@@ -374,7 +426,7 @@ def checkout(request):
     get_common_context(context)
     context['billing_address'] = Address.objects.filter(user_id=request.user.id, address_type=const.BILLING)
     context['shipping_address'] = Address.objects.filter(user_id=request.user.id, address_type=const.SHIPPING)
-    context['cart_bill'] = calculate_bill({ 'user_id': request.user.id })
+    context['cart_bill'] = calculate_bill(request)
     context['carts'] = Cart.objects.filter(user_id=request.user.id).order_by('-timestamp')
     try:
         if (request.method == 'POST'):
@@ -382,7 +434,14 @@ def checkout(request):
             payment_data = {}
             payment_data['user_id'] = user_id
             payment_data['price'] = context['cart_bill']['grand_total']
-            payment_data['bill'] = json.dumps(context['cart_bill'])
+            payment_data['bill'] = json.dumps({
+                'from_address': {
+                    'address': context['about_us'].address, 'phone': context['about_us'].phone, 'email': context['about_us'].email 
+                },
+                'billing_address': context['billing_address'],
+                'shipping_address': context['shipping_address'],
+                'price': context['cart_bill']
+            })
             payment_order = PaymentOrder(**payment_data)
             payment_order.save()
 
@@ -437,7 +496,7 @@ def offers(request):
     context = {}
     context['active'] = 'my_account'
     get_common_context(context)
-    today = datetime.datetime.now(tz=get_current_timezone())
+    today = datetime.now(tz=get_current_timezone())
     context['offers'] = Offer.objects.filter(end_time__gte=today)
     return render(request, 'user/offers.html', context)
 

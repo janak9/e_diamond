@@ -49,7 +49,7 @@
                                         <p>{{ row.product.price }}</p>
                                     </td>
                                     <td class="add-pr">
-                                        <a class="btn hvr-hover" href="#" onclick="add_cart('{{ row.product.pk }}', 1, event)">Add to Cart</a>
+                                        <a class="btn hvr-hover" href="{% url 'user:add-cart' product_id=row.product.pk %}">Add to Cart</a>
                                     </td>
                                     <td class="remove-pr">
                                         <a href="{% url 'user:remove-wishlist' pk=row.pk %}"><i class="fas fa-times"></i></a>

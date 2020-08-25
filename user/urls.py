@@ -25,7 +25,7 @@ urlpatterns = [
 
     # cart
     path("cart/", views.cart, name="cart"),
-    path("add_cart/", views.add_cart, name="add-cart"),
+    path("add_cart/<int:product_id>", views.add_cart, name="add-cart"),
     path("update_cart/", views.update_cart, name="update-cart"),
     path("remove_cart/<int:pk>", views.remove_cart, name="remove-cart"),
 
@@ -35,6 +35,7 @@ urlpatterns = [
     path("remove_compare/<int:product_id>", views.remove_compare, name="remove-compare"),
 
     # my account
+    path("verify_offer/", views.verify_offer, name="verify-offer"),
     path("checkout/", views.checkout, name="checkout"),
     path("my_account/", views.my_account, name="my_account"),
     path("login_security/", views.login_security, name="login-security"),

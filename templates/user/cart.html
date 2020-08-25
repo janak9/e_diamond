@@ -2,6 +2,19 @@
 {% block content %}
 {% load static %}
 {% load custom_tag %}
+<style type="text/css">
+.lead {
+  font-size: 21px;
+  font-height: 120%;
+  color: #1f1f1f;
+  padding: 15px 0;
+}
+@media (min-width: 768px){
+  .lead {
+      font-size: 21px;
+  }
+}
+</style>
     <!-- Start All Title Box -->
     <div class="all-title-box">
         <div class="container">
@@ -71,20 +84,38 @@
                         <div class="input-group input-group-sm">
                             <input class="form-control" id="coupon_code" placeholder="Enter your coupon code" aria-label="Coupon code" type="text">
                             <div class="input-group-append">
-                                <button class="btn btn-theme" type="button">Apply Coupon</button>
+                                <button class="btn btn-theme" onclick="apply_coupon()" type="button">Apply Coupon</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                {% comment %} <div class="col-lg-6 col-sm-6">
-                    <div class="update-box">
-                        <input value="Update Cart" type="submit">
-                    </div>
-                </div> {% endcomment %}
             </div>
 
             <div class="row my-5">
-                <div class="col-lg-8 col-sm-12"></div>
+                <div class="col-lg-8 col-sm-12">
+                    <h3>Offers</h3>
+                    <div class="row">
+                        {% if offers|length <= 0 %} <strong class="alert alert-warning">Oops, no related product found!</strong>{% endif %}
+                        {% for offer in offers %}
+                        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+                            <div class="listing listing-radius listing-success">
+                                <div class="shape">
+                                    <div class="shape-text">{{ offer.discount|floatformat }} {{ offer.get_offer_type_display }}</div>
+                                </div>
+                                <div class="listing-content">
+                                    <h3 class="lead">{{ offer.title }}</h3>
+                                    <p><b>Coupon Code:</b> <strong>{{ offer.code }}</strong></p>
+                                    <p><b>Start Time:</b> {{ offer.start_time }}</p>
+                                    <p><b>Remaining Time:</b> {{ offer.end_time|timeuntil }}</p>
+                                    <p>Applicable for Minimun Order Price {{ offer.minimun_order_price|floatformat }}.</p>
+                                    <p>Get {{ offer.discount|floatformat }} {{ offer.get_offer_type_display }} Discount{% if offer.maximun_discount %} upto {{ offer.maximun_discount|floatformat }}{% endif %}.</p>
+                                    <p><b>Description:</b> {{ offer.description }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
                 <div class="col-lg-4 col-sm-12">
                     <div class="order-box">
                         <h3>Order summary</h3>
@@ -110,9 +141,10 @@
                             <h5>Grand Total</h5>
                             <div class="ml-auto h5"><i class="fas fa-rupee-sign"></i> <span id="grand_total">{{ cart_bill.grand_total }}</span> </div>
                         </div>
-                        <hr> </div>
+                        <hr>
+                    </div>
+                    <div class="col-12 d-flex shopping-box"><a href="{% url 'user:checkout' %}" class="ml-auto btn hvr-hover">Checkout</a> </div>
                 </div>
-                <div class="col-12 d-flex shopping-box"><a href="{% url 'user:checkout' %}" class="ml-auto btn hvr-hover">Checkout</a> </div>
             </div>
 
         </div>

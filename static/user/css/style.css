@@ -2379,7 +2379,7 @@
  .featured-products-box .owl-nav button.owl-prev:hover, .featured-products-box .owl-nav button.owl-next:hover{
      background: #d33b33;
 }
- .table-responsive .table td, .table-responsive .table th {
+.table-responsive .table th {
      vertical-align: middle;
      white-space: nowrap;
 }

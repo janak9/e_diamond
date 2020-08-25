@@ -36,7 +36,7 @@
                             </a>
                             <a class="comparison-item-thumb" href="{% url 'user:product-details' pk=product.pk %}"><img src="{{ product.images.first.src.url }}" alt="{{ product.title }}"></a>
                             <a class="comparison-item-title" href="{% url 'user:product-details' pk=product.pk %}">{{ product.title }}</a>
-                            <a class="btn btn-pill btn-outline-primary btn-sm" type="button" href="{% url 'user:cart' %}" onclick="add_cart('{{ product.pk }}', 1, event)">Add to Cart</a>
+                            <a class="btn btn-pill btn-outline-primary btn-sm" type="button" href="{% url 'user:add-cart' product_id=product.pk %}">Add to Cart</a>
                         </div>
                     </td>
                     {% endfor %}
