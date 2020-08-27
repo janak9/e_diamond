@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from decouple import config
 from auth_user.models import User as user_model
 from auth_user.decorator import checkLogin
-from base import const, mail
+from base import const, mail, settings
 from user.models import Order, Feedback
 from product.models import MainCategory, Category, SubCategory, AdditionalInformation, Product, Review
 from payment.models import PaymentOrder, Payment
@@ -19,10 +19,20 @@ def get_common_context(request, context):
     context['CONST'] = const
 
 def test_mail(request):
-    user = user_model.objects.filter(user_type=const.ADMIN).first()
-    contact = Contact.objects.filter(contact_type=const.POST_REQUIRMENT).first()
-    mail.send_email(user, "contact", contact=contact)
+    user = user_model.objects.filter(user_type=const.ADMIN)
+    payment_order = PaymentOrder.objects.get(pk=25)
+    about_us = AboutUs.objects.first()
+    mail.send_email(user, "order_admin", payment_order=payment_order)
+    mail.send_email(payment_order.user, "order_user", payment_order=payment_order)
     return HttpResponse("sent")
+    # data = {
+    #         'user': payment_order.user,
+    #         'app_name': config('APP_NAME'),
+    #         'base_url': settings.SITE_URL,
+    #         'about_us': about_us,
+    #         'payment_order': payment_order
+    #     }
+    # return render(request, 'mail/order_user.html', data)
 
 @checkLogin('admin')
 def dashboard(request):

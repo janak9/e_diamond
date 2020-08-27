@@ -3,8 +3,9 @@ from django.http import HttpResponse
 from django.templatetags.static import static
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
+from auth_user.models import User as user_model
 from decouple import config
-from base import const
+from base import const, mail
 from auth_user.decorator import checkLogin
 from payment.models import PaymentOrder, Payment
 from product.models import Product
@@ -73,6 +74,9 @@ def success(request, pk):
             print(context['payment_order'])
 
             if payload['status'] == const.PAID:
+                user = user_model.objects.filter(user_type=const.ADMIN)
+                mail.send_email(user, "order_admin", payment_order=context['payment_order'])
+                mail.send_email(context['payment_order'].user, "order_user", payment_order=context['payment_order'])
                 return render(request, 'payment/success.html', context)
             else:
                 return redirect('payment:failure', pk=pk)

@@ -82,11 +82,14 @@
                 <div class="col-lg-6 col-sm-6">
                     <div class="coupon-box">
                         <div class="input-group input-group-sm">
-                            <input class="form-control" id="coupon_code" placeholder="Enter your coupon code" aria-label="Coupon code" type="text">
+                            <input class="form-control" id="coupon_code" placeholder="Enter your coupon code" aria-label="Coupon code" type="text" value="{% if cart_bill.offer_response and cart_bill.offer_response.status == 'success' %}{{ request.session.coupon_code }}{% endif %}">
                             <div class="input-group-append">
                                 <button class="btn btn-theme" onclick="apply_coupon()" type="button">Apply Coupon</button>
                             </div>
                         </div>
+                    </div>
+                    <div class="coupon-box" style="margin-top: 5px;">
+                        <div id="coupon_text" style="display:none;" class="alert"></div>
                     </div>
                 </div>
             </div>
@@ -158,6 +161,10 @@ $(document).ready(function(){
         const total_product_price = $(event.target).parent().siblings('.total-pr')[0].firstElementChild;
         total_product_price.innerHTML = +price * +qty;
     });
+
+    {% if cart_bill.offer_response and cart_bill.offer_response.status == 'success' %}
+    update_cart_bill({{ cart_bill|safe }});
+    {% endif %}
 });
 </script>
 {% endblock content %}

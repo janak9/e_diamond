@@ -15,7 +15,7 @@ class PaymentOrder(models.Model):
     price = models.FloatField(_('payable price'), blank=False, null=False)
     offer = models.ForeignKey(Offer, related_name="payment_order", on_delete=models.DO_NOTHING, blank=True, null=True)
     bill = models.TextField(_('bill calculation'), blank=False, null=False)
-    razorpay_order_id = models.CharField(_('comment'), max_length=150, blank=False, null=True)
+    razorpay_order_id = models.CharField(_('razorpay order id'), max_length=150, blank=False, null=True)
     razorpay_order_response = models.TextField(_('razorpay order response'), blank=False, null=True)
     receipt = models.CharField(_('receipt'), max_length=150, blank=False, null=True)
     timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)

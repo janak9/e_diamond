@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator as token_generator
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
@@ -34,6 +33,7 @@ def email_thread(user, email_type, *args, **kwargs):
         emails = []
         data = {
             'user': user,
+            'app_name': config('APP_NAME'),
             'base_url': settings.SITE_URL,
             'about_us': about_us
         }
@@ -59,6 +59,16 @@ def email_thread(user, email_type, *args, **kwargs):
             email_template = get_template('mail/change_password.html')
             subject = 'Change Password'
             emails.append(user.email)
+        elif email_type == 'order_user':
+            email_template = get_template('mail/order_user.html')
+            subject = 'Your ' + data['app_name'] + ' order #' + kwargs['payment_order'].receipt
+            data['payment_order'] = kwargs['payment_order']
+            emails.append(user.email)
+        elif email_type == 'order_admin':
+            email_template = get_template('mail/order_admin.html')
+            subject = 'You got new order #' + kwargs['payment_order'].receipt
+            data['payment_order'] = kwargs['payment_order']
+            for u in user: emails.append(u.email)
         else:
             email_template = get_template('mail/verification.html')
             subject = 'Activate Your Account'

@@ -58,10 +58,8 @@ function apply_coupon() {
         response = responseWrapper(response)
         console.log(response);
         if (response.status == "success"){
-          document.getElementById('coupon_code').classList.add('alert-success');
-          update_cart_bill(response);
+          update_cart_bill(response.cart_bill);
         } else {
-          document.getElementById('coupon_code').classList.add('alert-danger');
           alert(response.msg);
         }
       },
@@ -86,9 +84,8 @@ function update_cart(product_id, qty = 1, event = undefined) {
       success: function (response) {
         response = responseWrapper(response)
         console.log(response);
-        console.log(response.cart_bill);
         if (response.status == "success"){
-          update_cart_bill(response);
+          update_cart_bill(response.cart_bill);
         } else {
           alert(response.msg);
         }
@@ -100,12 +97,28 @@ function update_cart(product_id, qty = 1, event = undefined) {
   }
 }
 
-function update_cart_bill (response) {
-  document.getElementById('sub_total').innerHTML = response.cart_bill.sub_total;
-  document.getElementById('coupon_discount').innerHTML = response.cart_bill.coupon_discount;
-  document.getElementById('tax').innerHTML = response.cart_bill.tax;
-  document.getElementById('shipping_cost').innerHTML = response.cart_bill.shipping_cost;
-  document.getElementById('grand_total').innerHTML = response.cart_bill.grand_total;
+function update_cart_bill (cart_bill) {
+  document.getElementById('sub_total').innerHTML = cart_bill.sub_total;
+  document.getElementById('coupon_discount').innerHTML = cart_bill.coupon_discount;
+  document.getElementById('tax').innerHTML = cart_bill.tax;
+  document.getElementById('shipping_cost').innerHTML = cart_bill.shipping_cost;
+  document.getElementById('grand_total').innerHTML = cart_bill.grand_total;
+  if (cart_bill.offer_response) {
+    let coupon_code = document.getElementById('coupon_code');
+    let coupon_text = document.getElementById('coupon_text');
+    coupon_code.classList = "";
+    coupon_text.classList = "";
+    coupon_text.style = "display:block";
+    if (cart_bill.offer_response.status === 'error') {
+      coupon_code.classList.add('form-control', 'alert-danger');
+      coupon_text.classList.add('alert', 'alert-danger');
+      coupon_text.innerHTML = `${cart_bill.offer_response.msg}`;
+    } else {
+      coupon_code.classList.add('form-control', 'alert-success');
+      coupon_text.classList.add('alert', 'alert-success');
+      coupon_text.innerHTML = `Offer '${cart_bill.offer_response.offer_title}' Applied!`;
+    }
+  }
 }
 
 function remove_cart(product_id, event = undefined) {

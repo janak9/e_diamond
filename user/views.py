@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
+from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.utils.timezone import get_current_timezone
@@ -322,6 +323,9 @@ def calculate_bill(request):
             result['offer_response'] = offer_response
             if offer_response['status'] == 'success':
                 offer = offer_response['offer']
+                offer_response['offer_id'] = offer.pk
+                offer_response['offer_title'] = offer.title
+                offer_response['offer_code'] = offer.code
                 del offer_response['offer']
                 if result['sub_total'] < offer.minimun_order_price:
                     offer_response['status'] = 'error'
@@ -359,7 +363,7 @@ def check_offer(request):
         result['msg'] = 'Offer not started yet or expired!'
         return result
 
-    is_offer_used = PaymentOrder.objects.filter(user_id=user_id, offer_id=offer.pk).first()
+    is_offer_used = PaymentOrder.objects.filter(user_id=user_id, offer_id=offer.pk).exclude(status__in=[const.FAILED, const.CANCELLED]).first()
     if is_offer_used:
         result['status'] = 'error'
         result['msg'] = 'You have already used coupon code once!'
@@ -434,12 +438,19 @@ def checkout(request):
             payment_data = {}
             payment_data['user_id'] = user_id
             payment_data['price'] = context['cart_bill']['grand_total']
+            if context['cart_bill']['offer_response']:
+                if context['cart_bill']['offer_response']['status'] == 'success':
+                    context['cart_bill']['offer_id'] = context['cart_bill']['offer_response']['offer_id']
+                    context['cart_bill']['offer_code'] = context['cart_bill']['offer_response']['offer_code']
+                    payment_data['offer_id'] = context['cart_bill']['offer_response']['offer_id']
+                del context['cart_bill']['offer_response']
+
             payment_data['bill'] = json.dumps({
                 'from_address': {
                     'address': context['about_us'].address, 'phone': context['about_us'].phone, 'email': context['about_us'].email 
                 },
-                'billing_address': context['billing_address'],
-                'shipping_address': context['shipping_address'],
+                'billing_address': context['billing_address'].values()[0],
+                'shipping_address': context['shipping_address'].values()[0],
                 'price': context['cart_bill']
             })
             payment_order = PaymentOrder(**payment_data)
