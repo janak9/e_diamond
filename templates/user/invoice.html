@@ -82,23 +82,23 @@
           <div class="col-sm-4">
             <h5 class="mb-3">From:</h5>
             <h3 class="text-dark mb-1">{{ app_name }}</h3>
-            <div>{{ about_us.address }}</div>
-            <div>Email: {{ about_us.email }}</div>
-            <div>Phone: {{ about_us.phone }}</div>
+            <div>{{ from_address.address }}</div>
+            <div>Email: {{ from_address.email }}</div>
+            <div>Phone: {{ from_address.phone }}</div>
           </div>
           <div class="col-sm-4 ">
             <h5 class="mb-3">Billing Address:</h5>
-            <h3 class="text-dark mb-1">{{ billing_address.first.first_name }} {{ billing_address.first.last_name }}</h3>
-            {% if billing_address.first.company_name %}<div>{{ billing_address.first.company_name }}</div>{% endif %}
-            <div>{{ billing_address.first.appartment }}, {{ billing_address.first.street_address }}</div>
-            <div>{{ billing_address.first.city }}, {{ billing_address.first.country }} - {{ billing_address.first.pin_code }}</div>
+            <h3 class="text-dark mb-1">{{ billing_address.first_name }} {{ billing_address.last_name }}</h3>
+            {% if billing_address.company_name %}<div>{{ billing_address.company_name }}</div>{% endif %}
+            <div>{{ billing_address.appartment }}, {{ billing_address.street_address }}</div>
+            <div>{{ billing_address.city }}, {{ billing_address.country }} - {{ billing_address.pin_code }}</div>
           </div>
           <div class="col-sm-4 ">
             <h5 class="mb-3">Shipping Address:</h5>
-            <h3 class="text-dark mb-1">{{ shipping_address.first.first_name }} {{ shipping_address.first.last_name }}</h3>
-            {% if shipping_address.first.company_name %}<div>{{ shipping_address.first.company_name }}</div>{% endif %}
-            <div>{{ shipping_address.first.appartment }}, {{ shipping_address.first.street_address }}</div>
-            <div>{{ shipping_address.first.city }}, {{ shipping_address.first.country }} - {{ shipping_address.first.pin_code }}</div>
+            <h3 class="text-dark mb-1">{{ shipping_address.first_name }} {{ shipping_address.last_name }}</h3>
+            {% if shipping_address.company_name %}<div>{{ shipping_address.company_name }}</div>{% endif %}
+            <div>{{ shipping_address.appartment }}, {{ shipping_address.street_address }}</div>
+            <div>{{ shipping_address.city }}, {{ shipping_address.country }} - {{ shipping_address.pin_code }}</div>
           </div>
         </div>
         <div class="table-responsive-sm">

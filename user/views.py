@@ -19,42 +19,43 @@ import json
 import traceback
 from datetime import datetime
 
-def get_common_context(context):
+def get_common_context(request, context):
     context['app_name'] = config('APP_NAME')
     context['main_categories'] = MainCategory.objects.all()
     context['categories'] = Category.objects.all()
     context['about_us'] = AboutUs.objects.all()[0]
     context['offers'] = Offer.objects.order_by("-timestamp")
+    context['compare_products'] = Compare.objects.filter(user_id=request.user.id).first().product.all()
     context['top_10_products'] = Product.objects.order_by("-timestamp")[:10]
 
 def home(request):
     context = {}
     context['active'] = 'home'
-    get_common_context(context)
+    get_common_context(request, context)
     return render(request, 'user/index.html', context)
 
 def about(request):
     context = {}
     context['active'] = 'about'
-    get_common_context(context)
+    get_common_context(request, context)
     return render(request, 'user/about.html', context)
 
 def faq(request):
     context = {}
-    get_common_context(context)
+    get_common_context(request, context)
     context['faq'] = Details.objects.filter(detail_type=const.FAQ).first()
     return render(request, 'user/faq.html', context)
 
 def return_policy(request):
     context = {}
-    get_common_context(context)
+    get_common_context(request, context)
     context['return_policy'] = Details.objects.filter(detail_type=const.RETURN_POLICY).first()
     return render(request, 'user/return_policy.html', context)
 
 def contact_us(request):
     context = {}
     context['active'] = 'contact_us'
-    get_common_context(context)
+    get_common_context(request, context)
 
     try:
         if (request.method == 'POST'):
@@ -74,7 +75,7 @@ def contact_us(request):
 def post_requirment(request):
     context = {}
     context['active'] = 'post_requirment'
-    get_common_context(context)
+    get_common_context(request, context)
 
     try:
         if (request.method == 'POST'):
@@ -96,7 +97,7 @@ def post_requirment(request):
 def feedback(request):
     context = {}
     context['active'] = 'feedback'
-    get_common_context(context)
+    get_common_context(request, context)
 
     try:
         if (request.method == 'POST'):
@@ -117,7 +118,7 @@ def feedback(request):
 def products(request, main_category_id):
     context = {}
     context['active'] = 'products'
-    get_common_context(context)
+    get_common_context(request, context)
     filter_attr = {}
     filter_attr['sub_category'] = request.GET.getlist('sub_category[]')
     filter_attr['min_amount'] = request.GET.get('min_amount', 0)
@@ -152,7 +153,7 @@ def products(request, main_category_id):
 def product_details(request, pk):
     context = {}
     context['active'] = 'products'
-    get_common_context(context)
+    get_common_context(request, context)
     context['product'] = Product.objects.get(pk=pk)
     context['reviews'] = Review.objects.filter(product_id=pk).order_by('-timestamp')
     return render(request, 'user/product_details.html', context)
@@ -193,7 +194,7 @@ def add_review(request):
 def wishlist(request):
     context = {}
     context['active'] = 'my_account'
-    get_common_context(context)
+    get_common_context(request, context)
     context['wishlists'] = Wishlist.objects.filter(user_id=request.user.id).order_by('-timestamp')
     return render(request, 'user/wishlist.html', context)
 
@@ -232,7 +233,7 @@ def remove_wishlist(request, pk):
 def cart(request):
     context = {}
     context['active'] = 'my_account'
-    get_common_context(context)
+    get_common_context(request, context)
     today = datetime.now(tz=get_current_timezone())
     context['offers'] = Offer.objects.filter(end_time__gte=today)
     context['cart_bill'] = calculate_bill(request)
@@ -378,9 +379,8 @@ def check_offer(request):
 @checkLogin('both')
 def compare(request):
     context = {}
-    get_common_context(context)
+    get_common_context(request, context)
     context['products'] = Compare.objects.filter(user_id=request.user.id).first().product.all()
-    print(context['products'])
     return render(request, 'user/compare.html', context)
 
 @csrf_exempt
@@ -427,7 +427,7 @@ def remove_compare(request, product_id):
 def checkout(request):
     context = {}
     context['active'] = 'my_account'
-    get_common_context(context)
+    get_common_context(request, context)
     context['billing_address'] = Address.objects.filter(user_id=request.user.id, address_type=const.BILLING)
     context['shipping_address'] = Address.objects.filter(user_id=request.user.id, address_type=const.SHIPPING)
     context['cart_bill'] = calculate_bill(request)
@@ -492,21 +492,21 @@ def checkout(request):
 def my_account(request):
     context = {}
     context['active'] = 'my_account'
-    get_common_context(context)
+    get_common_context(request, context)
     return render(request, 'user/my_account.html', context)
 
 @checkLogin('both')
 def login_security(request):
     context = {}
     context['active'] = 'my_account'
-    get_common_context(context)
+    get_common_context(request, context)
     return render(request, 'user/login_security.html', context)
 
 @checkLogin('both')
 def offers(request):
     context = {}
     context['active'] = 'my_account'
-    get_common_context(context)
+    get_common_context(request, context)
     today = datetime.now(tz=get_current_timezone())
     context['offers'] = Offer.objects.filter(end_time__gte=today)
     return render(request, 'user/offers.html', context)
@@ -515,7 +515,7 @@ def offers(request):
 def address(request):
     context = {}
     context['active'] = 'my_account'
-    get_common_context(context)
+    get_common_context(request, context)
     context['billing_address'] = Address.objects.filter(user_id=request.user.id, address_type=const.BILLING)
     context['shipping_address'] = Address.objects.filter(user_id=request.user.id, address_type=const.SHIPPING)
 
@@ -547,7 +547,7 @@ def address(request):
 def orders(request):
     context = {}
     context['active'] = 'my_account'
-    get_common_context(context)
+    get_common_context(request, context)
     context['orders'] = Order.objects.filter(user_id=request.user.id).order_by('-timestamp')
     return render(request, 'user/orders.html', context)
 
@@ -555,7 +555,7 @@ def orders(request):
 def payments(request):
     context = {}
     context['active'] = 'my_account'
-    get_common_context(context)
+    get_common_context(request, context)
     context['payments'] = PaymentOrder.objects.filter(user_id=request.user.id).order_by('-timestamp')
     return render(request, 'user/payments.html', context)
 
@@ -563,11 +563,13 @@ def payments(request):
 def invoice(request, pk):
     context = {}
     context['active'] = 'my_account'
-    get_common_context(context)
+    get_common_context(request, context)
     context['payment'] = Payment.objects.get(pk=pk)
-    context['bill'] = json.loads(context['payment'].payment_order.bill)
-    context['billing_address'] = Address.objects.filter(user_id=context['payment'].user.id, address_type=const.BILLING)
-    context['shipping_address'] = Address.objects.filter(user_id=context['payment'].user.id, address_type=const.SHIPPING)
+    bill_details = json.loads(context['payment'].payment_order.bill)
+    context['billing_address'] = bill_details.get('billing_address')
+    context['shipping_address'] = bill_details.get('shipping_address')
+    context['from_address'] = bill_details.get('from_address')
+    context['bill'] = bill_details.get('price')
     # pdf_file = Render.render_to_file('user/invoice.html', context)
     # print(pdf_file)
     return render(request, 'user/invoice.html', context)
