@@ -136,7 +136,7 @@
                                     <li><a href="{% url 'user:wishlist' %}">Wishlist</a></li>
                                     <li><a href="{% url 'user:cart' %}">Cart</a></li>
                                     <li><a href="{% url 'user:checkout' %}">Checkout</a></li>
-                                    <li><a href="{% url 'user:compare' %}">Compare <span class="badge badge-pill badge-info">{{ compare_products|length }}</span></a></li>
+                                    <li><a href="{% url 'user:compare' %}">Compare</a></li>
                                     <li><a href="{% url 'user:my_account' %}">My Account</a></li>
                                     <li><a href="{% url 'auth:logout' %}">Logout</a></li>
                                 </ul>
@@ -154,7 +154,7 @@
                     <ul>
                         <li class="search"><a href="#"><i class="fa fa-search"></i></a></li>
                         <li class="side-menu">
-                            <a href="#"><i class="fas fa-sync-alt"></i><span class="badge">{{ compare_products|length }}</span></a>
+                            <a href="#"><i class="fas fa-sync-alt"></i><span id="compare_count" class="badge">{{ compare_products|length }}</span></a>
                         </li>
                     </ul>
                 </div>
@@ -164,7 +164,7 @@
             <div class="side">
                 <a href="#" class="close-side"><i class="fa fa-times"></i></a>
                 <li class="cart-box">
-                    <ul class="cart-list">
+                    <ul class="cart-list" id="compare_list">
                         {% for product in compare_products %}
                         <li>
                             <a href="{% url 'user:product-details' pk=product.pk %}" class="photo"><img src="{{ product.images.first.src.url }}" class="cart-thumb" alt="{{ product.title }}" /></a>

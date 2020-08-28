@@ -69,8 +69,12 @@ urlpatterns = [
         path('delete/<int:contact_type>/<int:pk>', views.del_contact, name="del-contact"),
     ])),
 
+    path('payments/', include([
+        path('', views.view_payments, name="view-payments"),
+        path('<int:pk>', views.edit_payment, name="edit-payment"),
+    ])),
+
     path("orders/", views.view_orders, name="view-orders"),
-    path("payments/", views.view_payments, name="view-payments"),
     path("about_us/", views.edit_about_us, name="edit-about-us"),
     path("details/<int:detail_type>", views.edit_details, name="edit-details"),
 ]

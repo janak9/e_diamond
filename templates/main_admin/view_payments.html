@@ -19,12 +19,15 @@
                         <tr>
                             <th>#</th>
                             <th>Receipt</th>
+                            <th>Order Id</th>
                             <th>User</th>
                             <th>Products</th>
                             <th>Price</th>
                             <th>Time</th>
                             <th>Status</th>
+                            <th>Track Order</th>
                             <th>Bill</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -32,6 +35,7 @@
                             <tr>
                                 <td>{% get_no payments.paginator.per_page payments.number forloop.counter %}</td>
                                 <td>{{ payment.payment_order.receipt }}</td>
+                                <td>{{ payment.payment_order.razorpay_order_id }}</td>
                                 <td><a href="{% url 'main_admin:edit-user' pk=payment.user.pk %}">{{ payment.user.get_full_name }}</a></td>
                                 <td>
                                 {% for order in payment.payment_order.order.all %}
@@ -53,10 +57,16 @@
                                         <span class="badge badge-danger">{{ payment.get_status_display }}</span>
                                     {% endif %}
                                 </td>
+                                <td>{{ payment.payment_order.get_track_order_status_display }}</td>
                                 <td>
                                     {% if payment.get_status_display == 'Paid' %}
-                                        <a class="btn hvr-hover" href="{% url 'user:invoice' pk=payment.pk %}" target="_blank">Download</a>
+                                        <a class="btn btn-success" href="{% url 'user:invoice' pk=payment.pk %}" target="_blank">Download</a>
                                     {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'main_admin:edit-payment' pk=payment.pk %}" style="margin-right:10px;">
+                                        <i class="fa fa-edit text-success ml-2"></i>
+                                    </a>
                                 </td>
                             </tr>
                         {% endfor %}

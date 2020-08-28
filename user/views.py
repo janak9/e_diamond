@@ -5,6 +5,7 @@ from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.utils.timezone import get_current_timezone
+from django.urls import reverse
 from auth_user.models import User as user_model
 from auth_user.decorator import checkLogin
 from base import const, mail
@@ -25,7 +26,11 @@ def get_common_context(request, context):
     context['categories'] = Category.objects.all()
     context['about_us'] = AboutUs.objects.all()[0]
     context['offers'] = Offer.objects.order_by("-timestamp")
-    context['compare_products'] = Compare.objects.filter(user_id=request.user.id).first().product.all()
+    try:
+        if(request.user.is_authenticated):
+            context['compare_products'] = Compare.objects.filter(user_id=request.user.id).first().product.all()
+    except:
+        traceback.print_exc()
     context['top_10_products'] = Product.objects.order_by("-timestamp")[:10]
 
 def home(request):
@@ -399,6 +404,16 @@ def add_compare(request):
         if not product in compare.product.all():
             compare.product.add(product)
             compare.save()
+        
+        compare_products = Compare.objects.filter(user_id=request.user.id).first().product.all()
+        result['compare_products_count'] = len(compare_products)
+        result['compare_products_list'] = ''
+        for product in compare_products:
+            result['compare_products_list'] = result['compare_products_list'] + "<li>" +\
+                "<a href='" + reverse('user:product-details', args=[product.pk]) + "' class='photo'><img src='" + product.images.first().src.url + "' class='cart-thumb' alt='" + product.title + "' /></a>" +\
+                "<h6><a href='" + reverse('user:product-details', args=[product.pk]) + "'>" + product.title + "</a></h6>" +\
+                "<p>1x - <span class='price'><i class='fas fa-rupee-sign'></i> " + str(product.price) + "</span></p>" +\
+            "</li>"
         result['status'] = 'success'
         result['msg'] = 'Added in compare list'
     except Exception as err:

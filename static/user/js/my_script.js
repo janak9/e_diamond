@@ -192,6 +192,8 @@ function add_compare(product_id, event = undefined) {
       success: function (response) {
         response = responseWrapper(response)
         console.log(response);
+        document.getElementById('compare_count').innerHTML = response.compare_products_count;
+        document.getElementById('compare_list').innerHTML = response.compare_products_list;
         alert(response.msg);
       },
       error: function (msg) {

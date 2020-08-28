@@ -6,27 +6,13 @@
 		<!-- //market-->
 		<div class="market-updates">
 			<div class="col-md-3 market-update-gd">
-				<div class="market-update-block clr-block-2">
-					<div class="col-md-4 market-update-right">
-						<i class="fa fa-eye"> </i>
-					</div>
-					<div class="col-md-8 market-update-left">
-						<h4>Visitors</h4>
-						<h3>13,500</h3>
-						<p>Other hand, we denounce</p>
-					</div>
-					<div class="clearfix"> </div>
-				</div>
-			</div>
-			<div class="col-md-3 market-update-gd">
 				<div class="market-update-block clr-block-1">
 					<div class="col-md-4 market-update-right">
 						<i class="fa fa-users"></i>
 					</div>
 					<div class="col-md-8 market-update-left">
 						<h4>Users</h4>
-						<h3>1,250</h3>
-						<p>Other hand, we denounce</p>
+						<h3>{{ user_count }}</h3>
 					</div>
 					<div class="clearfix"> </div>
 				</div>
@@ -34,12 +20,11 @@
 			<div class="col-md-3 market-update-gd">
 				<div class="market-update-block clr-block-3">
 					<div class="col-md-4 market-update-right">
-						<i class="fa fa-usd"></i>
+						<i class="far fa-gem" aria-hidden="true"></i>
 					</div>
 					<div class="col-md-8 market-update-left">
-						<h4>Sales</h4>
-						<h3>1,500</h3>
-						<p>Other hand, we denounce</p>
+						<h4>Product</h4>
+						<h3>{{ product_count }}</h3>
 					</div>
 					<div class="clearfix"> </div>
 				</div>
@@ -51,8 +36,19 @@
 					</div>
 					<div class="col-md-8 market-update-left">
 						<h4>Orders</h4>
-						<h3>1,500</h3>
-						<p>Other hand, we denounce</p>
+						<h3>{{ order_count }}</h3>
+					</div>
+					<div class="clearfix"> </div>
+				</div>
+			</div>
+			<div class="col-md-3 market-update-gd">
+				<div class="market-update-block clr-block-2">
+					<div class="col-md-4 market-update-right">
+						<i class="far fa-money-bill-alt"> </i>
+					</div>
+					<div class="col-md-8 market-update-left">
+						<h4>Payment</h4>
+						<h3>{{ payment_count }}</h3>
 					</div>
 					<div class="clearfix"> </div>
 				</div>

@@ -20,49 +20,49 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">First Name</label>
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" value="{{ user.first_name }}" disabled />
+                                    <input type="text" class="form-control" value="{{ user_detail.first_name }}" disabled />
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">Last Name</label>
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" value="{{ user.last_name }}" disabled />
+                                    <input type="text" class="form-control" value="{{ user_detail.last_name }}" disabled />
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">Email</label>
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" value="{{ user.email }}" disabled />
+                                    <input type="text" class="form-control" value="{{ user_detail.email }}" disabled />
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">Phone</label>
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" value="{{ user.phone }}" disabled />
+                                    <input type="text" class="form-control" value="{{ user_detail.phone }}" disabled />
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">Gender</label>
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" value="{{ user.get_gender_display }}" disabled />
+                                    <input type="text" class="form-control" value="{{ user_detail.get_gender_display }}" disabled />
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">Verified</label>
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" value="{{ user.is_active }}" disabled />
+                                    <input type="text" class="form-control" value="{{ user_detail.is_active }}" disabled />
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">Date Joined</label>
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" value="{{ user.date_joined }}" disabled />
+                                    <input type="text" class="form-control" value="{{ user_detail.date_joined }}" disabled />
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">Logo</label>
                                 <div class="col-sm-6">
-                                    <img src="{% if user.profile_pic %}{{ user.profile_pic.url }}{% endif %}" height="150" width="150"/>
+                                    <img src="{% if user_detail.profile_pic %}{{ user_detail.profile_pic.url }}{% endif %}" height="150" width="150"/>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -71,7 +71,7 @@
                                     <select class="form-control m-bot15" name="status" id="status">
                                         <option value="{{ CONST.STATUS_CHOICES.0.0 }}" selected>{{ CONST.STATUS_CHOICES.0.1 }}</option>
                                         <option value="{{ CONST.STATUS_CHOICES.1.0 }}" 
-                                        {% if user.status == CONST.STATUS_CHOICES.1.0 %}
+                                        {% if user_detail.status == CONST.STATUS_CHOICES.1.0 %}
                                             selected
                                         {% endif %}
                                             >{{ CONST.STATUS_CHOICES.1.1 }}</option>

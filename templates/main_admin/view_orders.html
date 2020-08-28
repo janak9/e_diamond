@@ -13,12 +13,12 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Product</th>
+                            <th>Receipt</th>
                             <th>User</th>
+                            <th>Product</th>
                             <th>Quantity</th>
                             <th>Price</th>
                             <th>Time</th>
-                            <th>Receipt</th>
                             <th>Payment Status</th>
                         </tr>
                     </thead>
@@ -26,12 +26,12 @@
                         {% for order in orders %}
                             <tr>
                                 <td>{% get_no orders.paginator.per_page orders.number forloop.counter %}</td>
-                                <td><a href="{% url 'main_admin:edit-product' pk=order.product.pk %}">{{ order.product.title }}</a></td>
+                                <td>{{ order.payment_order.first.receipt }}</td>
                                 <td><a href="{% url 'main_admin:edit-user' pk=order.user.pk %}">{{ order.user.get_full_name }}</a></td>
+                                <td><a href="{% url 'main_admin:edit-product' pk=order.product.pk %}">{{ order.product.title }}</a></td>
                                 <td>{{ order.qty }}</td>
                                 <td>{{ order.price }}</td>
                                 <td>{{ order.timestamp }}</td>
-                                <td>{{ order.payment_order.first.receipt }}</td>
                                 <td>
                                     {% if order.payment_order.first.get_status_display == 'Paid' %}
                                         <span class="badge badge-success">{{ order.payment_order.first.get_status_display }}</span>

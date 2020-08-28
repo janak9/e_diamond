@@ -20,6 +20,7 @@ class PaymentOrder(models.Model):
     receipt = models.CharField(_('receipt'), max_length=150, blank=False, null=True)
     timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
     status = models.PositiveSmallIntegerField(choices=const.PAYMENT_STATUS_CHOICES, default=const.PENDING)
+    track_order_status = models.PositiveSmallIntegerField(choices=const.TRACK_ORDER_STATUS_CHOICES, default=const.PENDING)
 
     def __str__(self):
         return "{} - {} - {} - {}".format(self.user.get_full_name(), self.get_status_display(), self.receipt, self.razorpay_order_id)

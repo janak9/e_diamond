@@ -1,0 +1,134 @@
+{% extends 'main_admin/base.html' %}
+{% block content %}
+{% load static %}
+{% load custom_tag %}
+<section class="wrapper">
+	<div class="form-w3layouts">
+        <div class="row">
+            <div class="col-lg-12">
+                <section class="panel">
+                    <header class="panel-heading">
+                        Payment Detail
+                    </header>
+                    <div class="panel-body">
+                        {% if msg %}
+                            <div class="alert alert-warning radius-both">
+                                <p style="color:red;">{{ msg }}</p>
+                            </div>
+                        {% endif %}
+                        <form class="form-horizontal bucket-form" method="post" action="" enctype="multipart/form-data">
+                        {% csrf_token %}
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Receipt</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" value="{{ payment.payment_order.receipt }}" disabled />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Order Id</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" value="{{ payment.payment_order.razorpay_order_id }}" disabled />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Price</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" value="{{ payment.payment_order.price }}" disabled />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Offer</label>
+                                <div class="col-sm-6">
+                                    {% if payment.payment_order.offer %}
+                                    <input type="text" class="form-control" value="{{ payment.payment_order.offer.title }}" disabled />
+                                    <a href="{% url 'main_admin:edit-offer' pk=payment.payment_order.offer.pk %}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
+                                    {% else %}<input type="text" class="form-control" value="Not Applied" disabled />{% endif %}
+                                </div>
+                            </div> 
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Status</label>
+                                <div class="col-sm-6">
+                                    {% if payment.get_status_display == 'Paid' %}
+                                        <span class="badge badge-success">{{ payment.get_status_display }}</span>
+                                        <a class="btn btn-success" href="{% url 'user:invoice' pk=payment.pk %}" target="_blank">Download Bill</a>
+                                    {% elif payment.get_status_display == 'Pending' %}
+                                        <span class="badge badge-primary">{{ payment.get_status_display }}</span>
+                                    {% elif payment.get_status_display == 'Processing' %}
+                                        <span class="badge badge-info">{{ payment.get_status_display }}</span>
+                                    {% elif payment.get_status_display == 'Cancelled' %}
+                                        <span class="badge badge-warning">{{ payment.get_status_display }}</span>
+                                    {% elif payment.get_status_display == 'Failed' %}
+                                        <span class="badge badge-danger">{{ payment.get_status_display }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">User Name</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" value="{{ payment.user.get_full_name }}" disabled />
+                                    <a href="{% url 'main_admin:edit-user' pk=payment.user.pk %}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
+                                </div>
+                            </div>
+                            {% for order in payment.payment_order.order.all %}
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Product {{ forloop.counter }}</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" value="{{ order.product.title }}" disabled />
+                                    <a href="{% url 'user:product-details' pk=order.product.pk %}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
+                                    <p><b>Price:</b> {{ order.price }}</p>
+                                    <p><b>Qty:</b> {{ order.qty }}</p>
+                                    <p><b>Total Price:</b> {{ order.qty|multiply:order.price }}</p>
+                                    <a href="{% url 'main_admin:edit-product' pk=order.product.pk %}"><img src="{% if order.product.images.first and order.product.images.first.src %}{{ order.product.images.first.src.url }}{% endif %}" height="150" width="150"/></a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Razorpay Response</label>
+                                <div class="col-sm-6">
+                                    <textarea class="form-control" rows=5 disabled>{{ payment.razorpay_response }}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Order Time</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" value="{{ payment.timestamp }}" disabled />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Track Order Status</label>
+                                <div class="col-sm-6">
+                                    <select class="form-control m-bot15" name="track_order_status" id="track_order_status">
+                                        <option value="{{ CONST.TRACK_ORDER_STATUS_CHOICES.0.0 }}" selected>{{ CONST.TRACK_ORDER_STATUS_CHOICES.0.1 }}</option>
+                                        <option value="{{ CONST.TRACK_ORDER_STATUS_CHOICES.1.0 }}" 
+                                        {% if payment.payment_order.track_order_status == CONST.TRACK_ORDER_STATUS_CHOICES.1.0 %}
+                                            selected
+                                        {% endif %}>{{ CONST.TRACK_ORDER_STATUS_CHOICES.1.1 }}</option>
+                                        <option value="{{ CONST.TRACK_ORDER_STATUS_CHOICES.2.0 }}" 
+                                        {% if payment.payment_order.track_order_status == CONST.TRACK_ORDER_STATUS_CHOICES.2.0 %}
+                                            selected
+                                        {% endif %}>{{ CONST.TRACK_ORDER_STATUS_CHOICES.2.1 }}</option>
+                                        <option value="{{ CONST.TRACK_ORDER_STATUS_CHOICES.3.0 }}" 
+                                        {% if payment.payment_order.track_order_status == CONST.TRACK_ORDER_STATUS_CHOICES.3.0 %}
+                                            selected
+                                        {% endif %}>{{ CONST.TRACK_ORDER_STATUS_CHOICES.3.1 }}</option>
+                                        <option value="{{ CONST.TRACK_ORDER_STATUS_CHOICES.4.0 }}" 
+                                        {% if payment.payment_order.track_order_status == CONST.TRACK_ORDER_STATUS_CHOICES.4.0 %}
+                                            selected
+                                        {% endif %}>{{ CONST.TRACK_ORDER_STATUS_CHOICES.4.1 }}</option> 
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"></label>
+                                <div class="col-sm-6">
+                                    <button type="submit" class="btn btn-info">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

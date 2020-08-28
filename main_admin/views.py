@@ -39,6 +39,10 @@ def dashboard(request):
     context = {}
     context['active'] = 'dashboard'
     get_common_context(request, context)
+    context['user_count'] = len(user_model.objects.all())
+    context['product_count'] = len(Product.objects.all())
+    context['order_count'] = len(Order.objects.all())
+    context['payment_count'] = len(Payment.objects.all())
     return render(request, 'main_admin/index.html', context)
 
 # main category
@@ -507,11 +511,11 @@ def edit_user(request, pk):
     context = {}
     context['active'] = 'user'
     get_common_context(request, context)
-    context['user'] = user_model.all_objects.get(pk=pk)
+    context['user_detail'] = user_model.all_objects.get(pk=pk)
     if (request.method == 'POST'):
         if 'status' in request.POST:
-            context['user'].status = request.POST['status']
-            context['user'].save()
+            context['user_detail'].status = request.POST['status']
+            context['user_detail'].save()
             return redirect("main_admin:view-user")
     return render(request, 'main_admin/edit_user.html', context)
 
@@ -642,6 +646,40 @@ def del_feedback(request, pk):
     feedback.delete()
     return redirect("main_admin:view-feedbacks")
 
+
+# payments
+@checkLogin('admin')
+def view_payments(request):
+    context = {}
+    context['active'] = 'payments'
+    get_common_context(request, context)
+    payment_list = Payment.objects.all().order_by('-timestamp')
+    page = request.GET.get('page', 1)
+    paginator = Paginator(payment_list, 5)
+    try:
+        payments = paginator.page(page)
+    except PageNotAnInteger:
+        payments = paginator.page(1)
+    except EmptyPage:
+        payments = paginator.page(paginator.num_pages)
+    context['payments'] = payments
+    return render(request, 'main_admin/view_payments.html', context)
+
+@checkLogin('admin')
+def edit_payment(request, pk):
+    context = {}
+    context['active'] = 'payments'
+    get_common_context(request, context)
+    context['payment'] = Payment.objects.get(pk=pk)
+    if (request.method == 'POST'):
+        if 'track_order_status' in request.POST:
+            payment_order = PaymentOrder.objects.get(pk=context['payment'].payment_order_id)
+            payment_order.track_order_status = request.POST['track_order_status']
+            payment_order.save()
+            return redirect("main_admin:view-payments")
+    return render(request, 'main_admin/edit_payment.html', context)
+
+
 @checkLogin('admin')
 def view_orders(request):
     context = {}
@@ -659,24 +697,6 @@ def view_orders(request):
         orders = paginator.page(paginator.num_pages)
     context['orders'] = orders
     return render(request, 'main_admin/view_orders.html', context)
-
-@checkLogin('admin')
-def view_payments(request):
-    context = {}
-    context['active'] = 'payments'
-    get_common_context(request, context)
-    
-    payment_list = Payment.objects.all().order_by('-timestamp')
-    page = request.GET.get('page', 1)
-    paginator = Paginator(payment_list, 5)
-    try:
-        payments = paginator.page(page)
-    except PageNotAnInteger:
-        payments = paginator.page(1)
-    except EmptyPage:
-        payments = paginator.page(paginator.num_pages)
-    context['payments'] = payments
-    return render(request, 'main_admin/view_payments.html', context)
 
 @checkLogin('admin')
 def edit_about_us(request):
