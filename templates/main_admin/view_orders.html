@@ -34,15 +34,15 @@
                                 <td>{{ order.timestamp }}</td>
                                 <td>
                                     {% if order.payment_order.first.get_status_display == 'Paid' %}
-                                        <span class="badge badge-success">{{ order.payment_order.first.get_status_display }}</span>
+                                        <span class="label label-success">{{ order.payment_order.first.get_status_display }}</span>
                                     {% elif order.payment_order.first.get_status_display == 'Pending' %}
-                                        <span class="badge badge-primary">{{ order.payment_order.first.get_status_display }}</span>
+                                        <span class="label label-primary">{{ order.payment_order.first.get_status_display }}</span>
                                     {% elif order.payment_order.first.get_status_display == 'Processing' %}
-                                        <span class="badge badge-info">{{ order.payment_order.first.get_status_display }}</span>
+                                        <span class="label label-info">{{ order.payment_order.first.get_status_display }}</span>
                                     {% elif order.payment_order.first.get_status_display == 'Cancelled' %}
-                                        <span class="badge badge-warning">{{ order.payment_order.first.get_status_display }}</span>
+                                        <span class="label label-warning">{{ order.payment_order.first.get_status_display }}</span>
                                     {% elif order.payment_order.first.get_status_display == 'Failed' %}
-                                        <span class="badge badge-danger">{{ order.payment_order.first.get_status_display }}</span>
+                                        <span class="label label-danger">{{ order.payment_order.first.get_status_display }}</span>
                                     {% endif %}
                                 </td>
                             </tr>

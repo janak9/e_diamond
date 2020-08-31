@@ -30,3 +30,11 @@ python>=3.5
 
 ## force reinstall Django
 pip install --upgrade --force-reinstall  Django==3.0.8
+
+
+# errors
+> ValueError: Database returned an invalid datetime value. Are time zone definitions for your database installed?
+```
+mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root -p mysql
+mysql -u root -p -e "flush tables;" mysql
+```

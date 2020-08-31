@@ -46,15 +46,15 @@
                                 <td>{{ payment.timestamp }}</td>
                                 <td>
                                     {% if payment.get_status_display == 'Paid' %}
-                                        <span class="badge badge-success">{{ payment.get_status_display }}</span>
+                                        <span class="label label-success">{{ payment.get_status_display }}</span>
                                     {% elif payment.get_status_display == 'Pending' %}
-                                        <span class="badge badge-primary">{{ payment.get_status_display }}</span>
+                                        <span class="label label-primary">{{ payment.get_status_display }}</span>
                                     {% elif payment.get_status_display == 'Processing' %}
-                                        <span class="badge badge-info">{{ payment.get_status_display }}</span>
+                                        <span class="label label-info">{{ payment.get_status_display }}</span>
                                     {% elif payment.get_status_display == 'Cancelled' %}
-                                        <span class="badge badge-warning">{{ payment.get_status_display }}</span>
+                                        <span class="label label-warning">{{ payment.get_status_display }}</span>
                                     {% elif payment.get_status_display == 'Failed' %}
-                                        <span class="badge badge-danger">{{ payment.get_status_display }}</span>
+                                        <span class="label label-danger">{{ payment.get_status_display }}</span>
                                     {% endif %}
                                 </td>
                                 <td>{{ payment.payment_order.get_track_order_status_display }}</td>

@@ -115,7 +115,7 @@ def verify_account(request, uid, token):
 def profile(request):
     context = {}
     context['active'] = 'my_account'
-    get_common_context(context)
+    get_common_context(request, context)
     context['msg'] = ""
     context['form'] = None
     if(request.method == 'POST'):
@@ -178,7 +178,7 @@ def verify_forgot_password(request, uid, token):
 def change_password(request):
     context = {}
     context['active'] = 'my_account'
-    get_common_context(context)
+    get_common_context(request, context)
     context['msg'] = ""
     user = user_model.objects.get(id=request.user.id)
     if request.method == "POST":

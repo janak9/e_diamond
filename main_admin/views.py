@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Sum, Count
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+from django.utils.timezone import get_current_timezone
 from decouple import config
 from auth_user.models import User as user_model
 from auth_user.decorator import checkLogin
@@ -13,6 +15,7 @@ from main_admin.models import Image, SocialLink, Contact, AboutUs, Details, Offe
 from main_admin.forms import ImageFormset, AboutForm
 import traceback
 import json
+import datetime
 
 def get_common_context(request, context):
     context['app_name'] = config('APP_NAME')
@@ -39,10 +42,38 @@ def dashboard(request):
     context = {}
     context['active'] = 'dashboard'
     get_common_context(request, context)
-    context['user_count'] = len(user_model.objects.all())
-    context['product_count'] = len(Product.objects.all())
-    context['order_count'] = len(Order.objects.all())
-    context['payment_count'] = len(Payment.objects.all())
+    context['user_count'] = user_model.objects.all().count()
+    context['product_count'] = Product.objects.all().count()
+    context['order_count'] = Order.objects.all().count()
+    payments = Payment.objects.all()
+    context['payment_count'] = payments.count()
+
+    today = datetime.datetime.now(tz=get_current_timezone())
+    prev_month = today - datetime.timedelta(30)
+    prev_year = today - datetime.timedelta(365)
+    
+    # last_month
+    last_month = payments.filter(status=const.PAID, timestamp__gt=prev_month).values('timestamp__year', 'timestamp__month', 'timestamp__day').annotate(total_income=Sum('payment_order__price'), total_sale=Count('*'))
+    context['last_month'] = []
+    for day in last_month:
+        day['date'] = str(day['timestamp__year']) + '-' + str('%02d' % day['timestamp__month']) + '-' + str('%02d' % day['timestamp__day'])
+        context['last_month'].append(day)
+
+    context['last_month'] = sorted(context['last_month'], key = lambda i: i['date'])    
+
+    # last_year
+    last_year = payments.filter(status=const.PAID, timestamp__gt=prev_year).values('timestamp__year', 'timestamp__month').annotate(total_income=Sum('payment_order__price'), total_sale=Count('*'))
+    context['last_year'] = []
+    for day in last_year:
+        day['date'] = str(day['timestamp__year']) + '-' + str('%02d' % day['timestamp__month'])
+        context['last_year'].append(day)
+
+    context['last_year'] = sorted(context['last_year'], key = lambda i: i['date'])
+
+    # overall
+    context['overall'] = list(payments.filter(status=const.PAID).values('timestamp__year').annotate(total_income=Sum('payment_order__price'), total_sale=Count('*')).order_by('timestamp__year').values('timestamp__year', 'total_income', 'total_sale'))
+
+    context['top_payments'] = payments.order_by('-timestamp')[0:5]
     return render(request, 'main_admin/index.html', context)
 
 # main category
