@@ -110,7 +110,7 @@
                                                 <div class="form-group">
                                                     <label class="col-sm-3 control-label">Image {{ forloop.counter }}</label>
                                                     <div class="col-sm-6">
-                                                        <input type="file" name="form-{{ forloop.counter0 }}-src" accept="image/*" class="form-control" id="id_form-{{ forloop.counter0 }}-src" onchange="loadImage(event,'id_form-{{ forloop.counter0 }}-src_preview')" >
+                                                        <input type="file" name="form-{{ forloop.counter0 }}-src" accept="image/*" class="form-control" id="id_form-{{ forloop.counter0 }}-src" onchange="loadImage(event,'id_form-{{ forloop.counter0 }}-src_preview')" value="{{ image.pk }}">
                                                         <input type="hidden" name="form-{{ forloop.counter0 }}-id" id="id_form-{{ forloop.counter0 }}-id" value="{{ image.pk }}">
                                                         <img id="id_form-{{ forloop.counter0 }}-src_preview" src="{% if image.src %}{{ image.src.url }}{% endif %}" height="150" width="150"/>
                                                     </div>

@@ -313,7 +313,7 @@ def add_product(request, pk=None):
         context['product'] = Product.all_objects.get(id=pk)
         context['categories'] = Category.all_objects.filter(main_category_id=context['product'].main_category_id).order_by('name')
         context['sub_categories'] = SubCategory.all_objects.filter(category_id=context['product'].category_id).order_by('name')
-        context['image_form'] = ImageFormset(request.POST or None, request.FILES or None, queryset=Image.objects.none())
+        context['image_form'] = ImageFormset(request.POST or None, request.FILES or None, queryset=context['product'].images.all())
     else:
         context['task'] = "Add"
         context['image_form'] = ImageFormset(request.POST or None, request.FILES or None, queryset=Image.objects.none())
@@ -339,7 +339,6 @@ def add_product(request, pk=None):
                 print(form.cleaned_data)
                 image_data = form.cleaned_data
                 image = image_data.get('id')
-                print(image)
                 if image_data.get('src') or image:
                     if image and image_data.get('src'):
                         image.src = image_data.get('src')

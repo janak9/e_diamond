@@ -82,6 +82,20 @@ class AdditionalInformation(models.Model):
         return self.title
 
 
+class Polish(models.Model):
+    class Meta:
+        db_table = 'polish'
+
+    size = models.FloatField(_('size'), blank=True, null=True)
+    diameter = models.FloatField(_('diameter'), blank=True, null=True)
+    shape = models.PositiveSmallIntegerField(choices=const.POLISH_SHAPE_CHOICES, blank=True, null=True)
+    cut = models.PositiveSmallIntegerField(choices=const.POLISH_CUT_CHOICES, blank=True, null=True)
+    symmetry_cut = models.PositiveSmallIntegerField(choices=const.POLISH_CUT_CHOICES, blank=True, null=True)
+    purity = models.PositiveSmallIntegerField(choices=const.POLISH_PURITY_CHOICES, blank=True, null=True)
+    color = models.PositiveSmallIntegerField(choices=const.POLISH_COLOR_CHOICES, blank=True, null=True)
+    fluorescence = models.PositiveSmallIntegerField(choices=const.POLISH_FLUORESCENCE_CHOICES, blank=True, null=True)
+
+
 class Product(models.Model):
     class Meta:
         db_table = 'product'
@@ -97,6 +111,7 @@ class Product(models.Model):
     images = models.ManyToManyField(Image, related_name='product', blank=True)
     social_links = models.ManyToManyField(SocialLink, related_name='product', blank=True)
     additional_information = models.ManyToManyField(AdditionalInformation, related_name='product', blank=True)
+    polish = models.ForeignKey(Polish, related_name='product', on_delete=models.SET_NULL, blank=True, null=True)
     status = models.PositiveSmallIntegerField(choices=const.STATUS_CHOICES, default=const.ACTIVE)
     timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
 

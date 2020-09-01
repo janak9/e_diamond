@@ -77,6 +77,16 @@ additional_information:
     title
     description
 
+polish:
+    size 
+    shape (Round, Princess, Cushion, Oval, Emerald, Heart, Pear, Marquise, Asscher, Radiant)
+    cut (poor, fair, good, very good, excellent)
+    symmetry_cut (poor, fair, good, very good, excellent)
+    diameter
+    purity (FL, IF, VVS1, VVS2, VS1, VS2, SI1, SI2, SI3, I1)
+    color (D-N)
+    fluorescence (None, Faint, Medium, Strong, Very Strong)
+
 reviews:
     user#
     product#

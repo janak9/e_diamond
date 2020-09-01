@@ -1,6 +1,7 @@
 {% extends 'main_admin/base.html' %}
 {% block content %}
 {% load static %}
+{% load custom_tag %}
 <section class="wrapper">
     <div class="table-agile-info">
         <div class="panel panel-default">
@@ -11,6 +12,7 @@
                 <table class="table table-striped b-t b-light">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th>Main Category</th>
                             <th>Category</th>
                             <th>Sub Category</th>
@@ -25,6 +27,7 @@
                     <tbody>
                         {% for product in products %}
                             <tr>
+                                <td>{% get_no products.paginator.per_page products.number forloop.counter %}</td>
                                 <td>{{ product.main_category.name }}</td>
                                 <td>{{ product.category.name }}</td>
                                 <td>{{ product.sub_category.name }}</td>
