@@ -237,7 +237,7 @@
                                                     <div class="why-text full-width">
                                                         <a href="{% url 'user:product-details' pk=row.pk %}" style="padding:0px;" ><h4>{{ row.title }}</h4></a>
                                                         <h5><i class="fas fa-rupee-sign"></i> {{ row.price }}</h5>
-                                                        <p style="min-height: 90px;max-height: 100px;overflow-y: hidden;">{{ row.description|safe }}</p>
+                                                        <div style="min-height: 90px;max-height: 100px;overflow-y: hidden;">{{ row.description|safe }}</div>
                                                         <a class="btn hvr-hover" href="{% url 'user:add-cart' product_id=row.pk %}" style="margin-top: 10px;">Add to Cart</a>
                                                     </div>
                                                 </div>

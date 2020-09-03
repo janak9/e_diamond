@@ -414,6 +414,9 @@ def add_compare(request):
                 "<h6><a href='" + reverse('user:product-details', args=[product.pk]) + "'>" + product.title + "</a></h6>" +\
                 "<p>1x - <span class='price'><i class='fas fa-rupee-sign'></i> " + str(product.price) + "</span></p>" +\
             "</li>"
+        result['compare_products_list'] = result['compare_products_list'] + "<li>" +\
+                "<a href='" + reverse('user:compare') + "' class='btn btn-info'>Detail View</a>" +\
+            "</li>"
         result['status'] = 'success'
         result['msg'] = 'Added in compare list'
     except Exception as err:

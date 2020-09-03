@@ -80,7 +80,7 @@ function navigate(evt)
   // Check if nothing is selected and that we are using a known key
   if (active.length === 0 && ( evt.keyCode === left || evt.keyCode === up || evt.keyCode === right || evt.keyCode === down ))
   {
-    $('ul.icons li:visible').first().trigger('click');
+    // $('ul.icons li:visible').first().trigger('click');
 
     if(typeof window._gaq !== 'undefined')
     {
