@@ -1,4 +1,4 @@
-from django.urls import path, re_path
+from django.urls import path
 from user import views
 
 app_name = "user"
@@ -9,7 +9,7 @@ urlpatterns = [
     path("faq", views.faq, name="faq"),
     path("return_policy", views.return_policy, name="return-policy"),
     path("contact_us", views.contact_us, name="contact-us"),
-    path("post_requirment", views.post_requirment, name="post-requirment"),
+    path("post_requirement", views.post_requirement, name="post-requirement"),
     path("feedback", views.feedback, name="feedback"),
 
     # product

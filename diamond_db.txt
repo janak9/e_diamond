@@ -97,7 +97,7 @@ reviews:
 
 --------- admin -----------
 contact:
-    type(contact_us/post_requirment)
+    type(contact_us/post_requirement)
     name
     Email
     phone

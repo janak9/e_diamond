@@ -8,6 +8,7 @@ from base import const, managers
 from product.models import Product
 from main_admin.models import Offer
 
+
 class Address(models.Model):
     class Meta:
         db_table = 'address'

@@ -11,21 +11,24 @@ import logging
 
 admins_logger = logging.getLogger('admins')
 
+
 def send_email(user, email_type='activation', *args, **kwargs):
     # this start thread there for user don't need to wait until mail send
     t = Thread(target=email_thread, args=(user, email_type, *args), kwargs=kwargs)
     t.start()
 
-def send_email_with_attachment(file: list):
-    r = requests.post(
-        "https://api.mailgun.net/v3/######/messages",
-        auth=("api", "key-########################################"),
-        files=[("attachment", (file[0], open(file[1], "rb").read()))],
-        data={"from": "No Reply <no-reply@##########>",
-              "to": "me@########",
-              "subject": "Sales Report",
-              "text": "Requested Sales Report",
-              "html": "<html>Requested Sales Report</html>"})
+
+# def send_email_with_attachment(file: list):
+#     r = requests.post(
+#         "https://api.mailgun.net/v3/######/messages",
+#         auth=("api", "key-########################################"),
+#         files=[("attachment", (file[0], open(file[1], "rb").read()))],
+#         data={"from": "No Reply <no-reply@##########>",
+#               "to": "me@########",
+#               "subject": "Sales Report",
+#               "text": "Requested Sales Report",
+#               "html": "<html>Requested Sales Report</html>"})
+
 
 def email_thread(user, email_type, *args, **kwargs):
     try:

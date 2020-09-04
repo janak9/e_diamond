@@ -1,7 +1,5 @@
 from django.shortcuts import render, redirect
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
-from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.utils.timezone import get_current_timezone
@@ -9,16 +7,15 @@ from django.urls import reverse
 from auth_user.models import User as user_model
 from auth_user.decorator import checkLogin
 from base import const, mail
-from base.utils import Render
-from product.models import MainCategory, Category, SubCategory, Product, Review
-from main_admin.models import Image, AboutUs, Offer, Contact, Details
+from product.models import MainCategory, Category, Product, Review
+from main_admin.models import AboutUs, Offer, Contact, Details
 from user.models import Wishlist, Cart, Compare, Address, Order, Feedback
 from payment.models import PaymentOrder, Payment
 from decouple import config
-import sys
 import json
 import traceback
 from datetime import datetime
+
 
 def get_common_context(request, context):
     context['app_name'] = config('APP_NAME')
@@ -27,23 +24,24 @@ def get_common_context(request, context):
     context['about_us'] = AboutUs.objects.all()[0]
     context['offers'] = Offer.objects.order_by("-timestamp")
     try:
-        if(request.user.is_authenticated):
+        if request.user.is_authenticated:
             context['compare_products'] = Compare.objects.filter(user_id=request.user.id).first().product.all()
     except:
         traceback.print_exc()
     context['top_10_products'] = Product.objects.order_by("-timestamp")[:10]
 
+
 def home(request):
-    context = {}
-    context['active'] = 'home'
+    context = {'active': 'home'}
     get_common_context(request, context)
     return render(request, 'user/index.html', context)
 
+
 def about(request):
-    context = {}
-    context['active'] = 'about'
+    context = {'active': 'about'}
     get_common_context(request, context)
     return render(request, 'user/about.html', context)
+
 
 def faq(request):
     context = {}
@@ -51,68 +49,69 @@ def faq(request):
     context['faq'] = Details.objects.filter(detail_type=const.FAQ).first()
     return render(request, 'user/faq.html', context)
 
+
 def return_policy(request):
     context = {}
     get_common_context(request, context)
     context['return_policy'] = Details.objects.filter(detail_type=const.RETURN_POLICY).first()
     return render(request, 'user/return_policy.html', context)
 
+
 def contact_us(request):
-    context = {}
-    context['active'] = 'contact_us'
+    context = {'active': 'contact_us'}
     get_common_context(request, context)
 
     try:
-        if (request.method == 'POST'):
+        if request.method == 'POST':
             data = request.POST.dict()
             tmp = ['csrfmiddlewaretoken']
-            list(map(data.pop, tmp)) # remove extra fields
+            list(map(data.pop, tmp))  # remove extra fields
             contact = Contact.objects.create(**data)
             user = user_model.objects.filter(user_type=const.ADMIN)
             mail.send_email(user, "contact", contact=contact)
             context['msg'] = "Thank You! For reaching us, we will you contact soon."
-    except Exception as err:
+    except:
         traceback.print_exc()
         context['msg'] = "Oops, Something was wrong! Please try again."
 
     return render(request, 'user/contact_us.html', context)
 
-def post_requirment(request):
-    context = {}
-    context['active'] = 'post_requirment'
+
+def post_requirement(request):
+    context = {'active': 'post_requirement'}
     get_common_context(request, context)
 
     try:
-        if (request.method == 'POST'):
+        if request.method == 'POST':
             data = request.POST.dict()
             tmp = ['csrfmiddlewaretoken']
-            list(map(data.pop, tmp)) # remove extra fields
-            data['contact_type'] = const.POST_REQUIRMENT
+            list(map(data.pop, tmp))  # remove extra fields
+            data['contact_type'] = const.POST_REQUIREMENT
             contact = Contact.objects.create(**data)
             user = user_model.objects.filter(user_type=const.ADMIN)
             mail.send_email(user, "contact", contact=contact)
             context['msg'] = "Thank You! For reaching us, we will you contact soon."
-    except Exception as err:
+    except:
         traceback.print_exc()
         context['msg'] = "Oops, Something was wrong! Please try again."
 
-    return render(request, 'user/post_requirment.html', context)
+    return render(request, 'user/post_requirement.html', context)
+
 
 @checkLogin('both')
 def feedback(request):
-    context = {}
-    context['active'] = 'feedback'
+    context = {'active': 'feedback'}
     get_common_context(request, context)
 
     try:
-        if (request.method == 'POST'):
+        if request.method == 'POST':
             data = request.POST.dict()
             tmp = ['csrfmiddlewaretoken']
-            list(map(data.pop, tmp)) # remove extra fields
+            list(map(data.pop, tmp))  # remove extra fields
             data['user_id'] = request.user.pk
-            feedback = Feedback.objects.create(**data)
+            Feedback.objects.create(**data)
             context['msg'] = "Thank You! For Giving Feedback to us."
-    except Exception as err:
+    except:
         traceback.print_exc()
         context['msg'] = "Oops, Something was wrong! Please try again."
 
@@ -121,28 +120,35 @@ def feedback(request):
 
 # product
 def products(request, main_category_id):
-    context = {}
-    context['active'] = 'products'
+    context = {'active': 'products'}
     get_common_context(request, context)
-    filter_attr = {}
-    filter_attr['sub_category'] = request.GET.getlist('sub_category[]')
-    filter_attr['min_amount'] = request.GET.get('min_amount', 0)
-    filter_attr['max_amount'] = request.GET.get('max_amount', 30000)
-    filter_attr['sort_by'] = request.GET.get('sort_by')
+    filter_attr = {'sub_category': request.GET.getlist('sub_category[]'),
+                   'min_amount': request.GET.get('min_amount', 0),
+                   'max_amount': request.GET.get('max_amount', 30000),
+                   'sort_by': request.GET.get('sort_by')}
     context['filter_attr'] = filter_attr
     context['main_category'] = MainCategory.objects.get(pk=main_category_id)
 
-    if (filter_attr['sort_by'] != '' and filter_attr['sort_by'] == 'price_desc'):
-        orderbyList = ['-price']
-    elif (filter_attr['sort_by'] != '' and filter_attr['sort_by'] == 'price_asc'):
-        orderbyList = ['price']
+    if filter_attr['sort_by'] != '' and filter_attr['sort_by'] == 'price_desc':
+        order_list = ['-price']
+    elif filter_attr['sort_by'] != '' and filter_attr['sort_by'] == 'price_asc':
+        order_list = ['price']
     else:
-        orderbyList = ['-timestamp']
-    
-    if (len(filter_attr['sub_category']) > 0):
-        products_list = Product.objects.filter(main_category__pk=main_category_id, sub_category__pk__in=filter_attr['sub_category'], price__range=(filter_attr['min_amount'], filter_attr['max_amount'])).order_by(*orderbyList)
+        order_list = ['-timestamp']
+
+    if len(filter_attr['sub_category']) > 0:
+        products_list = Product.objects.filter(
+            main_category__pk=main_category_id,
+            sub_category__pk__in=filter_attr['sub_category'],
+            price__range=(filter_attr['min_amount'], filter_attr['max_amount'])
+        ) \
+            .order_by(*order_list)
     else:
-        products_list = Product.objects.filter(main_category__pk=main_category_id, price__range=(filter_attr['min_amount'], filter_attr['max_amount'])).order_by(*orderbyList)
+        products_list = Product.objects.filter(
+            main_category__pk=main_category_id,
+            price__range=(filter_attr['min_amount'], filter_attr['max_amount'])
+        ) \
+            .order_by(*order_list)
 
     # page = request.GET.get('page', 1)
     # paginator = Paginator(products_list, 20)
@@ -155,19 +161,21 @@ def products(request, main_category_id):
     context['products'] = products_list
     return render(request, 'user/products.html', context)
 
+
 def product_details(request, pk):
-    context = {}
-    context['active'] = 'products'
+    context = {'active': 'products'}
     get_common_context(request, context)
     context['product'] = Product.objects.get(pk=pk)
     context['reviews'] = Review.objects.filter(product_id=pk).order_by('-timestamp')
     return render(request, 'user/product_details.html', context)
 
+
 def description(request, pk):
     product = Product.objects.get(pk=pk)
-    res = render(request, 'user/description.html', { 'product': product })
+    res = render(request, 'user/description.html', {'product': product})
     res['X-Frame-Options'] = 'SAMEORIGIN'
     return res
+
 
 @csrf_exempt
 @checkLogin('both')
@@ -180,13 +188,13 @@ def add_review(request):
         star = data['star']
         user_id = request.user.id
         product = PaymentOrder.objects.filter(user_id=user_id, status=const.PAID, order__product_id=product_id)
-        if (product.count() > 0):
+        if product.count() > 0:
             Review.objects.create(user_id=user_id, product_id=product_id, star=star, comment=comment)
             result['status'] = 'success'
         else:
             result['status'] = 'not_buy'
-            result['msg'] = "you havn't buy this product. so, you can't give review."
-    except Exception as err:
+            result['msg'] = "you haven't buy this product. so, you can't give review."
+    except:
         traceback.print_exc()
         result['status'] = 'error'
         result['msg'] = 'something is wrong!'
@@ -197,11 +205,11 @@ def add_review(request):
 # wishlist
 @checkLogin('both')
 def wishlist(request):
-    context = {}
-    context['active'] = 'my_account'
+    context = {'active': 'my_account'}
     get_common_context(request, context)
     context['wishlists'] = Wishlist.objects.filter(user_id=request.user.id).order_by('-timestamp')
     return render(request, 'user/wishlist.html', context)
+
 
 @csrf_exempt
 @checkLogin('both')
@@ -212,19 +220,20 @@ def add_wishlist(request):
         product_id = data['product_id']
         user_id = request.user.id
         wishlist = Wishlist.objects.filter(user_id=user_id, product_id=product_id)
-        if (wishlist.count() > 0):
+        if wishlist.count() > 0:
             result['status'] = 'success'
             result['msg'] = 'already added in wishlist'
         else:
             Wishlist.objects.create(user_id=user_id, product_id=product_id)
             result['status'] = 'success'
             result['msg'] = 'successfully added to wishlist'
-    except Exception as err:
+    except:
         traceback.print_exc()
         result['status'] = 'error'
         result['msg'] = 'something is wrong!'
 
     return HttpResponse(json.dumps(result))
+
 
 @checkLogin('both')
 def remove_wishlist(request, pk):
@@ -236,8 +245,7 @@ def remove_wishlist(request, pk):
 # cart
 @checkLogin('both')
 def cart(request):
-    context = {}
-    context['active'] = 'my_account'
+    context = {'active': 'my_account'}
     get_common_context(request, context)
     today = datetime.now(tz=get_current_timezone())
     context['offers'] = Offer.objects.filter(end_time__gte=today)
@@ -245,18 +253,20 @@ def cart(request):
     context['carts'] = Cart.objects.filter(user_id=request.user.id).order_by('-timestamp')
     return render(request, 'user/cart.html', context)
 
+
 @csrf_exempt
 @checkLogin('both')
 def add_cart(request, product_id):
     try:
         user_id = request.user.id
         cart = Cart.objects.filter(user_id=user_id, product_id=product_id)
-        if (cart.count() <= 0):
+        if cart.count() <= 0:
             Cart.objects.create(user_id=user_id, product_id=product_id, qty=1)
     except Exception as err:
         print('update_cart - ', err)
         traceback.print_exc()
     return redirect("user:cart")
+
 
 @csrf_exempt
 @checkLogin('both')
@@ -268,13 +278,13 @@ def update_cart(request):
         qty = data['qty']
         user_id = request.user.id
         cart = Cart.objects.filter(user_id=user_id, product_id=product_id)
-        if (cart.count() <= 0):
+        if cart.count() <= 0:
             result['status'] = 'error'
             result['msg'] = 'product not found in cart!'
             return HttpResponse(json.dumps(result))
         else:
             cart = cart.get()
-            if (cart.qty != qty):
+            if cart.qty != qty:
                 cart.qty = qty
                 cart.save()
             result['cart_bill'] = calculate_bill(request)
@@ -288,11 +298,13 @@ def update_cart(request):
 
     return HttpResponse(json.dumps(result))
 
+
 @checkLogin('both')
 def remove_cart(request, pk):
     cart = Cart.objects.get(id=pk)
     cart.delete()
     return redirect("user:cart")
+
 
 @csrf_exempt
 @checkLogin('both')
@@ -301,16 +313,16 @@ def verify_offer(request):
     try:
         data = json.loads(request.POST.get('data'))
         coupon_code = data['coupon_code']
-        user_id = request.user.id
         request.session['coupon_code'] = coupon_code
         result['cart_bill'] = calculate_bill(request)
         result['status'] = 'success'
-    except Exception as err:
+    except:
         traceback.print_exc()
         result['status'] = 'error'
         result['msg'] = 'something is wrong!'
 
     return HttpResponse(json.dumps(result))
+
 
 def calculate_bill(request):
     try:
@@ -323,7 +335,7 @@ def calculate_bill(request):
         result['coupon_discount'] = 0
         for cart in carts:
             result['sub_total'] += (cart.qty * cart.product.price)
-        
+
         offer_response = check_offer(request)
         if offer_response:
             result['offer_response'] = offer_response
@@ -336,7 +348,7 @@ def calculate_bill(request):
                 if result['sub_total'] < offer.minimun_order_price:
                     offer_response['status'] = 'error'
                     offer_response['msg'] = 'The order price is below the minimum price for the applied offer!'
-                else:    
+                else:
                     if offer.offer_type == const.PERCENTAGE:
                         result['coupon_discount'] = (result['sub_total'] * offer.discount / 100)
                         if result['coupon_discount'] > offer.maximun_discount:
@@ -350,10 +362,11 @@ def calculate_bill(request):
         print('calculate_bill - ', err)
         raise err
 
+
 def check_offer(request):
     result = {}
     user_id = request.user.id
-    coupon_code = request.session['coupon_code'] if request.session.has_key('coupon_code') else None
+    coupon_code = request.session['coupon_code'] if 'coupon_code' in request.session else None
     if not coupon_code:
         return
 
@@ -369,12 +382,14 @@ def check_offer(request):
         result['msg'] = 'Offer not started yet or expired!'
         return result
 
-    is_offer_used = PaymentOrder.objects.filter(user_id=user_id, offer_id=offer.pk).exclude(status__in=[const.FAILED, const.CANCELLED]).first()
+    is_offer_used = PaymentOrder.objects.filter(user_id=user_id, offer_id=offer.pk)\
+        .exclude(status__in=[const.FAILED, const.CANCELLED])\
+        .first()
     if is_offer_used:
         result['status'] = 'error'
         result['msg'] = 'You have already used coupon code once!'
         return result
-    
+
     result['status'] = 'success'
     result['offer'] = offer
     return result
@@ -387,6 +402,7 @@ def compare(request):
     get_common_context(request, context)
     context['products'] = Compare.objects.filter(user_id=request.user.id).first().product.all()
     return render(request, 'user/compare.html', context)
+
 
 @csrf_exempt
 @checkLogin('both')
@@ -401,10 +417,10 @@ def add_compare(request):
             compare.save()
 
         product = Product.objects.get(pk=product_id)
-        if not product in compare.product.all():
+        if product not in compare.product.all():
             compare.product.add(product)
             compare.save()
-        
+
         compare_products = Compare.objects.filter(user_id=request.user.id).first().product.all()
         result['compare_products_count'] = len(compare_products)
         result['compare_products_list'] = ''
@@ -413,18 +429,19 @@ def add_compare(request):
                 "<a href='" + reverse('user:product-details', args=[product.pk]) + "' class='photo'><img src='" + product.images.first().src.url + "' class='cart-thumb' alt='" + product.title + "' /></a>" +\
                 "<h6><a href='" + reverse('user:product-details', args=[product.pk]) + "'>" + product.title + "</a></h6>" +\
                 "<p>1x - <span class='price'><i class='fas fa-rupee-sign'></i> " + str(product.price) + "</span></p>" +\
-            "</li>"
+                "</li>"
         result['compare_products_list'] = result['compare_products_list'] + "<li>" +\
-                "<a href='" + reverse('user:compare') + "' class='btn btn-info'>Detail View</a>" +\
+            "<a href='" + reverse('user:compare') + "' class='btn btn-info'>Detail View</a>" +\
             "</li>"
         result['status'] = 'success'
         result['msg'] = 'Added in compare list'
-    except Exception as err:
+    except:
         traceback.print_exc()
         result['status'] = 'error'
         result['msg'] = 'something is wrong!'
 
     return HttpResponse(json.dumps(result))
+
 
 @checkLogin('both')
 def remove_compare(request, product_id):
@@ -434,28 +451,25 @@ def remove_compare(request, product_id):
             product = Product.objects.get(pk=product_id)
             compare.product.remove(product)
             compare.save()
-    except Exception as err:
+    except:
         traceback.print_exc()
-        
+
     return redirect('user:compare')
- 
+
 
 # my account
 @checkLogin('both')
 def checkout(request):
-    context = {}
-    context['active'] = 'my_account'
+    context = {'active': 'my_account'}
     get_common_context(request, context)
     context['billing_address'] = Address.objects.filter(user_id=request.user.id, address_type=const.BILLING)
     context['shipping_address'] = Address.objects.filter(user_id=request.user.id, address_type=const.SHIPPING)
     context['cart_bill'] = calculate_bill(request)
     context['carts'] = Cart.objects.filter(user_id=request.user.id).order_by('-timestamp')
     try:
-        if (request.method == 'POST'):
+        if request.method == 'POST':
             user_id = request.user.id
-            payment_data = {}
-            payment_data['user_id'] = user_id
-            payment_data['price'] = context['cart_bill']['grand_total']
+            payment_data = {'user_id': user_id, 'price': context['cart_bill']['grand_total']}
             if context['cart_bill']['offer_response']:
                 if context['cart_bill']['offer_response']['status'] == 'success':
                     context['cart_bill']['offer_id'] = context['cart_bill']['offer_response']['offer_id']
@@ -465,7 +479,9 @@ def checkout(request):
 
             payment_data['bill'] = json.dumps({
                 'from_address': {
-                    'address': context['about_us'].address, 'phone': context['about_us'].phone, 'email': context['about_us'].email 
+                    'address': context['about_us'].address,
+                    'phone': context['about_us'].phone,
+                    'email': context['about_us'].email
                 },
                 'billing_address': context['billing_address'].values()[0],
                 'shipping_address': context['shipping_address'].values()[0],
@@ -478,12 +494,13 @@ def checkout(request):
             payment_order.receipt = receipt
 
             # create razorpay_order
-            razorpay_order_payload = {}
-            razorpay_order_payload['amount'] = int(payment_data['price']) * 100 # razorpay accept money in 'paisa' so need to convert ruppes to paisa
-            razorpay_order_payload['currency'] = 'INR'
-            razorpay_order_payload['receipt'] = receipt
-            razorpay_order_payload['notes'] = {'user_id': user_id, **context['cart_bill']}
-            razorpay_order_payload['payment_capture'] = '1'
+            razorpay_order_payload = {
+                'amount': int(payment_data['price']) * 100,
+                'currency': 'INR',
+                'receipt': receipt,
+                'notes': {'user_id': user_id, **context['cart_bill']},
+                'payment_capture': '1'
+            }
             print(razorpay_order_payload)
             razorpay_order = settings.RAZORPAY.order.create(razorpay_order_payload)
             print(razorpay_order)
@@ -492,95 +509,91 @@ def checkout(request):
             payment_order.save()
 
             for cart in context['carts']:
-                data = {}
-                data['user_id'] = user_id
-                data['product_id'] = cart.product.pk
-                data['qty'] = cart.qty
-                data['price'] = cart.product.price
+                data = {'user_id': user_id, 'product_id': cart.product.pk, 'qty': cart.qty, 'price': cart.product.price}
                 order = Order.objects.create(**data)
                 payment_order.order.add(order)
                 payment_order.save()
             return redirect('payment:confirm', pk=payment_order.pk)
-    except Exception as err:
+    except:
         traceback.print_exc()
         context['msg'] = "Sorry for the inconvenience, Something was wrong! please try again or contact customer support."
     return render(request, 'user/checkout.html', context)
 
+
 @checkLogin('both')
 def my_account(request):
-    context = {}
-    context['active'] = 'my_account'
+    context = {'active': 'my_account'}
     get_common_context(request, context)
     return render(request, 'user/my_account.html', context)
 
+
 @checkLogin('both')
 def login_security(request):
-    context = {}
-    context['active'] = 'my_account'
+    context = {'active': 'my_account'}
     get_common_context(request, context)
     return render(request, 'user/login_security.html', context)
 
+
 @checkLogin('both')
 def offers(request):
-    context = {}
-    context['active'] = 'my_account'
+    context = {'active': 'my_account'}
     get_common_context(request, context)
     today = datetime.now(tz=get_current_timezone())
     context['offers'] = Offer.objects.filter(end_time__gte=today)
     return render(request, 'user/offers.html', context)
 
+
 @checkLogin('both')
 def address(request):
-    context = {}
-    context['active'] = 'my_account'
+    context = {'active': 'my_account'}
     get_common_context(request, context)
     context['billing_address'] = Address.objects.filter(user_id=request.user.id, address_type=const.BILLING)
     context['shipping_address'] = Address.objects.filter(user_id=request.user.id, address_type=const.SHIPPING)
 
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         data = request.POST.dict()
         tmp = ['csrfmiddlewaretoken']
         if 'same_address' in data:
             del data['same_address']
-        list(map(data.pop, tmp)) # remove extra fields
+        list(map(data.pop, tmp))  # remove extra fields
         billing = {k.replace('billing_', ''): v for k, v in data.items() if k.startswith('billing')}
         shipping = {k.replace('shipping_', ''): v for k, v in data.items() if k.startswith('shipping')}
-        if (context['billing_address'].count() <= 0):
+        if context['billing_address'].count() <= 0:
             billing['user_id'] = request.user.id
             billing['address_type'] = const.BILLING
-            address = Address.objects.create(**billing)
+            Address.objects.create(**billing)
         else:
             context['billing_address'].update(**billing)
 
-        if (context['shipping_address'].count() <= 0):
+        if context['shipping_address'].count() <= 0:
             shipping['user_id'] = request.user.id
             shipping['address_type'] = const.SHIPPING
             context['shipping_address'] = Address.objects.create(**shipping)
         else:
             context['shipping_address'].update(**shipping)
-    
+
     return render(request, 'user/address.html', context)
+
 
 @checkLogin('both')
 def orders(request):
-    context = {}
-    context['active'] = 'my_account'
+    context = {'active': 'my_account'}
     get_common_context(request, context)
     context['orders'] = Order.objects.filter(user_id=request.user.id).order_by('-timestamp')
     return render(request, 'user/orders.html', context)
 
+
 @checkLogin('both')
 def payments(request):
-    context = {}
-    context['active'] = 'my_account'
+    context = {'active': 'my_account'}
     get_common_context(request, context)
     context['payments'] = PaymentOrder.objects.filter(user_id=request.user.id).order_by('-timestamp')
     return render(request, 'user/payments.html', context)
 
+
 @checkLogin('both')
 def invoice(request, pk):
-    context = {}
-    context['active'] = 'my_account'
+    context = {'active': 'my_account'}
     get_common_context(request, context)
     context['payment'] = Payment.objects.get(pk=pk)
     bill_details = json.loads(context['payment'].payment_order.bill)

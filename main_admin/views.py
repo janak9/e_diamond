@@ -7,7 +7,7 @@ from django.utils.timezone import get_current_timezone
 from decouple import config
 from auth_user.models import User as user_model
 from auth_user.decorator import checkLogin
-from base import const, mail, settings
+from base import const, mail
 from user.models import Order, Feedback
 from product.models import MainCategory, Category, SubCategory, AdditionalInformation, Product, Review, Polish
 from payment.models import PaymentOrder, Payment
@@ -17,14 +17,15 @@ import traceback
 import json
 import datetime
 
+
 def get_common_context(request, context):
     context['app_name'] = config('APP_NAME')
     context['CONST'] = const
 
+
 def test_mail(request):
     user = user_model.objects.filter(user_type=const.ADMIN)
     payment_order = PaymentOrder.objects.get(pk=25)
-    about_us = AboutUs.objects.first()
     mail.send_email(user, "order_admin", payment_order=payment_order)
     mail.send_email(payment_order.user, "order_user", payment_order=payment_order)
     return HttpResponse("sent")
@@ -37,10 +38,10 @@ def test_mail(request):
     #     }
     # return render(request, 'mail/order_user.html', data)
 
+
 @checkLogin('admin')
 def dashboard(request):
-    context = {}
-    context['active'] = 'dashboard'
+    context = {'active': 'dashboard'}
     get_common_context(request, context)
     context['user_count'] = user_model.objects.all().count()
     context['product_count'] = Product.objects.all().count()
@@ -51,36 +52,44 @@ def dashboard(request):
     today = datetime.datetime.now(tz=get_current_timezone())
     prev_month = today - datetime.timedelta(30)
     prev_year = today - datetime.timedelta(365)
-    
+
     # last_month
-    last_month = payments.filter(status=const.PAID, timestamp__gt=prev_month).values('timestamp__year', 'timestamp__month', 'timestamp__day').annotate(total_income=Sum('payment_order__price'), total_sale=Count('*'))
+    last_month = payments.filter(status=const.PAID, timestamp__gt=prev_month) \
+        .values('timestamp__year', 'timestamp__month', 'timestamp__day') \
+        .annotate(total_income=Sum('payment_order__price'), total_sale=Count('*'))
     context['last_month'] = []
     for day in last_month:
         day['date'] = str(day['timestamp__year']) + '-' + str('%02d' % day['timestamp__month']) + '-' + str('%02d' % day['timestamp__day'])
         context['last_month'].append(day)
 
-    context['last_month'] = sorted(context['last_month'], key = lambda i: i['date'])    
+    context['last_month'] = sorted(context['last_month'], key=lambda i: i['date'])
 
     # last_year
-    last_year = payments.filter(status=const.PAID, timestamp__gt=prev_year).values('timestamp__year', 'timestamp__month').annotate(total_income=Sum('payment_order__price'), total_sale=Count('*'))
+    last_year = payments.filter(status=const.PAID, timestamp__gt=prev_year)\
+                        .values('timestamp__year', 'timestamp__month')\
+                        .annotate(total_income=Sum('payment_order__price'), total_sale=Count('*'))
     context['last_year'] = []
     for day in last_year:
         day['date'] = str(day['timestamp__year']) + '-' + str('%02d' % day['timestamp__month'])
         context['last_year'].append(day)
 
-    context['last_year'] = sorted(context['last_year'], key = lambda i: i['date'])
+    context['last_year'] = sorted(context['last_year'], key=lambda i: i['date'])
 
     # overall
-    context['overall'] = list(payments.filter(status=const.PAID).values('timestamp__year').annotate(total_income=Sum('payment_order__price'), total_sale=Count('*')).order_by('timestamp__year').values('timestamp__year', 'total_income', 'total_sale'))
+    context['overall'] = list(payments.filter(status=const.PAID)
+                              .values('timestamp__year')
+                              .annotate(total_income=Sum('payment_order__price'), total_sale=Count('*'))
+                              .order_by('timestamp__year')
+                              .values('timestamp__year', 'total_income', 'total_sale'))
 
     context['top_payments'] = payments.order_by('-timestamp')[0:5]
     return render(request, 'main_admin/index.html', context)
 
+
 # main category
 @checkLogin('admin')
 def add_main_category(request, pk=None):
-    context = {}
-    context['active'] = 'main_category'
+    context = {'active': 'main_category'}
     get_common_context(request, context)
     if pk is not None:
         context['task'] = "Edit"
@@ -89,25 +98,25 @@ def add_main_category(request, pk=None):
         context['task'] = "Add"
 
     try:
-        if (request.method == 'POST'):
+        if request.method == 'POST':
             data = request.POST.dict()
             tmp = ['csrfmiddlewaretoken']
-            list(map(data.pop, tmp)) # remove extra fields
+            list(map(data.pop, tmp))  # remove extra fields
             if pk is not None:
                 MainCategory.all_objects.filter(pk=pk).update(**data)
             else:
                 MainCategory.all_objects.create(**data)
             return redirect("main_admin:view-main-category")
-    except Exception as err:
+    except:
         traceback.print_exc()
         context['msg'] = "Oops, Something was wrong! Please try again."
 
     return render(request, 'main_admin/add_main_category.html', context)
 
+
 @checkLogin('admin')
 def view_main_category(request):
-    context = {}
-    context['active'] = 'main_category'
+    context = {'active': 'main_category'}
     get_common_context(request, context)
     main_category_list = MainCategory.all_objects.all().order_by('-id')
     page = request.GET.get('page', 1)
@@ -120,6 +129,7 @@ def view_main_category(request):
         main_categories = paginator.page(paginator.num_pages)
     context['main_categories'] = main_categories
     return render(request, 'main_admin/view_main_category.html', context)
+
 
 @checkLogin('admin')
 def del_main_category(request, pk):
@@ -139,17 +149,17 @@ def get_category(request):
         categories = Category.all_objects.filter(main_category_id=main_category_id).order_by('name').values()
         result['status'] = 'success'
         result['categories'] = list(categories)
-    except Exception as err:
+    except:
         traceback.print_exc()
         result['status'] = 'error'
         result['msg'] = 'something is wrong!'
 
     return HttpResponse(json.dumps(result))
 
+
 @checkLogin('admin')
 def add_category(request, pk=None):
-    context = {}
-    context['active'] = 'category'
+    context = {'active': 'category'}
     get_common_context(request, context)
     context['main_categories'] = MainCategory.all_objects.all().order_by('name')
     context['image_form'] = ImageFormset(request.POST or None, request.FILES or None, queryset=Image.objects.none())
@@ -160,7 +170,7 @@ def add_category(request, pk=None):
         context['task'] = "Add"
 
     try:
-        if (request.method == 'POST'):
+        if request.method == 'POST':
             data = request.POST.dict()
             tmp = ['csrfmiddlewaretoken', 'form-TOTAL_FORMS', 'form-INITIAL_FORMS', 'form-MIN_NUM_FORMS', 'form-MAX_NUM_FORMS']
 
@@ -177,7 +187,7 @@ def add_category(request, pk=None):
                     else:
                         tmp.append('form-0-src')
 
-                list(map(data.pop, tmp)) # remove extra fields
+                list(map(data.pop, tmp))  # remove extra fields
                 if pk is not None:
                     Category.all_objects.filter(pk=pk).update(**data)
                 else:
@@ -189,12 +199,12 @@ def add_category(request, pk=None):
 
     return render(request, 'main_admin/add_category.html', context)
 
+
 @checkLogin('admin')
 def view_category(request):
-    context = {}
-    context['active'] = 'category'
+    context = {'active': 'category'}
     get_common_context(request, context)
-    
+
     category_list = Category.all_objects.all().order_by('-id')
     page = request.GET.get('page', 1)
     paginator = Paginator(category_list, 5)
@@ -206,6 +216,7 @@ def view_category(request):
         categories = paginator.page(paginator.num_pages)
     context['categories'] = categories
     return render(request, 'main_admin/view_category.html', context)
+
 
 @checkLogin('admin')
 def del_category(request, pk):
@@ -225,29 +236,30 @@ def get_sub_category(request):
         sub_categories = SubCategory.all_objects.filter(category_id=category_id).order_by('name').values()
         result['status'] = 'success'
         result['sub_categories'] = list(sub_categories)
-    except Exception as err:
+    except:
         traceback.print_exc()
         result['status'] = 'error'
         result['msg'] = 'something is wrong!'
 
     return HttpResponse(json.dumps(result))
 
+
 @checkLogin('admin')
 def add_sub_category(request, pk=None):
-    context = {}
-    context['active'] = 'sub_category'
+    context = {'active': 'sub_category'}
     get_common_context(request, context)
     context['main_categories'] = MainCategory.all_objects.all().order_by('name')
     context['image_form'] = ImageFormset(request.POST or None, request.FILES or None, queryset=Image.objects.none())
     if pk is not None:
         context['task'] = "Edit"
         context['sub_category'] = SubCategory.all_objects.get(id=pk)
-        context['categories'] = Category.all_objects.filter(main_category_id=context['sub_category'].main_category_id).order_by('name')
+        context['categories'] = Category.all_objects.filter(main_category_id=context['sub_category'].main_category_id)\
+                                                    .order_by('name')
     else:
         context['task'] = "Add"
 
     try:
-        if (request.method == 'POST'):
+        if request.method == 'POST':
             data = request.POST.dict()
             tmp = ['csrfmiddlewaretoken', 'form-TOTAL_FORMS', 'form-INITIAL_FORMS', 'form-MIN_NUM_FORMS', 'form-MAX_NUM_FORMS']
 
@@ -264,7 +276,7 @@ def add_sub_category(request, pk=None):
                     else:
                         tmp.append('form-0-src')
 
-                list(map(data.pop, tmp)) # remove extra fields
+                list(map(data.pop, tmp))  # remove extra fields
                 if pk is not None:
                     SubCategory.all_objects.filter(pk=pk).update(**data)
                 else:
@@ -276,12 +288,12 @@ def add_sub_category(request, pk=None):
 
     return render(request, 'main_admin/add_sub_category.html', context)
 
+
 @checkLogin('admin')
 def view_sub_category(request):
-    context = {}
-    context['active'] = 'sub_category'
+    context = {'active': 'sub_category'}
     get_common_context(request, context)
-    
+
     sub_category_list = SubCategory.all_objects.all().order_by('-id')
     page = request.GET.get('page', 1)
     paginator = Paginator(sub_category_list, 5)
@@ -294,6 +306,7 @@ def view_sub_category(request):
     context['sub_categories'] = sub_categories
     return render(request, 'main_admin/view_sub_category.html', context)
 
+
 @checkLogin('admin')
 def del_sub_category(request, pk):
     sub_category = SubCategory.all_objects.get(pk=pk)
@@ -304,22 +317,23 @@ def del_sub_category(request, pk):
 # product
 @checkLogin('admin')
 def add_product(request, pk=None):
-    context = {}
-    context['active'] = 'product'
+    context = {'active': 'product'}
     get_common_context(request, context)
     context['main_categories'] = MainCategory.all_objects.all().order_by('name')
     if pk is not None:
         context['task'] = "Edit"
         context['product'] = Product.all_objects.get(id=pk)
-        context['categories'] = Category.all_objects.filter(main_category_id=context['product'].main_category_id).order_by('name')
-        context['sub_categories'] = SubCategory.all_objects.filter(category_id=context['product'].category_id).order_by('name')
+        context['categories'] = Category.all_objects.filter(main_category_id=context['product'].main_category_id)\
+                                .order_by('name')
+        context['sub_categories'] = SubCategory.all_objects.filter(category_id=context['product'].category_id)\
+                                    .order_by('name')
         context['image_form'] = ImageFormset(request.POST or None, request.FILES or None, queryset=context['product'].images.all())
     else:
         context['task'] = "Add"
         context['image_form'] = ImageFormset(request.POST or None, request.FILES or None, queryset=Image.objects.none())
 
     try:
-        if (request.method == 'POST'):
+        if request.method == 'POST':
             data = request.POST.dict()
             product_data = {
                 'main_category_id': data['main_category_id'],
@@ -362,7 +376,7 @@ def add_product(request, pk=None):
                 product = Product.all_objects.create(**product_data)
                 product.save()
                 product.images.set(images)
-            
+
             if 'is_polish' in data:
                 polish_data = {
                     'size': data['size'],
@@ -382,8 +396,8 @@ def add_product(request, pk=None):
                     product.polish.save()
 
             # Additional Informations
-            new_info = { k:v for k,v in data.items() if k.startswith('new_info') }
-            old_info = { k:v for k,v in data.items() if k.startswith('info_') }
+            new_info = {k: v for k, v in data.items() if k.startswith('new_info')}
+            old_info = {k: v for k, v in data.items() if k.startswith('info_')}
             result_new = {}
             for key, value in new_info.items():
                 no = key.split('_')[-1]
@@ -391,7 +405,7 @@ def add_product(request, pk=None):
                 if no not in result_new:
                     result_new[no] = {}
                 result_new[no][field] = value
-            
+
             result_old = {}
             for key, value in old_info.items():
                 no = key.split('_')[-1]
@@ -399,7 +413,7 @@ def add_product(request, pk=None):
                 if no not in result_old:
                     result_old[no] = {}
                 result_old[no][field] = value
-            
+
             # save
             for info in product.additional_information.all():
                 key = str(info.pk)
@@ -409,14 +423,14 @@ def add_product(request, pk=None):
                     info.save()
                 else:
                     product.additional_information.remove(info)
-            
+
             for key, value in result_new.items():
                 info = AdditionalInformation.objects.create(**value)
                 product.additional_information.add(info)
 
             # Social Link
-            new_social = { k:v for k,v in data.items() if k.startswith('new_social') }
-            old_social = { k:v for k,v in data.items() if k.startswith('social_') }
+            new_social = {k: v for k, v in data.items() if k.startswith('new_social')}
+            old_social = {k: v for k, v in data.items() if k.startswith('social_')}
             result_new = {}
             for key, value in new_social.items():
                 no = key.split('_')[-1]
@@ -424,7 +438,7 @@ def add_product(request, pk=None):
                 if no not in result_new:
                     result_new[no] = {}
                 result_new[no][field] = value
-            
+
             result_old = {}
             for key, value in old_social.items():
                 no = key.split('_')[-1]
@@ -432,8 +446,8 @@ def add_product(request, pk=None):
                 if no not in result_old:
                     result_old[no] = {}
                 result_old[no][field] = value
-            
-            del result_old['id'] # remove social_link_id
+
+            del result_old['id']  # remove social_link_id
             # save
             for social in product.social_links.all():
                 key = str(social.pk)
@@ -445,24 +459,24 @@ def add_product(request, pk=None):
                     product.social_links.remove(social)
 
             for key, value in result_new.items():
-                social = SocialLink.objects.create(social_icon= value['icon'], link=value['link'])
+                social = SocialLink.objects.create(social_icon=value['icon'], link=value['link'])
                 product.social_links.add(social)
             product.save()
 
             return redirect("main_admin:view-product")
 
-    except Exception as err:
+    except:
         traceback.print_exc()
         context['msg'] = "Oops, Something was wrong! Please try again."
 
     return render(request, 'main_admin/add_product.html', context)
 
+
 @checkLogin('admin')
 def view_product(request):
-    context = {}
-    context['active'] = 'product'
+    context = {'active': 'product'}
     get_common_context(request, context)
-    
+
     product_list = Product.all_objects.all().order_by('-id')
     page = request.GET.get('page', 1)
     paginator = Paginator(product_list, 5)
@@ -475,6 +489,7 @@ def view_product(request):
     context['products'] = products
     return render(request, 'main_admin/view_product.html', context)
 
+
 @checkLogin('admin')
 def del_product(request, pk):
     product = Product.all_objects.get(pk=pk)
@@ -485,8 +500,7 @@ def del_product(request, pk):
 # offer
 @checkLogin('admin')
 def add_offer(request, pk=None):
-    context = {}
-    context['active'] = 'offer'
+    context = {'active': 'offer'}
     get_common_context(request, context)
     if pk is not None:
         context['task'] = "Edit"
@@ -495,28 +509,28 @@ def add_offer(request, pk=None):
         context['task'] = "Add"
 
     try:
-        if (request.method == 'POST'):
+        if request.method == 'POST':
             data = request.POST.dict()
             tmp = ['csrfmiddlewaretoken']
-            list(map(data.pop, tmp)) # remove extra fields
+            list(map(data.pop, tmp))  # remove extra fields
             data['code'] = data['code'].upper()
             if pk is not None:
                 Offer.all_objects.filter(pk=pk).update(**data)
             else:
                 Offer.all_objects.create(**data)
             return redirect("main_admin:view-offer")
-    except Exception as err:
+    except:
         traceback.print_exc()
         context['msg'] = "Oops, Something was wrong! Please try again."
 
     return render(request, 'main_admin/add_offer.html', context)
 
+
 @checkLogin('admin')
 def view_offer(request):
-    context = {}
-    context['active'] = 'offer'
+    context = {'active': 'offer'}
     get_common_context(request, context)
-    
+
     offer_list = Offer.all_objects.all().order_by('-id')
     page = request.GET.get('page', 1)
     paginator = Paginator(offer_list, 5)
@@ -529,6 +543,7 @@ def view_offer(request):
     context['offers'] = offers
     return render(request, 'main_admin/view_offer.html', context)
 
+
 @checkLogin('admin')
 def del_offer(request, pk):
     offer = Offer.all_objects.get(pk=pk)
@@ -539,8 +554,7 @@ def del_offer(request, pk):
 # user
 @checkLogin('admin')
 def view_user(request):
-    context = {}
-    context['active'] = 'user'
+    context = {'active': 'user'}
     get_common_context(request, context)
     user_list = user_model.all_objects.filter(user_type=const.USER).order_by('-date_joined')
     page = request.GET.get('page', 1)
@@ -554,18 +568,19 @@ def view_user(request):
     context['users'] = users
     return render(request, 'main_admin/view_users.html', context)
 
+
 @checkLogin('admin')
 def edit_user(request, pk):
-    context = {}
-    context['active'] = 'user'
+    context = {'active': 'user'}
     get_common_context(request, context)
     context['user_detail'] = user_model.all_objects.get(pk=pk)
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         if 'status' in request.POST:
             context['user_detail'].status = request.POST['status']
             context['user_detail'].save()
             return redirect("main_admin:view-user")
     return render(request, 'main_admin/edit_user.html', context)
+
 
 @checkLogin('admin')
 def del_user(request, pk):
@@ -577,8 +592,7 @@ def del_user(request, pk):
 # contact
 @checkLogin('admin')
 def view_contact(request, contact_type=const.CONTACT_US):
-    context = {}
-    context['active'] = 'contact_us' if contact_type is const.CONTACT_US else 'post_requirements'
+    context = {'active': 'contact_us' if contact_type is const.CONTACT_US else 'post_requirements'}
     get_common_context(request, context)
     context['contact_type'] = contact_type
     contact_list = Contact.objects.filter(contact_type=contact_type).order_by('-timestamp')
@@ -593,13 +607,13 @@ def view_contact(request, contact_type=const.CONTACT_US):
     context['contacts'] = contacts
     return render(request, 'main_admin/view_contacts.html', context)
 
+
 @checkLogin('admin')
 def edit_contact(request, contact_type, pk):
-    context = {}
-    context['active'] = 'contact_us'
+    context = {'active': 'contact_us'}
     get_common_context(request, context)
     context['contact'] = Contact.objects.get(pk=pk)
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         if 'status' in request.POST:
             context['contact'].status = request.POST['status']
             context['contact'].save()
@@ -608,6 +622,7 @@ def edit_contact(request, contact_type, pk):
             mail.send_email(None, 'contact_reply', contact=context['contact'], reply=request.POST['reply'])
             context['msg'] = 'mail sent to user\'s email ' + context['contact'].email
     return render(request, 'main_admin/edit_contact.html', context)
+
 
 @checkLogin('admin')
 def del_contact(request, contact_type, pk):
@@ -619,10 +634,9 @@ def del_contact(request, contact_type, pk):
 # review
 @checkLogin('admin')
 def view_reviews(request):
-    context = {}
-    context['active'] = 'reviews'
+    context = {'active': 'reviews'}
     get_common_context(request, context)
-    
+
     review_list = Review.all_objects.all().order_by('-timestamp')
     page = request.GET.get('page', 1)
     paginator = Paginator(review_list, 5)
@@ -635,18 +649,19 @@ def view_reviews(request):
     context['reviews'] = reviews
     return render(request, 'main_admin/view_reviews.html', context)
 
+
 @checkLogin('admin')
 def edit_review(request, pk):
-    context = {}
-    context['active'] = 'reviews'
+    context = {'active': 'reviews'}
     get_common_context(request, context)
     context['review'] = Review.all_objects.get(pk=pk)
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         if 'status' in request.POST:
             context['review'].status = request.POST['status']
             context['review'].save()
             return redirect("main_admin:view-reviews")
     return render(request, 'main_admin/edit_review.html', context)
+
 
 @checkLogin('admin')
 def del_review(request, pk):
@@ -658,10 +673,9 @@ def del_review(request, pk):
 # feedback
 @checkLogin('admin')
 def view_feedbacks(request):
-    context = {}
-    context['active'] = 'feedbacks'
+    context = {'active': 'feedbacks'}
     get_common_context(request, context)
-    
+
     feedback_list = Feedback.all_objects.all().order_by('-timestamp')
     page = request.GET.get('page', 1)
     paginator = Paginator(feedback_list, 5)
@@ -674,19 +688,20 @@ def view_feedbacks(request):
     context['feedbacks'] = feedbacks
     return render(request, 'main_admin/view_feedbacks.html', context)
 
+
 @checkLogin('admin')
 def edit_feedback(request, pk):
-    context = {}
-    context['active'] = 'feedbacks'
+    context = {'active': 'feedbacks'}
     get_common_context(request, context)
     context['feedback'] = Feedback.all_objects.get(pk=pk)
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         if 'status' in request.POST:
             context['feedback'].status = request.POST['status']
             context['feedback'].read_status = request.POST['read_status']
             context['feedback'].save()
             return redirect("main_admin:view-feedbacks")
     return render(request, 'main_admin/edit_feedback.html', context)
+
 
 @checkLogin('admin')
 def del_feedback(request, pk):
@@ -698,8 +713,7 @@ def del_feedback(request, pk):
 # payments
 @checkLogin('admin')
 def view_payments(request):
-    context = {}
-    context['active'] = 'payments'
+    context = {'active': 'payments'}
     get_common_context(request, context)
     payment_list = Payment.objects.all().order_by('-timestamp')
     page = request.GET.get('page', 1)
@@ -713,13 +727,13 @@ def view_payments(request):
     context['payments'] = payments
     return render(request, 'main_admin/view_payments.html', context)
 
+
 @checkLogin('admin')
 def edit_payment(request, pk):
-    context = {}
-    context['active'] = 'payments'
+    context = {'active': 'payments'}
     get_common_context(request, context)
     context['payment'] = Payment.objects.get(pk=pk)
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         if 'track_order_status' in request.POST:
             payment_order = PaymentOrder.objects.get(pk=context['payment'].payment_order_id)
             payment_order.track_order_status = request.POST['track_order_status']
@@ -730,10 +744,9 @@ def edit_payment(request, pk):
 
 @checkLogin('admin')
 def view_orders(request):
-    context = {}
-    context['active'] = 'orders'
+    context = {'active': 'orders'}
     get_common_context(request, context)
-    
+
     order_list = Order.all_objects.all().order_by('-timestamp')
     page = request.GET.get('page', 1)
     paginator = Paginator(order_list, 5)
@@ -746,16 +759,16 @@ def view_orders(request):
     context['orders'] = orders
     return render(request, 'main_admin/view_orders.html', context)
 
+
 @checkLogin('admin')
 def edit_about_us(request):
-    context = {}
-    context['active'] = 'about_us'
+    context = {'active': 'about_us'}
     get_common_context(request, context)
     context['about_us'] = AboutUs.objects.all().first()
     context['about_form'] = AboutForm(request.POST or None, request.FILES or None, instance=context['about_us'])
 
     try:
-        if (request.method == 'POST'):
+        if request.method == 'POST':
             data = request.POST.dict()
             about_us_data = {
                 'title': data['title'],
@@ -778,8 +791,8 @@ def edit_about_us(request):
                 context['about_form'].save()
 
             # Social Link
-            new_social = { k:v for k,v in data.items() if k.startswith('new_social') }
-            old_social = { k:v for k,v in data.items() if k.startswith('social_') }
+            new_social = {k: v for k, v in data.items() if k.startswith('new_social')}
+            old_social = {k: v for k, v in data.items() if k.startswith('social_')}
             result_new = {}
             for key, value in new_social.items():
                 no = key.split('_')[-1]
@@ -787,7 +800,7 @@ def edit_about_us(request):
                 if no not in result_new:
                     result_new[no] = {}
                 result_new[no][field] = value
-            
+
             result_old = {}
             for key, value in old_social.items():
                 no = key.split('_')[-1]
@@ -795,8 +808,8 @@ def edit_about_us(request):
                 if no not in result_old:
                     result_old[no] = {}
                 result_old[no][field] = value
-            
-            del result_old['id'] # remove social_link_id
+
+            del result_old['id']  # remove social_link_id
             # save
             for social in context['about_us'].social_links.all():
                 key = str(social.pk)
@@ -808,24 +821,24 @@ def edit_about_us(request):
                     context['about_us'].social_links.remove(social)
 
             for key, value in result_new.items():
-                social = SocialLink.objects.create(social_icon= value['icon'], link=value['link'])
+                social = SocialLink.objects.create(social_icon=value['icon'], link=value['link'])
                 context['about_us'].social_links.add(social)
             context['about_us'].save()
-    except Exception as err:
+    except:
         traceback.print_exc()
         context['msg'] = "Oops, Something was wrong! Please try again."
 
     return render(request, 'main_admin/edit_about_us.html', context)
 
+
 @checkLogin('admin')
 def edit_details(request, detail_type):
-    context = {}
-    context['active'] = 'faq' if detail_type is const.FAQ else 'return_policy'
+    context = {'active': 'faq' if detail_type is const.FAQ else 'return_policy'}
     print(context['active'])
     get_common_context(request, context)
     context['detail_type'] = detail_type
     context['details'] = Details.objects.filter(detail_type=detail_type).first()
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         context['details'].description = request.POST['description']
         context['details'].save()
     return render(request, 'main_admin/edit_details.html', context)

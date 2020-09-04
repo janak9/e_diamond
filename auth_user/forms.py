@@ -1,7 +1,6 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
-from auth_user.models import User as user_model
 
 
 class SignUpForm(UserCreationForm):
@@ -30,7 +29,7 @@ class ProfileForm(forms.ModelForm):
         super(ProfileForm, self).clean()
 
         phone = self.cleaned_data.get('phone')
-        if (len(phone) != 10 and len(phone) != 0):
+        if len(phone) != 10 and len(phone) != 0:
             self._errors['phone'] = self.error_class(['phone must be of 10 digit'])
 
     # def __init__(self, *args, **kwargs):

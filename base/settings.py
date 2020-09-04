@@ -29,7 +29,6 @@ DEBUG = config('DEBUG')
 SITE_URL = config('SITE_URL')
 ALLOWED_HOSTS = ['*']
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -78,7 +77,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'base.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -118,16 +116,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # for authentication
 AUTH_USER_MODEL = 'auth_user.User'
 LOGIN_REDIRECT_URL = '/'
 
-#Authentication backends
+# Authentication backends
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
@@ -141,7 +137,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -158,7 +153,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-
 # Email Settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config('EMAIL_HOST')
@@ -170,4 +164,4 @@ EMAIL_FROM = config('EMAIL_FROM')
 
 # Setup razorpay client
 RAZORPAY = razorpay.Client(auth=(config('KEY_ID'), config('KEY_SECRET')))
-RAZORPAY.set_app_details({"title" : "Django", "version" : "3.0.8"})
+RAZORPAY.set_app_details({"title": "Django", "version": "3.0.8"})

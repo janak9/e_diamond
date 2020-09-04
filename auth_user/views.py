@@ -9,7 +9,6 @@ from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.urls import reverse
 from django.http import HttpResponse
-from django.forms.models import model_to_dict
 from auth_user.forms import SignUpForm, ProfileForm
 from auth_user.models import User as user_model
 from auth_user.decorator import checkLogin
@@ -18,18 +17,19 @@ from base.mail import send_email
 from decouple import config
 from user.views import get_common_context
 
+
 def manage_redirect(u_type):
-    if(u_type == const.USER):
+    if u_type == const.USER:
         return redirect('/')
-    elif(u_type == const.ADMIN):
+    elif u_type == const.ADMIN:
         return redirect('/main_admin')
 
 
 def resend_verification_token(request):
     detail = ''
-    if(request.method == 'POST'):
+    if request.method == 'POST':
         user = user_model.objects.filter(email=request.POST.get('email')).first()
-        if(user.exists()):
+        if user.exists():
             send_email(user, 'activation')
             detail = "Link send to your mail check your mail"
         else:
@@ -40,7 +40,7 @@ def resend_verification_token(request):
 
 def signup(request):
     msg = ""
-    if(request.method == 'POST'):
+    if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
@@ -57,11 +57,11 @@ def login(request):
         return manage_redirect(request.user.user_type)
 
     errors = []
-    if(request.method == 'POST'):
+    if request.method == 'POST':
         email = request.POST['email']
         password = request.POST['pwd']
         user = user_model.objects.filter(email=email)
-        if(user.exists()):
+        if user.exists():
             if user[0].status == const.ACTIVE:
                 if user[0].is_active:
                     user = authenticate(
@@ -103,7 +103,7 @@ def verify_account(request, uid, token):
         user.is_active = True
         user.save()
         detail = "your account is activated successfully<br><a href='" + \
-            config('SITE_URL') + reverse('auth:login') + "'>Click Here for Login</a>"
+                 config('SITE_URL') + reverse('auth:login') + "'>Click Here for Login</a>"
     else:
         send_email(user, 'activation')
         detail = 'Link was expired. Please check your inbox again.'
@@ -113,15 +113,14 @@ def verify_account(request, uid, token):
 
 @checkLogin('both')
 def profile(request):
-    context = {}
-    context['active'] = 'my_account'
+    context = {'active': 'my_account'}
     get_common_context(request, context)
     context['msg'] = ""
     context['form'] = None
-    if(request.method == 'POST'):
+    if request.method == 'POST':
         context['form'] = ProfileForm(request.POST, request.FILES, instance=request.user)
         if context['form'].is_valid():
-            user = context['form'].save()
+            context['form'].save()
             context['msg'] = "Profile update successfully"
         else:
             context['msg'] = "Something Wrong Try Again!"
@@ -154,7 +153,7 @@ def verify_forgot_password(request, uid, token):
     except DjangoUnicodeDecodeError:
         msg = 'Link was expired. Please try again by generating new link.'
 
-    if(request.method == 'POST'):
+    if request.method == 'POST':
         confirm_pwd = request.POST.get('confirm_password')
         new_pwd = request.POST.get('new_password')
         if new_pwd == confirm_pwd:
@@ -176,15 +175,15 @@ def verify_forgot_password(request, uid, token):
 
 @checkLogin('both')
 def change_password(request):
-    context = {}
-    context['active'] = 'my_account'
+    context = {'active': 'my_account'}
     get_common_context(request, context)
     context['msg'] = ""
     user = user_model.objects.get(id=request.user.id)
     if request.method == "POST":
         if check_password(request.POST.get('current_password'), user.password):
             if check_password(request.POST.get('new_password'), user.password):
-                context['msg'] = "New Password cannot be same as your current password. Please choose a different password."
+                context[
+                    'msg'] = "New Password cannot be same as your current password. Please choose a different password."
             else:
                 if request.POST.get('new_password') == request.POST.get('confirm_password'):
                     user.set_password(request.POST.get('new_password'))

@@ -2,12 +2,10 @@ from django.db import models
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
-from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from base.utils import MyValidation
 from base import const
-from django.core.validators import FileExtensionValidator
 import os
 import uuid
 

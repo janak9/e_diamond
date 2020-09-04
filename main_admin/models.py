@@ -1,17 +1,20 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MinValueValidator
 from base import const, managers
 from base.utils import MyValidation
 import os
 import uuid
 
+
 def get_image_path(instance, filename):
     return os.path.join('product', '{}.{}'.format(uuid.uuid4(), filename.split('.')[-1]))
 
+
 def get_logo_path(instance, filename):
     return os.path.join('logo', '{}.{}'.format(uuid.uuid4(), filename.split('.')[-1]))
+
 
 class Image(models.Model):
     class Meta:
@@ -91,6 +94,7 @@ class Details(models.Model):
 
     def __str__(self):
         return str(self.get_detail_type_display())
+
 
 class Offer(models.Model):
     class Meta:

@@ -13,13 +13,15 @@ from user.models import Cart
 import json
 import traceback
 
+
 @checkLogin('both')
 def confirm(request, pk):
-    context = {}
-    context['app_name'] = config('APP_NAME')
-    context['payment_order'] = PaymentOrder.objects.get(pk=pk)
+    context = {
+        'app_name': config('APP_NAME'),
+        'payment_order': PaymentOrder.objects.get(pk=pk)
+    }
     try:
-        if (request.method == 'POST'):
+        if request.method == 'POST':
             context['payment_order'].status = const.CANCELLED
             context['payment_order'].save()
             return redirect('user:checkout')
@@ -41,25 +43,21 @@ def confirm(request, pk):
         }
         print(context['options'])
         return render(request, 'payment/confirm.html', context)
-    except Exception as err:
+    except:
         traceback.print_exc()
 
     return HttpResponse("Something was wrong! <a href='" + reverse('user:home') + "'>Back To Home</a>")
 
+
 @csrf_exempt
 def success(request, pk):
     try:
-        context = {}
-        context['app_name'] = config('APP_NAME')
-        context['payment_order'] = PaymentOrder.objects.get(pk=pk)
-        if (request.method == 'POST'):
+        context = {'app_name': config('APP_NAME'), 'payment_order': PaymentOrder.objects.get(pk=pk)}
+        if request.method == 'POST':
             data = request.POST.dict()
             print(data)
-            payload = {}
-            payload['user_id'] = context['payment_order'].user_id
-            payload['payment_order'] = context['payment_order']
-            payload['razorpay_response'] = json.dumps(data)
-            payload['status'] = const.PAID
+            payload = {'user_id': context['payment_order'].user_id, 'payment_order': context['payment_order'],
+                       'razorpay_response': json.dumps(data), 'status': const.PAID}
             if 'error[code]' in data:
                 payload['status'] = const.FAILED
             else:
@@ -81,13 +79,12 @@ def success(request, pk):
             else:
                 return redirect('payment:failure', pk=pk)
 
-    except Exception as err:
+    except:
         traceback.print_exc()
 
     return HttpResponse("Something was wrong! <a href='" + reverse('user:home') + "'>Back To Home</a>")
 
+
 def failure(request, pk):
-    context = {}
-    context['app_name'] = config('APP_NAME')
-    context['payment_order'] = PaymentOrder.objects.get(pk=pk)
+    context = {'app_name': config('APP_NAME'), 'payment_order': PaymentOrder.objects.get(pk=pk)}
     return render(request, 'payment/failure.html', context)

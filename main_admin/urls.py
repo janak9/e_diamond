@@ -1,6 +1,5 @@
-from django.urls import path, re_path, include
+from django.urls import path, include
 from main_admin import views
-from base import const
 
 app_name = "main_admin"
 
