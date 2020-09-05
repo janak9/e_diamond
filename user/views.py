@@ -177,6 +177,48 @@ def description(request, pk):
     return res
 
 
+def search_diamond(request):
+    context = {'active': 'search_diamond', 'CONST': const}
+    get_common_context(request, context)
+    filter_attr = {'sub_category': request.GET.getlist('sub_category[]'),
+                   'min_amount': request.GET.get('min_amount', 0),
+                   'max_amount': request.GET.get('max_amount', 30000),
+                   'sort_by': request.GET.get('sort_by')}
+    context['filter_attr'] = filter_attr
+
+    if filter_attr['sort_by'] != '' and filter_attr['sort_by'] == 'price_desc':
+        order_list = ['-price']
+    elif filter_attr['sort_by'] != '' and filter_attr['sort_by'] == 'price_asc':
+        order_list = ['price']
+    else:
+        order_list = ['-timestamp']
+
+    if len(filter_attr['sub_category']) > 0:
+        products_list = Product.objects.filter(
+            polish__isnull=False,
+            sub_category__pk__in=filter_attr['sub_category'],
+            price__range=(filter_attr['min_amount'], filter_attr['max_amount'])
+        ) \
+            .order_by(*order_list)
+    else:
+        products_list = Product.objects.filter(
+            polish__isnull=False,
+            price__range=(filter_attr['min_amount'], filter_attr['max_amount'])
+        ) \
+            .order_by(*order_list)
+
+    # page = request.GET.get('page', 1)
+    # paginator = Paginator(products_list, 20)
+    # try:
+    #     products = paginator.page(page)
+    # except PageNotAnInteger:
+    #     products = paginator.page(1)
+    # except EmptyPage:
+    #     products = paginator.page(paginator.num_pages)
+    context['products'] = products_list
+    return render(request, 'user/search_diamond.html', context)
+
+
 @csrf_exempt
 @checkLogin('both')
 def add_review(request):

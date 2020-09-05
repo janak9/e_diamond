@@ -119,6 +119,11 @@
                                 </li>
                             </ul>
                         </li>
+                        <li class="nav-item {% if active == 'search_diamond' %}
+                            active
+                            {% endif %}">
+                            <a class="nav-link" href="{% url 'user:search-diamond' %}">Search</a>
+                        </li>
                         <li class="nav-item {% if active == 'about' %}
                             active
                             {% endif %}">
