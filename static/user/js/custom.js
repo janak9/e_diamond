@@ -194,7 +194,7 @@
 	$(function() {
 		const min_amount = $("#min_amount").val();
 		const max_amount = $("#max_amount").val();
-		$("#slider-range").slider({
+		$("#slider-price").slider({
 			range: true,
 			min: 0,
 			max: 100000,
@@ -207,8 +207,47 @@
 		});
 		$("#min_amount").val(min_amount);
 		$("#max_amount").val(max_amount);
-		$("#amount").val("Rs. " + min_amount +
-			" - Rs. " + max_amount);
+		$("#amount").val("Rs. " + min_amount + " - Rs. " + max_amount);
+	});
+
+	$(function() {
+		const min_size = $("#min_size").val();
+		const max_size = $("#max_size").val();
+		$("#slider-size").slider({
+			range: true,
+			min: 0.01,
+			max: 10.00,
+			step: 0.01,
+			values: [min_size, max_size],
+			slide: function(event, ui) {
+				$("#min_size").val(ui.values[0]);
+				$("#max_size").val(ui.values[1]);
+				$("#size").val(ui.values[0] + " - " + ui.values[1]);
+			}
+		});
+		$("#min_size").val(min_size);
+		$("#max_size").val(max_size);
+		$("#size").val(min_size + " - " + max_size);
+	});
+
+	$(function() {
+		const min_diameter = $("#min_diameter").val();
+		const max_diameter = $("#max_diameter").val();
+		$("#slider-diameter").slider({
+			range: true,
+			min: 0.01,
+			max: 12.00,
+			step: 0.01,
+			values: [min_diameter, max_diameter],
+			slide: function(event, ui) {
+				$("#min_diameter").val(ui.values[0]);
+				$("#max_diameter").val(ui.values[1]);
+				$("#diameter").val(ui.values[0] + " - " + ui.values[1]);
+			}
+		});
+		$("#min_diameter").val(min_diameter);
+		$("#max_diameter").val(max_diameter);
+		$("#diameter").val(min_diameter + " - " + max_diameter);
 	});
 
 	/* ..............................................

@@ -180,42 +180,35 @@ def description(request, pk):
 def search_diamond(request):
     context = {'active': 'search_diamond', 'CONST': const}
     get_common_context(request, context)
-    filter_attr = {'sub_category': request.GET.getlist('sub_category[]'),
-                   'min_amount': request.GET.get('min_amount', 0),
-                   'max_amount': request.GET.get('max_amount', 30000),
-                   'sort_by': request.GET.get('sort_by')}
+    filter_attr = {
+        'min_size': request.GET.get('min_size', 0.01),
+        'max_size': request.GET.get('max_size', 10),
+        'min_diameter': request.GET.get('min_diameter', 0.01),
+        'max_diameter': request.GET.get('max_diameter', 12),
+        'shape': request.GET.getlist('shape[]'),
+        'cut': request.GET.getlist('cut[]'),
+        'symmetry_cut': request.GET.getlist('symmetry_cut[]'),
+        'purity': request.GET.getlist('purity[]'),
+        'color': request.GET.getlist('color[]'),
+        'fluorescence': request.GET.getlist('fluorescence[]'),
+    }
     context['filter_attr'] = filter_attr
 
-    if filter_attr['sort_by'] != '' and filter_attr['sort_by'] == 'price_desc':
-        order_list = ['-price']
-    elif filter_attr['sort_by'] != '' and filter_attr['sort_by'] == 'price_asc':
-        order_list = ['price']
-    else:
-        order_list = ['-timestamp']
+    filter_conditions = {
+        'polish__isnull': False,
+        'polish__size__range': (filter_attr['min_size'], filter_attr['max_size']),
+        'polish__diameter__range': (filter_attr['min_diameter'], filter_attr['max_diameter'])
+    }
 
-    if len(filter_attr['sub_category']) > 0:
-        products_list = Product.objects.filter(
-            polish__isnull=False,
-            sub_category__pk__in=filter_attr['sub_category'],
-            price__range=(filter_attr['min_amount'], filter_attr['max_amount'])
-        ) \
-            .order_by(*order_list)
-    else:
-        products_list = Product.objects.filter(
-            polish__isnull=False,
-            price__range=(filter_attr['min_amount'], filter_attr['max_amount'])
-        ) \
-            .order_by(*order_list)
+    if len(filter_attr['shape']) > 0:        filter_conditions['polish__shape__in'] = filter_attr['shape']
+    if len(filter_attr['cut']) > 0:          filter_conditions['polish__cut__in'] = filter_attr['cut']
+    if len(filter_attr['symmetry_cut']) > 0: filter_conditions['polish__symmetry_cut__in'] = filter_attr['symmetry_cut']
+    if len(filter_attr['purity']) > 0:       filter_conditions['polish__purity__in'] = filter_attr['purity']
+    if len(filter_attr['color']) > 0:        filter_conditions['polish__color__in'] = filter_attr['color']
+    if len(filter_attr['fluorescence']) > 0: filter_conditions['polish__fluorescence__in'] = filter_attr['fluorescence']
 
-    # page = request.GET.get('page', 1)
-    # paginator = Paginator(products_list, 20)
-    # try:
-    #     products = paginator.page(page)
-    # except PageNotAnInteger:
-    #     products = paginator.page(1)
-    # except EmptyPage:
-    #     products = paginator.page(paginator.num_pages)
-    context['products'] = products_list
+    print(filter_conditions)
+    context['products'] = Product.objects.filter(**filter_conditions)
     return render(request, 'user/search_diamond.html', context)
 
 
@@ -358,12 +351,15 @@ def verify_offer(request):
         request.session['coupon_code'] = coupon_code
         result['cart_bill'] = calculate_bill(request)
         result['status'] = 'success'
+        del request.session['coupon_code']
     except:
         traceback.print_exc()
         result['status'] = 'error'
         result['msg'] = 'something is wrong!'
 
-    return HttpResponse(json.dumps(result))
+    hr = HttpResponse(json.dumps(result))
+    hr.set_signed_cookie('coupon_code', coupon_code, max_age=60*60*24)
+    return hr
 
 
 def calculate_bill(request):
@@ -409,6 +405,8 @@ def check_offer(request):
     result = {}
     user_id = request.user.id
     coupon_code = request.session['coupon_code'] if 'coupon_code' in request.session else None
+    print(coupon_code)
+    if not coupon_code: coupon_code = request.get_signed_cookie('coupon_code', None, max_age=60*60*24)
     if not coupon_code:
         return
 

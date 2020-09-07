@@ -1647,7 +1647,7 @@
  .filter-price-left{
      margin-bottom: 20px;
 }
- #slider-range .ui-slider-handle {
+ .slider-range .ui-slider-handle {
      background-color: #d33b33;
      border: 2px solid #fff;
      border-radius: 50%;
@@ -1658,11 +1658,11 @@
      width: 21px;
      box-shadow: 0px 0px 6.65px 0.35px rgba(0,0,0,0.15);
 }
- #slider-range .ui-slider-range {
+ .slider-range .ui-slider-range {
      background-color: #d33b33;
      border-radius: 0;
 }
- #slider-range {
+ .slider-range {
      background: #010101;
      border: medium none;
      border-radius: 50px;
