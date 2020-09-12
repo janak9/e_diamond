@@ -9,7 +9,7 @@ from auth_user.models import User as user_model
 from auth_user.decorator import checkLogin
 from base import const, mail
 from user.models import Order, Feedback
-from product.models import MainCategory, Category, SubCategory, AdditionalInformation, Product, Review, Polish
+from product.models import MainCategory, Category, SubCategory, AdditionalInformation, Product, Review
 from payment.models import PaymentOrder, Payment
 from main_admin.models import Image, SocialLink, Contact, AboutUs, Details, Offer
 from main_admin.forms import ImageFormset, AboutForm
@@ -376,24 +376,6 @@ def add_product(request, pk=None):
                 product = Product.all_objects.create(**product_data)
                 product.save()
                 product.images.set(images)
-
-            if 'is_polish' in data:
-                polish_data = {
-                    'size': data['size'],
-                    'diameter': data['diameter'],
-                    'shape': data['shape'],
-                    'cut': data['cut'],
-                    'symmetry_cut': data['symmetry_cut'],
-                    'purity': data['purity'],
-                    'color': data['color'],
-                    'fluorescence': data['fluorescence'],
-                }
-                if product.polish:
-                    polish = Polish.objects.filter(pk=product.polish_id)
-                    polish.update(**polish_data)
-                else:
-                    product.polish = Polish.objects.create(**polish_data)
-                    product.polish.save()
 
             # Additional Informations
             new_info = {k: v for k, v in data.items() if k.startswith('new_info')}

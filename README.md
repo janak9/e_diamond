@@ -1,4 +1,4 @@
-### E-diamond
+### Maruti Fashion
 
 ## requirements
 django>=3.0

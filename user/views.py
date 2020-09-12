@@ -177,41 +177,6 @@ def description(request, pk):
     return res
 
 
-def search_diamond(request):
-    context = {'active': 'search_diamond', 'CONST': const}
-    get_common_context(request, context)
-    filter_attr = {
-        'min_size': request.GET.get('min_size', 0.01),
-        'max_size': request.GET.get('max_size', 10),
-        'min_diameter': request.GET.get('min_diameter', 0.01),
-        'max_diameter': request.GET.get('max_diameter', 12),
-        'shape': request.GET.getlist('shape[]'),
-        'cut': request.GET.getlist('cut[]'),
-        'symmetry_cut': request.GET.getlist('symmetry_cut[]'),
-        'purity': request.GET.getlist('purity[]'),
-        'color': request.GET.getlist('color[]'),
-        'fluorescence': request.GET.getlist('fluorescence[]'),
-    }
-    context['filter_attr'] = filter_attr
-
-    filter_conditions = {
-        'polish__isnull': False,
-        'polish__size__range': (filter_attr['min_size'], filter_attr['max_size']),
-        'polish__diameter__range': (filter_attr['min_diameter'], filter_attr['max_diameter'])
-    }
-
-    if len(filter_attr['shape']) > 0:        filter_conditions['polish__shape__in'] = filter_attr['shape']
-    if len(filter_attr['cut']) > 0:          filter_conditions['polish__cut__in'] = filter_attr['cut']
-    if len(filter_attr['symmetry_cut']) > 0: filter_conditions['polish__symmetry_cut__in'] = filter_attr['symmetry_cut']
-    if len(filter_attr['purity']) > 0:       filter_conditions['polish__purity__in'] = filter_attr['purity']
-    if len(filter_attr['color']) > 0:        filter_conditions['polish__color__in'] = filter_attr['color']
-    if len(filter_attr['fluorescence']) > 0: filter_conditions['polish__fluorescence__in'] = filter_attr['fluorescence']
-
-    print(filter_conditions)
-    context['products'] = Product.objects.filter(**filter_conditions)
-    return render(request, 'user/search_diamond.html', context)
-
-
 @csrf_exempt
 @checkLogin('both')
 def add_review(request):

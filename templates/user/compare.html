@@ -57,57 +57,6 @@
             <tbody id="price" data-filter="target">
                 <tr class="bg-secondary">
                 {% for product in products %}
-                    <td><span class="text-dark font-weight-semibold">Polish Details</span></td>
-                {% endfor %}
-                </tr>
-                <tr>
-                {% for product in products %}
-                    <td>
-                        <table class="table table-bordered">
-                            {% if product.polish %}
-                                <tr>
-                                    <td>Size</td>
-                                    <td>{{ product.polish.size|default:'NA' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>diameter</td>
-                                    <td>{{ product.polish.diameter|default:'NA' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>shape</td>
-                                    <td>{{ product.polish.get_shape_display|default:'NA' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>cut</td>
-                                    <td>{{ product.polish.get_cut_display|default:'NA' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>symmetry_cut</td>
-                                    <td>{{ product.polish.get_symmetry_cut_display|default:'NA' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>purity</td>
-                                    <td>{{ product.polish.get_purity_display|default:'NA' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>color</td>
-                                    <td>{{ product.polish.get_color_display|default:'NA' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>fluorescence</td>
-                                    <td>{{ product.polish.get_fluorescence_display|default:'NA' }}</td>
-                                </tr>
-                            {% else %}
-                                Diamond is not polished!
-                            {% endif %}
-                        </table>
-                    </td>
-                {% endfor %}
-                </tr>
-            </tbody>
-            <tbody id="price" data-filter="target">
-                <tr class="bg-secondary">
-                {% for product in products %}
                     <td><span class="text-dark font-weight-semibold">Additional Information</span></td>
                 {% endfor %}
                 </tr>

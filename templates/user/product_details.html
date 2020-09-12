@@ -78,46 +78,6 @@
                     <h4><strong>Description:</strong></h4>
                     <div id="description"></div>
                     <br><br>
-                    <h4>Polish Details:</h4>
-                    <table class="table table-bordered table-striped table-hover">
-                        {% if product.polish %}
-                                <tr>
-                                    <td>Size</td>
-                                    <td>{{ product.polish.size|default:'NA' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>diameter</td>
-                                    <td>{{ product.polish.diameter|default:'NA' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>shape</td>
-                                    <td>{{ product.polish.get_shape_display|default:'NA' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>cut</td>
-                                    <td>{{ product.polish.get_cut_display|default:'NA' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>symmetry_cut</td>
-                                    <td>{{ product.polish.get_symmetry_cut_display|default:'NA' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>purity</td>
-                                    <td>{{ product.polish.get_purity_display|default:'NA' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>color</td>
-                                    <td>{{ product.polish.get_color_display|default:'NA' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>fluorescence</td>
-                                    <td>{{ product.polish.get_fluorescence_display|default:'NA' }}</td>
-                                </tr>
-                            {% else %}
-                                Diamond is not polished!
-                            {% endif %}
-                    </table>
-                    <br>
                     <h4>Additional Information:</h4>
                     <table class="table table-bordered table-striped table-hover">
                         {% for info in product.additional_information.all %}

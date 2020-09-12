@@ -90,7 +90,7 @@ WSGI_APPLICATION = 'base.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'e_diamond',
+        'NAME': 'maruti_fashion',
         'USER': 'root',
         'PASSWORD': '123',
         'HOST': '127.0.0.1',
