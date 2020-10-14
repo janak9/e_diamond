@@ -16,6 +16,7 @@ from main_admin.forms import ImageFormset, AboutForm
 import traceback
 import json
 import datetime
+from django.core.serializers.json import DjangoJSONEncoder
 
 
 def get_common_context(request, context):
@@ -241,7 +242,7 @@ def get_sub_category(request):
         result['status'] = 'error'
         result['msg'] = 'something is wrong!'
 
-    return HttpResponse(json.dumps(result))
+    return HttpResponse(json.dumps(result, cls=DjangoJSONEncoder))
 
 
 @checkLogin('admin')
