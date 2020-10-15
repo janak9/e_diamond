@@ -28,9 +28,9 @@ def manage_redirect(u_type):
 def resend_verification_token(request):
     detail = ''
     if request.method == 'POST':
-        user = user_model.objects.filter(email=request.POST.get('email')).first()
+        user = user_model.objects.filter(email=request.POST.get('email'))
         if user.exists():
-            send_email(user, 'activation')
+            send_email(user.first(), 'activation')
             detail = "Link send to your mail check your mail"
         else:
             detail = 'User does not exist'
@@ -72,7 +72,7 @@ def login(request):
                     else:
                         errors.append('Password is wrong...!')
                 else:
-                    errors.append("email is not activated. please check your mail and confirm your email. if you don't get mail then <a href=" + reverse('auth:resend-verify') + ">click here<a> to resend mail")
+                    errors.append("email is not activated. please check your mail and confirm your email. if you don't get mail then <a style='color:#007bff;' href=" + reverse('auth:resend-verify') + ">click here<a> to resend mail")
             else:
                 errors.append("Your Account Is " + user[0].get_status_display())
         else:
